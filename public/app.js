@@ -85,7 +85,7 @@
   function connectFeed() {
     if (es) { es.close(); es = null; }
     setLink('connecting');
-    try { es = new EventSource('/api/feed'); } catch { setLink('down'); scheduleRetry(); return; }
+    try { es = new EventSource('api/feed'); } catch { setLink('down'); scheduleRetry(); return; }
     es.onopen = () => { retryMs = 2000; setLink('live'); };
     es.onerror = () => {
       // 404 / server down: EventSource closes; otherwise it retries itself.
@@ -218,7 +218,7 @@
     sendBtn.classList.add('is-busy');
     sendLabel.textContent = 'SENDING';
     try {
-      const r = await postJSON('/api/submit', { sid, handle: handle || undefined, kind: item.kind, text: item.text });
+      const r = await postJSON('api/submit', { sid, handle: handle || undefined, kind: item.kind, text: item.text });
       item.state = 'received'; item.id = r.id; item.ts = r.ts; item.error = null;
       sendLabel.textContent = `RECEIVED · ${r.id}`;
       say(`RECEIVED · ID ${r.id}`);
@@ -403,7 +403,7 @@
 
   async function loadCatalog() {
     try {
-      const res = await fetch('/components.json', { cache: 'no-cache' });
+      const res = await fetch('components.json', { cache: 'no-cache' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       catalog = await res.json();
       byId = new Map(catalog.components.map(c => [c.id, c]));
@@ -453,7 +453,7 @@
     transmitBtn.classList.add('is-busy');
     transmitLabel.textContent = 'TRANSMITTING';
     try {
-      const r = await postJSON('/api/assemblage', { sid, handle: handle || undefined, picks: [...picks], spectrum: s.spectrum, klass: s.klass });
+      const r = await postJSON('api/assemblage', { sid, handle: handle || undefined, picks: [...picks], spectrum: s.spectrum, klass: s.klass });
       transmitLabel.textContent = `RECEIVED · ${r.id}`;
       say(`ASSEMBLAGE LOGGED · ID ${r.id}`);
       renderCard(s, r);

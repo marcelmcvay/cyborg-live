@@ -8,9 +8,9 @@
 
   // ── Config ───────────────────────────────────────────────────────
   const API = {
-    state: '/api/state',
-    feed: '/api/feed',
-    moderate: '/api/moderate',
+    state: 'api/state',
+    feed: 'api/feed',
+    moderate: 'api/moderate',
   };
   const ADMIN_KEY_LS = 'cyborg.adminKey';
   const MAX_CARDS = 60;               // DOM cap; feed is newest-first
