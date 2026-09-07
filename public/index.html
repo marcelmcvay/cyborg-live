@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0F0F0D">
+  <meta name="color-scheme" content="dark">
+  <title>CYBORG // LIVE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared.css">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-title">
+    <span class="reticle is-accent" aria-hidden="true"></span>
+    <h1>CYBORG <span class="hdr-sep">//</span> LIVE</h1>
+  </div>
+  <div class="hdr-right">
+    <span class="readout micro-label hdr-sid" id="sid-readout" title="session">SID ····</span>
+    <span class="pill is-pulsing" id="link-pill" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <span>LINK</span><span class="pill-state" id="link-state">CONNECTING</span>
+    </span>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- ================= MODE A: SIGNAL ================= -->
+  <section class="mode" id="mode-signal" data-mode="signal" aria-labelledby="tab-signal">
+    <div class="mode-head">
+      <span class="micro-label">MODE A</span>
+      <h2>Signal</h2>
+      <p class="mode-sub">Send a question, a discussion-starter, or a note to the room. Lands on the presenter screen live.</p>
+    </div>
+
+    <form class="fui-panel signal-form" id="signal-form" novalidate>
+      <span class="fui-corners" aria-hidden="true"></span>
+
+      <fieldset class="kind-group">
+        <legend class="micro-label">KIND</legend>
+        <div class="kind-seg" role="radiogroup" aria-label="Submission kind">
+          <label class="kind-opt">
+            <input type="radio" name="kind" value="question" checked>
+            <span class="kind-face"><span class="kind-glyph">?</span>QUESTION</span>
+          </label>
+          <label class="kind-opt">
+            <input type="radio" name="kind" value="discussion">
+            <span class="kind-face"><span class="kind-glyph">⇄</span>DISCUSSION</span>
+          </label>
+          <label class="kind-opt">
+            <input type="radio" name="kind" value="note">
+            <span class="kind-face"><span class="kind-glyph">▸</span>NOTE</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="field">
+        <div class="field-row">
+          <label class="micro-label" for="signal-text">TEXT</label>
+          <span class="readout counter" id="char-counter" aria-live="polite">000<span class="counter-sep">/</span>280</span>
+        </div>
+        <textarea id="signal-text" name="text" class="textarea" rows="4" maxlength="280"
+          placeholder="Type it. 280 chars. Plain text." autocomplete="off" spellcheck="true"></textarea>
+      </div>
+
+      <div class="field">
+        <div class="field-row">
+          <label class="micro-label" for="handle">HANDLE <span class="opt">(optional)</span></label>
+          <span class="readout counter is-dim" id="handle-counter">00/24</span>
+        </div>
+        <input id="handle" name="handle" class="input" type="text" maxlength="24"
+          placeholder="anon" autocomplete="nickname" autocapitalize="off">
+      </div>
+
+      <div class="form-foot">
+        <p class="inline-error" id="signal-error" role="alert" hidden></p>
+        <button class="btn is-primary send-btn" id="send-btn" type="submit" disabled>
+          <span class="send-label">SEND SIGNAL</span>
+          <span class="send-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+    </form>
+
+    <div class="log">
+      <div class="log-head">
+        <span class="micro-label">YOUR SIGNALS</span>
+        <span class="readout micro-label" id="log-count">000</span>
+      </div>
+      <ol class="log-list" id="log-list" aria-live="polite">
+        <li class="log-empty micro-label">NO SIGNALS SENT FROM THIS SESSION YET</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= MODE B: ASSEMBLE ================= -->
+  <section class="mode" id="mode-assemble" data-mode="assemble" aria-labelledby="tab-assemble" hidden>
+    <div class="mode-head">
+      <span class="micro-label">MODE B</span>
+      <h2>Assemble</h2>
+      <p class="mode-sub">Tap the tech that is part of your extended self. Your position on the spectrum updates live.</p>
+    </div>
+
+    <!-- sticky-ish live readout -->
+    <div class="fui-panel spectrum-panel" id="spectrum-panel">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="spectrum-head">
+        <div>
+          <span class="micro-label">SPECTRUM</span>
+          <div class="readout spectrum-value"><span id="spectrum-num">000</span><span class="unit">/100</span></div>
+        </div>
+        <div class="klass-block">
+          <span class="micro-label">CLASS</span>
+          <div class="klass-readout display" id="klass-readout">Unassembled</div>
+        </div>
+        <div class="picks-block">
+          <span class="micro-label">PICKS</span>
+          <div class="readout picks-readout" id="picks-count">00</div>
+        </div>
+      </div>
+
+      <div class="ruler" id="ruler" role="img" aria-label="Spectrum ruler from Daily Designer to Vader">
+        <div class="ruler-track">
+          <div class="ruler-fill" id="ruler-fill"></div>
+          <div class="ruler-ticks" id="ruler-ticks" aria-hidden="true"></div>
+          <div class="ruler-marker" id="ruler-marker"><span class="ruler-marker-line"></span></div>
+        </div>
+        <ol class="ruler-labels" id="ruler-labels">
+          <li data-at="0"><span>DAILY<br>DESIGNER</span></li>
+          <li data-at="25"><span>RACE CAR<br>DRIVER</span></li>
+          <li data-at="50"><span>PILOT</span></li>
+          <li data-at="75"><span>ASTRONAUT</span></li>
+          <li data-at="100"><span>VADER</span></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="slots" id="slots">
+      <!-- slot groups injected by app.js -->
+      <p class="micro-label slots-loading" id="slots-loading">LOADING CATALOG…</p>
+    </div>
+
+    <div class="fui-panel transmit-panel" id="transmit-panel">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="field">
+        <div class="field-row">
+          <label class="micro-label" for="handle-2">HANDLE <span class="opt">(optional, shared with Signal)</span></label>
+        </div>
+        <input id="handle-2" class="input" type="text" maxlength="24" placeholder="anon" autocomplete="nickname" autocapitalize="off">
+      </div>
+      <p class="inline-error" id="assemble-error" role="alert" hidden></p>
+      <button class="btn is-primary transmit-btn" id="transmit-btn" type="button" disabled>
+        <span class="send-label">TRANSMIT ASSEMBLAGE</span>
+        <span class="send-arrow" aria-hidden="true">↑</span>
+      </button>
+      <p class="micro-label transmit-hint" id="transmit-hint">PICK AT LEAST ONE COMPONENT</p>
+    </div>
+
+    <!-- class card (shown after transmit) -->
+    <div class="fui-panel class-card is-active" id="class-card" hidden>
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="card-top">
+        <span class="micro-label is-fg">CLASS CARD</span>
+        <span class="readout micro-label" id="card-id">ID ········</span>
+      </div>
+      <div class="card-klass display" id="card-klass">—</div>
+      <div class="card-handle micro-label" id="card-handle">ANON</div>
+      <div class="card-stats">
+        <div><span class="micro-label">SPECTRUM</span><div class="readout" id="card-spectrum">000</div></div>
+        <div><span class="micro-label">ARCHETYPE</span><div class="readout" id="card-archetype">—</div></div>
+        <div><span class="micro-label">PICKS</span><div class="readout" id="card-picks">00</div></div>
+      </div>
+      <div class="card-mini-ruler" id="card-ruler"><span class="card-mini-marker" id="card-marker"></span></div>
+      <div class="card-groups" id="card-groups"></div>
+      <ul class="card-list" id="card-list"></ul>
+      <div class="card-actions">
+        <button class="btn" id="card-share" type="button">SHARE / COPY</button>
+        <button class="btn" id="card-edit" type="button">EDIT ASSEMBLAGE</button>
+      </div>
+      <p class="micro-label card-status" id="card-status" aria-live="polite"></p>
+    </div>
+  </section>
+</main>
+
+<!-- ================= MODE SWITCH ================= -->
+<nav class="modebar" aria-label="Mode">
+  <div class="seg" role="tablist">
+    <button class="seg-btn is-on" id="tab-signal" role="tab" aria-selected="true" aria-controls="mode-signal" data-mode="signal" type="button">
+      <span class="seg-key">A</span><span class="seg-name">SIGNAL</span>
+    </button>
+    <button class="seg-btn" id="tab-assemble" role="tab" aria-selected="false" aria-controls="mode-assemble" data-mode="assemble" type="button">
+      <span class="seg-key">B</span><span class="seg-name">ASSEMBLE</span>
+    </button>
+    <span class="seg-indicator" aria-hidden="true"></span>
+  </div>
+</nav>
+
+<script src="/app.js" defer></script>
+</body>
+</html>

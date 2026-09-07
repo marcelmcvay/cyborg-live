@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CYBORG // LIVE — PRESENTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="presenter.css">
+</head>
+<body class="presenter">
+
+  <header class="hdr" role="banner">
+    <div class="hdr__brand">
+      <h1 class="hdr__title">CYBORG <span class="hdr__sep">//</span> LIVE</h1>
+      <span class="micro-label hdr__sub">PRESENTER · MISSION FEED</span>
+    </div>
+
+    <div class="hdr__center">
+      <span class="micro-label">JOIN</span>
+      <span class="hdr__url readout" id="joinUrl">—</span>
+    </div>
+
+    <div class="hdr__status">
+      <span class="pill pill--offline" id="linkPill" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="pill__text">LINK ○ OFFLINE</span>
+      </span>
+      <span class="readout hdr__clock" id="clock">00:00:00</span>
+    </div>
+  </header>
+
+  <main class="stage">
+
+    <!-- ── LEFT 2/3 : SIGNAL FEED ────────────────────────────── -->
+    <section class="fui-panel feed" aria-label="Signal feed">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="panel__head">
+        <div class="panel__title">
+          <span class="micro-label">MODE A</span>
+          <h2>SIGNAL</h2>
+        </div>
+
+        <div class="filters" role="tablist" aria-label="Filter feed">
+          <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">
+            <kbd>1</kbd> ALL <span class="filter__n readout" data-count="all">000</span>
+          </button>
+          <button class="filter" data-filter="question" role="tab" aria-selected="false">
+            <kbd>2</kbd> QUESTION <span class="filter__n readout" data-count="question">000</span>
+          </button>
+          <button class="filter" data-filter="discussion" role="tab" aria-selected="false">
+            <kbd>3</kbd> DISCUSSION <span class="filter__n readout" data-count="discussion">000</span>
+          </button>
+          <button class="filter" data-filter="note" role="tab" aria-selected="false">
+            <kbd>4</kbd> NOTE <span class="filter__n readout" data-count="note">000</span>
+          </button>
+        </div>
+      </div>
+
+      <ol class="cards" id="cards" aria-live="polite" aria-relevant="additions"></ol>
+
+      <div class="empty" id="feedEmpty">
+        <div class="empty__reticle" aria-hidden="true"></div>
+        <p class="micro-label">AWAITING SIGNAL</p>
+        <p class="empty__hint">NO TRANSMISSIONS RECEIVED · CHANNEL OPEN</p>
+      </div>
+    </section>
+
+    <!-- ── RIGHT 1/3 : ASSEMBLE TELEMETRY ────────────────────── -->
+    <aside class="tele" aria-label="Assemble telemetry">
+
+      <section class="fui-panel counters">
+      <span class="fui-corners" aria-hidden="true"></span>
+        <div class="counter">
+          <span class="micro-label">SIGNALS</span>
+          <span class="counter__val readout" id="cSignals">000</span>
+        </div>
+        <div class="counter">
+          <span class="micro-label">ASSEMBLAGES</span>
+          <span class="counter__val readout" id="cAssemblages">000</span>
+        </div>
+      </section>
+
+      <section class="fui-panel spectrum">
+      <span class="fui-corners" aria-hidden="true"></span>
+        <div class="panel__head panel__head--tight">
+          <div class="panel__title">
+            <span class="micro-label">MODE B</span>
+            <h2>SPECTRUM</h2>
+          </div>
+          <span class="micro-label" id="spectrumMeta">N=000 · μ=—</span>
+        </div>
+
+        <div class="hist" id="hist" role="img" aria-label="Spectrum histogram, 10 buckets">
+          <!-- 10 .hist__bar filled by JS -->
+        </div>
+
+        <div class="ruler" aria-hidden="true">
+          <div class="ruler__ticks" id="rulerTicks"></div>
+          <div class="ruler__labels">
+            <span style="--x:0">DAILY<br>DESIGNER</span>
+            <span style="--x:25">RACE CAR<br>DRIVER</span>
+            <span style="--x:50">PILOT</span>
+            <span style="--x:75">ASTRONAUT</span>
+            <span style="--x:100">VADER</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="fui-panel tally">
+      <span class="fui-corners" aria-hidden="true"></span>
+        <div class="panel__head panel__head--tight">
+          <div class="panel__title">
+            <span class="micro-label">COMPONENTS</span>
+            <h2>TOP 08</h2>
+          </div>
+        </div>
+        <ol class="tally__list" id="tally"></ol>
+        <p class="tally__empty micro-label" id="tallyEmpty">NO ASSEMBLAGES · TALLY IDLE</p>
+      </section>
+
+      <section class="fui-panel klass" id="klassCard" aria-live="polite">
+      <span class="fui-corners" aria-hidden="true"></span>
+        <div class="panel__head panel__head--tight">
+          <div class="panel__title">
+            <span class="micro-label">LATEST CLASS</span>
+          </div>
+          <span class="micro-label" id="klassIdx">— / —</span>
+        </div>
+        <div class="klass__body" id="klassBody">
+          <div class="klass__name is-empty">STANDBY</div>
+          <div class="klass__meta">
+            <span class="readout" id="klassHandle">—</span>
+            <span class="klass__picks readout" id="klassPicks">PICKS 00</span>
+            <span class="readout" id="klassSpectrum">SPEC 000</span>
+          </div>
+        </div>
+      </section>
+
+    </aside>
+  </main>
+
+  <footer class="ftr" aria-hidden="true">
+    <span class="micro-label"><kbd>F</kbd> FULLSCREEN</span>
+    <span class="micro-label"><kbd>1-4</kbd> FILTER</span>
+    <span class="micro-label"><kbd>H</kbd> MOD CONTROLS</span>
+    <span class="micro-label ftr__right" id="ftrStatus">BOOT</span>
+  </footer>
+
+  <script src="presenter.js"></script>
+</body>
+</html>

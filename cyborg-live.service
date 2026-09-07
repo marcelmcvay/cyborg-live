@@ -1,0 +1,15 @@
+[Unit]
+Description=CYBORG LIVE — audience participation server
+After=network.target
+
+[Service]
+WorkingDirectory=/home/marcel/cyborg-live
+ExecStart=/usr/bin/node server.js
+Restart=always
+RestartSec=2
+Environment=ADMIN_KEY=cyborg
+Environment=PORT=8787
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=default.target

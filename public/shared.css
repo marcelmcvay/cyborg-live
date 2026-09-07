@@ -1,0 +1,169 @@
+/* CYBORG // LIVE — shared design tokens + base + FUI utilities
+   Imported by index.html (audience) and presenter.html. Keep this file lean. */
+
+:root {
+  --bg: #0F0F0D;
+  --fg: #F0EFE9;
+  --mid: #666666;
+  --accent: #00E5CC;
+  --rule: rgba(240, 239, 233, 0.12);
+  --rule-strong: rgba(240, 239, 233, 0.28);
+  --warn: #FFB020;
+  --danger: #FF4D4D;
+
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --grid: 40px;
+  --tap: 44px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t-fast: 120ms;
+  --t-med: 180ms;
+}
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  /* 40px grid on hairlines */
+  background-image:
+    linear-gradient(to right, var(--rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+  background-size: var(--grid) var(--grid);
+  background-attachment: fixed;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; margin: 0; letter-spacing: -0.01em; }
+p { margin: 0; }
+button, input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+button { cursor: pointer; touch-action: manipulation; }
+button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+ul, ol { margin: 0; padding: 0; list-style: none; }
+::selection { background: var(--accent); color: var(--bg); }
+
+/* ---------- typographic utilities ---------- */
+.micro-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mid);
+}
+.micro-label.is-fg { color: var(--fg); }
+.readout {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.readout.is-accent { color: var(--accent); }
+.mono { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); }
+.hairline { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- status pill ---------- */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 22px; padding: 0 8px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono); font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--mid);
+  white-space: nowrap;
+}
+.pill .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mid);
+  transition: background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.pill.is-live { color: var(--fg); border-color: var(--accent); }
+.pill.is-live .dot { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+.pill.is-warn { color: var(--warn); border-color: var(--warn); }
+.pill.is-warn .dot { background: var(--warn); }
+.pill.is-danger { color: var(--danger); border-color: var(--danger); }
+.pill.is-danger .dot { background: var(--danger); }
+.pill.is-pulsing .dot { animation: pill-pulse 1.4s ease-in-out infinite; }
+@keyframes pill-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ---------- FUI panel with corner brackets ---------- */
+.fui-panel {
+  position: relative;
+  background: rgba(15, 15, 13, 0.88);
+  border: 1px solid var(--rule);
+  padding: 14px;
+  --bracket: 10px;
+  --bracket-color: var(--rule-strong);
+}
+.fui-panel::before, .fui-panel::after,
+.fui-panel > .fui-corners::before, .fui-panel > .fui-corners::after {
+  content: "";
+  position: absolute;
+  width: var(--bracket); height: var(--bracket);
+  border-color: var(--bracket-color);
+  border-style: solid;
+  pointer-events: none;
+  transition: border-color var(--t-fast) var(--ease);
+}
+.fui-panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.fui-panel::after  { top: -1px; right: -1px; border-width: 1px 1px 0 0; }
+.fui-panel > .fui-corners::before { bottom: -1px; left: -1px; border-width: 0 0 1px 1px; }
+.fui-panel > .fui-corners::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+.fui-panel.is-active { --bracket-color: var(--accent); }
+.fui-panel.is-danger { --bracket-color: var(--danger); border-color: rgba(255, 77, 77, 0.4); }
+
+/* ---------- reticle motif (small crosshair) ---------- */
+.reticle {
+  position: relative; display: inline-block; width: 10px; height: 10px; flex: none;
+}
+.reticle::before, .reticle::after {
+  content: ""; position: absolute; background: var(--mid);
+}
+.reticle::before { left: 50%; top: 0; width: 1px; height: 100%; transform: translateX(-50%); }
+.reticle::after  { top: 50%; left: 0; height: 1px; width: 100%; transform: translateY(-50%); }
+.reticle.is-accent::before, .reticle.is-accent::after { background: var(--accent); }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: var(--tap); padding: 0 16px;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono); font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--fg);
+  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease),
+              background var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.btn:active { transform: scale(0.985); border-color: var(--accent); }
+.btn.is-primary { border-color: var(--fg); }
+.btn.is-primary:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { color: var(--mid); border-color: var(--rule); cursor: not-allowed; transform: none; }
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
