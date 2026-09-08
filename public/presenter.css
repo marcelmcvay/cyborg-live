@@ -179,7 +179,7 @@ kbd {
 /* ── Stage ────────────────────────────────────────────────────────── */
 .stage {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: minmax(300px, 26fr) minmax(0, 44fr) minmax(0, 24fr);
   gap: var(--gap);
   padding: var(--gap) var(--pad);
   min-height: 0;
@@ -250,11 +250,11 @@ kbd {
 .card {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   grid-template-areas:
-    "meta  hide"
-    "text  text"
-    "foot  foot";
+    "meta  stage hide"
+    "text  text  text"
+    "foot  foot  foot";
   gap: 8px 12px;
   padding: 16px 20px 14px;
   border: 1px solid var(--rule);
@@ -558,6 +558,314 @@ kbd {
 .klass__meta .readout:first-child { color: var(--fg); }
 .klass__body.is-rotating { animation: slide-in var(--t) var(--ease) both; }
 
+/* ═══════════════════════════════════════════════════════════════════
+   CONTROL TRACK — run of show. Left column. Lectern laptop, dark room:
+   legibility at a glance beats density. Five Norman jobs kept distinct:
+   signifier (.tbtn looks pressable), constraint (disabled at deck ends),
+   mapping (down = forward, matching the list order), state (.is-current),
+   feedback (.is-firing within 100ms + .ctrl__err on failure).
+   ═══════════════════════════════════════════════════════════════════ */
+.ctrl {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+}
+
+/* ── STATE: the current beat, unmistakable from across a stage ────── */
+.now {
+  padding: 10px 16px 9px;
+  border-bottom: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+}
+.now__head { display: flex; align-items: baseline; gap: 12px; }
+.now__idx {
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: .1em;
+  flex: none;
+}
+.now__label {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: .01em;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.now.is-standby { border-left-color: var(--mid); }
+.now.is-standby .now__idx { color: var(--mid); }
+.now.is-standby .now__label { color: var(--mid); }
+.now.is-foreign { border-left-color: var(--warn); }
+.now.is-foreign .now__idx { color: var(--warn); }
+
+.now__prompt {
+  margin: 7px 0 0;
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.28;
+  color: var(--fg);
+  opacity: .82;
+  overflow-wrap: anywhere;
+}
+.now__warn {
+  margin: 7px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--warn);
+  border-top: 1px solid var(--rule);
+  padding-top: 8px;
+}
+
+/* ── Clocks ───────────────────────────────────────────────────────── */
+.clocks {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: 7px;
+}
+.clock-box {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  min-width: 0;
+}
+.clock-box__val {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.clock-box__bud { font-size: 11px; color: var(--mid); }
+.clock-box.is-warn { border-color: var(--warn); }
+.clock-box.is-warn .clock-box__val { color: var(--warn); }
+.clock-box.is-over { border-color: var(--danger); }
+.clock-box.is-over .clock-box__val { color: var(--danger); }
+
+.t0 {
+  flex: none;
+  min-width: 44px;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--mid);
+  border: 1px solid var(--rule);
+  transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.t0:hover, .t0:focus-visible { color: var(--accent); border-color: var(--accent); }
+
+/* ── Cue status pills: what forty phones can do right now ─────────── */
+.cue-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.cue-pills .pill { font-size: 10px; padding: 4px 9px; }
+.cue-pills .dot { width: 7px; height: 7px; border-radius: 999px; flex: none; }
+.pill--mode { border-color: var(--rule); color: var(--fg); letter-spacing: .1em; }
+.pill.is-open { color: var(--fg); border-color: var(--accent); }
+.pill.is-open .dot { background: var(--accent); }
+.pill.is-shut { color: var(--mid); border-color: var(--rule); }
+.pill.is-shut .dot { background: transparent; box-shadow: inset 0 0 0 1px var(--mid); }
+
+/* ── SIGNIFIER + MAPPING: transport. 48px targets. ────────────────── */
+.transport {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.tbtn {
+  min-height: 44px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  color: var(--fg);
+  transition: border-color var(--t) var(--ease), color var(--t) var(--ease);
+}
+.tbtn__lbl {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.tbtn__key { display: flex; gap: 4px; }
+.tbtn--next { border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.tbtn:hover:not(:disabled), .tbtn:focus-visible:not(:disabled) { border-color: var(--accent); }
+.tbtn:hover:not(:disabled) .tbtn__lbl { color: var(--accent); }
+/* CONSTRAINT: no next beat at the end of the deck */
+.tbtn:disabled { opacity: .32; cursor: default; }
+/* FEEDBACK: fires on keydown, before the network resolves */
+.tbtn.is-firing { border-color: var(--accent); color: var(--accent); }
+.tbtn.is-firing:not(.is-reduced) { animation: fire 160ms var(--ease) both; }
+@keyframes fire {
+  from { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+  to   { background: transparent; }
+}
+
+.ctrl__err {
+  margin: 0;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--danger);
+  border-bottom: 1px solid var(--danger);
+}
+
+/* ── Beat list ────────────────────────────────────────────────────── */
+.beats {
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  flex: 0 1 auto;
+  min-height: 0;
+  max-height: 30vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.beat {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 16px;
+  text-align: left;
+  border: 0;
+  border-left: 3px solid transparent;
+  color: var(--mid);
+  transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+}
+.beat:hover, .beat:focus-visible { color: var(--fg); border-left-color: var(--rule); }
+.beat__idx { font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; }
+.beat__lbl {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.beat__mins { font-family: var(--font-mono); font-size: 11px; color: var(--mid); }
+.beat.is-done { color: color-mix(in srgb, var(--fg) 40%, transparent); }
+/* STATE: current beat. Marker + weight + accent, three redundant cues. */
+.beat.is-current {
+  border-left-color: var(--accent);
+  color: var(--fg);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.beat.is-current .beat__idx { color: var(--accent); }
+.beat.is-current .beat__lbl { font-weight: 600; font-size: 15px; }
+.beat.is-current .beat__idx::before { content: "▸ "; }
+.beat.is-pending { border-left-color: var(--warn); }
+.beat.is-pending .beat__idx { color: var(--warn); }
+
+/* ── Staged bar ───────────────────────────────────────────────────── */
+.staged-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.staged-bar__id { font-size: 12px; color: var(--mid); margin-right: auto; }
+.staged-bar.is-live .staged-bar__id { color: var(--accent); }
+.ubtn {
+  min-height: 30px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--mid);
+  border: 1px solid var(--rule);
+  transition: color var(--t), border-color var(--t);
+}
+.ubtn:hover, .ubtn:focus-visible { color: var(--danger); border-color: var(--danger); }
+
+/* ── Presenter notes — Marcel's script. Legibility first. ─────────── */
+.notes {
+  flex: 1 1 auto;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-top: 1px solid var(--rule);
+}
+.notes__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 16px 5px;
+  border-bottom: 1px solid var(--rule);
+}
+.notes__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px 18px;
+  scrollbar-width: thin;
+}
+.notes__body p {
+  margin: 0 0 .75em;
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+.notes__body p:last-child { margin-bottom: 0; }
+.notes__empty { font-family: var(--font-mono); font-size: 11px; color: var(--mid); }
+
+/* ── Feed card STAGE affordance ───────────────────────────────────── */
+.card__stage {
+  grid-area: stage;
+  align-self: start;
+  min-height: 30px;
+  padding: 5px 9px;
+  font-size: 10px;
+  letter-spacing: .1em;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: var(--mid);
+  transition: color var(--t), border-color var(--t);
+}
+.card__stage:hover, .card__stage:focus-visible { color: var(--accent); border-color: var(--accent); }
+.card__stage:disabled { opacity: .4; cursor: default; }
+.card__stage.is-firing { color: var(--accent); border-color: var(--accent); }
+.mod-hidden .card__stage { display: none; }
+/* the staged card is visibly marked */
+.card.is-staged { border-color: var(--accent); }
+.card.is-staged::after {
+  content: "ON DECK";
+  position: absolute;
+  bottom: -1px; right: -1px;
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .12em;
+  color: var(--bg);
+  background: var(--accent);
+}
+.card.is-staged .card__stage { color: var(--accent); border-color: var(--accent); }
+
 /* ── Footer ───────────────────────────────────────────────────────── */
 .ftr {
   display: flex;
@@ -572,6 +880,10 @@ kbd {
 /* ── 1280x720 tune ────────────────────────────────────────────────── */
 @media (max-width: 1400px) {
   .presenter { --card-text: 22px; --hdr-h: 60px; --gap: 14px; --pad: 16px; }
+  .stage { grid-template-columns: minmax(270px, 28fr) minmax(0, 42fr) minmax(0, 22fr); }
+  .now__label { font-size: 24px; }
+  .clock-box__val { font-size: 20px; }
+  .notes__body p { font-size: 15px; }
   .hdr__title { font-size: 22px; }
   .hdr__url { font-size: 17px; }
   .counter__val { font-size: 42px; }

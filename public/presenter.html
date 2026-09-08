@@ -16,7 +16,7 @@
   <header class="hdr" role="banner">
     <div class="hdr__brand">
       <h1 class="hdr__title">CYBORG <span class="hdr__sep">//</span> LIVE</h1>
-      <span class="micro-label hdr__sub">PRESENTER · MISSION FEED</span>
+      <span class="micro-label hdr__sub" id="hdrSession">PRESENTER · STANDBY</span>
     </div>
 
     <div class="hdr__center">
@@ -34,6 +34,82 @@
   </header>
 
   <main class="stage">
+
+    <!-- ── LEFT COLUMN : CONTROL TRACK (run of show) ──────────── -->
+    <section class="fui-panel ctrl" aria-label="Run of show control track">
+      <span class="fui-corners" aria-hidden="true"></span>
+
+      <div class="panel__head panel__head--tight">
+        <div class="panel__title">
+          <span class="micro-label">CONTROL TRACK</span>
+          <h2>RUN OF SHOW</h2>
+        </div>
+        <span class="micro-label" id="ctrlDeck">DECK LOADING…</span>
+      </div>
+
+      <!-- STATE: what the room is doing right now -->
+      <div class="now" id="now">
+        <div class="now__head">
+          <span class="now__idx readout" id="nowIdx">—/—</span>
+          <span class="now__label" id="nowLabel">STANDBY</span>
+        </div>
+
+        <div class="clocks">
+          <div class="clock-box" id="beatClockBox">
+            <span class="micro-label">BEAT</span>
+            <span class="clock-box__val readout" id="beatElapsed">00:00</span>
+            <span class="clock-box__bud readout" id="beatBudget">/ 00:00</span>
+          </div>
+          <div class="clock-box" id="totalClockBox">
+            <span class="micro-label">TOTAL</span>
+            <span class="clock-box__val readout" id="totalElapsed">00:00</span>
+            <span class="clock-box__bud readout" id="totalBudget">/ 00:00</span>
+          </div>
+          <button class="t0" id="btnT0" title="Set the total-elapsed clock to zero (talk starts now)">T0</button>
+        </div>
+
+        <div class="cue-pills">
+          <span class="pill pill--mode" id="pillMode">MODE —</span>
+          <span class="pill" id="pillSignal"><span class="dot" aria-hidden="true"></span><span class="pill__text">SIGNAL SHUT</span></span>
+          <span class="pill" id="pillAssemble"><span class="dot" aria-hidden="true"></span><span class="pill__text">ASSEMBLE SHUT</span></span>
+        </div>
+
+        <p class="now__prompt" id="nowPrompt">—</p>
+        <p class="now__warn" id="nowWarn" hidden></p>
+      </div>
+
+      <!-- SIGNIFIER + MAPPING: transport -->
+      <div class="transport">
+        <button class="tbtn" id="btnPrev" type="button" aria-label="Cue previous beat">
+          <span class="tbtn__key"><kbd>↑</kbd><kbd>P</kbd></span>
+          <span class="tbtn__lbl">PREV BEAT</span>
+        </button>
+        <button class="tbtn tbtn--next" id="btnNext" type="button" aria-label="Cue next beat">
+          <span class="tbtn__key"><kbd>↓</kbd><kbd>N</kbd></span>
+          <span class="tbtn__lbl">NEXT BEAT</span>
+        </button>
+      </div>
+
+      <p class="ctrl__err" id="ctrlErr" role="alert" hidden></p>
+
+      <ol class="beats" id="beats" aria-label="Beats"></ol>
+
+      <div class="staged-bar">
+        <span class="micro-label">STAGED ON DECK</span>
+        <span class="readout staged-bar__id" id="stagedId">NONE</span>
+        <button class="ubtn" id="btnUnstage" type="button" hidden>UNSTAGE</button>
+      </div>
+
+      <div class="notes">
+        <div class="notes__head">
+          <span class="micro-label">PRESENTER NOTES</span>
+          <span class="micro-label" id="notesBeat">—</span>
+        </div>
+        <div class="notes__body" id="notes">
+          <p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>
+        </div>
+      </div>
+    </section>
 
     <!-- ── LEFT 2/3 : SIGNAL FEED ────────────────────────────── -->
     <section class="fui-panel feed" aria-label="Signal feed">
@@ -145,6 +221,8 @@
 
   <footer class="ftr" aria-hidden="true">
     <span class="micro-label"><kbd>F</kbd> FULLSCREEN</span>
+    <span class="micro-label"><kbd>↓</kbd>/<kbd>N</kbd> NEXT BEAT</span>
+    <span class="micro-label"><kbd>↑</kbd>/<kbd>P</kbd> PREV BEAT</span>
     <span class="micro-label"><kbd>1-4</kbd> FILTER</span>
     <span class="micro-label"><kbd>H</kbd> MOD CONTROLS</span>
     <span class="micro-label ftr__right" id="ftrStatus">BOOT</span>

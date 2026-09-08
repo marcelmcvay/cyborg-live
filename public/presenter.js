@@ -7,17 +7,24 @@
   'use strict';
 
   // ── Config ───────────────────────────────────────────────────────
+  // All paths RELATIVE — this screen has to survive being served under a
+  // reverse-proxy prefix like /cyborg/.
   const API = {
     state: 'api/state',
     feed: 'api/feed',
     moderate: 'api/moderate',
+    cue: 'api/cue',
+    stage: 'api/stage',
   };
   const ADMIN_KEY_LS = 'cyborg.adminKey';
+  const T0_LS = 'cyborg.t0';          // ms epoch of "talk starts now"
+  const DEFAULT_DECK = 'design-week-ri';
   const MAX_CARDS = 60;               // DOM cap; feed is newest-first
   const KINDS = ['question', 'discussion', 'note'];
   const SPECTRUM_LABELS = ['DAILY DESIGNER', 'RACE CAR DRIVER', 'PILOT', 'ASTRONAUT', 'VADER'];
   const KLASS_ROTATE_MS = 8000;
   const BACKOFF = { base: 1000, max: 30000 };
+  const OVER_HARD = 1.35;             // >135% of budget = --danger
   const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ── State ────────────────────────────────────────────────────────
@@ -36,6 +43,16 @@
     reconnectTimer: null,
     klassIdx: 0,
     klassTimer: null,
+    // ── control track ──
+    deck: null,             // loaded deck JSON
+    beats: [],              // deck.beats with a string id, in authored order
+    cue: null,              // authoritative room cue (server / SSE)
+    pendingBeatId: null,    // optimistic: pressed, POST not resolved yet
+    beatStartTs: 0,         // when the current beat was cued (ms epoch)
+    t0: 0,                  // talk start (ms epoch) for the total clock
+    staged: null,           // submission id currently full-screen on the deck
+    session: null,
+    clockTimer: null,
   };
 
   // ── DOM ──────────────────────────────────────────────────────────
@@ -63,6 +80,32 @@
     klassPicks: $('#klassPicks'),
     klassSpectrum: $('#klassSpectrum'),
     ftrStatus: $('#ftrStatus'),
+    // control track
+    hdrSession: $('#hdrSession'),
+    ctrlDeck: $('#ctrlDeck'),
+    ctrlErr: $('#ctrlErr'),
+    now: $('#now'),
+    nowIdx: $('#nowIdx'),
+    nowLabel: $('#nowLabel'),
+    nowPrompt: $('#nowPrompt'),
+    nowWarn: $('#nowWarn'),
+    beatElapsed: $('#beatElapsed'),
+    beatBudget: $('#beatBudget'),
+    beatClockBox: $('#beatClockBox'),
+    totalElapsed: $('#totalElapsed'),
+    totalBudget: $('#totalBudget'),
+    totalClockBox: $('#totalClockBox'),
+    btnT0: $('#btnT0'),
+    pillMode: $('#pillMode'),
+    pillSignal: $('#pillSignal'),
+    pillAssemble: $('#pillAssemble'),
+    btnPrev: $('#btnPrev'),
+    btnNext: $('#btnNext'),
+    beats: $('#beats'),
+    notes: $('#notes'),
+    notesBeat: $('#notesBeat'),
+    stagedId: $('#stagedId'),
+    btnUnstage: $('#btnUnstage'),
   };
 
   // ── Utils ────────────────────────────────────────────────────────
@@ -91,6 +134,11 @@
     node.classList.add('is-bump');
   };
   const status = (msg) => { el.ftrStatus.textContent = msg; };
+  const mmss = (ms) => {
+    const neg = ms < 0;
+    const t = Math.floor(Math.abs(ms) / 1000);
+    return `${neg ? '-' : ''}${pad(Math.floor(t / 60), 2)}:${pad(t % 60, 2)}`;
+  };
 
   // ── Header: join URL + clock ─────────────────────────────────────
   function initHeader() {
@@ -132,6 +180,7 @@
         ${handleHTML}
       </div>
       <button class="card__hide" data-hide="${esc(sub.id)}" title="Hide from feed" aria-label="Hide submission ${esc(sub.id)}">HIDE</button>
+      <button class="card__stage" data-stage="${esc(sub.id)}" title="Throw this submission full-screen on the deck" aria-label="Stage submission ${esc(sub.id)} on the deck">STAGE</button>
       <p class="card__text">${esc(sub.text)}</p>
       <div class="card__foot">
         <span class="readout card__ts">${fmtTime(sub.ts)}</span>
@@ -145,6 +194,7 @@
     li.dataset.id = sub.id;
     li.dataset.kind = sub.kind;
     li.innerHTML = cardHTML(sub);
+    if (S.staged && sub.id === S.staged) li.classList.add('is-staged');
     if (entering && !REDUCED_MOTION) {
       li.classList.add('is-entering');
       li.addEventListener('animationend', () => li.classList.remove('is-entering'), { once: true });
@@ -438,6 +488,399 @@
     el.body.classList.toggle('mod-hidden', !v);
   }
 
+  /* ═════════════════════════════════════════════════════════════════
+     CONTROL TRACK — the run of show. This is the thing that advances
+     the projector deck: /deck's arrow keys only step slides WITHIN a
+     beat; the next BEAT only happens when somebody POSTs /api/cue.
+     That somebody is this screen.
+
+     Beats are resolved BY ID, never by array position across the wire.
+     Prev/next arithmetic happens locally against the loaded deck and
+     the result is always transmitted as an id.
+     ═════════════════════════════════════════════════════════════════ */
+
+  function deckSlug() {
+    const q = new URLSearchParams(location.search).get('deck');
+    const s = (q || DEFAULT_DECK).trim();
+    // constrain so ?deck= can't walk the filesystem (same rule as deck.js)
+    return /^[a-z0-9][a-z0-9-]{0,63}$/i.test(s) ? s : DEFAULT_DECK;
+  }
+
+  async function loadDeck() {
+    const slug = deckSlug();
+    el.ctrlDeck.textContent = `LOADING ${slug.toUpperCase()}…`;
+    try {
+      const res = await fetch(`decks/${slug}.json`, { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const deck = await res.json();
+      if (!deck || !Array.isArray(deck.beats)) throw new Error('deck has no beats[]');
+      S.deck = deck;
+      S.beats = deck.beats.filter((b) => b && typeof b.id === 'string');
+      el.ctrlDeck.textContent =
+        `${slug.toUpperCase()} · ${pad(S.beats.length)} BEATS · ${pad(deckTotalMins())}MIN`;
+      renderBeats();
+      renderNow();
+      status(`DECK ${slug.toUpperCase()} · ${pad(S.beats.length)} BEATS`);
+      return true;
+    } catch (err) {
+      S.deck = null;
+      S.beats = [];
+      el.ctrlDeck.textContent = `DECK UNAVAILABLE`;
+      ctrlError(`DECK ${slug.toUpperCase()} FAILED · ${err.message}`);
+      renderBeats();
+      renderNow();
+      return false;
+    }
+  }
+
+  const deckTotalMins = () => {
+    const t = Number(S.deck && S.deck.totalMins);
+    if (Number.isFinite(t) && t > 0) return t;
+    return S.beats.reduce((a, b) => a + (Number(b.mins) || 0), 0);
+  };
+
+  // ── Beat resolution — BY ID, ALWAYS ──────────────────────────────
+  const findBeat = (id) => (id ? S.beats.find((b) => b.id === id) || null : null);
+  const beatIndex = (id) => S.beats.findIndex((b) => b.id === id);
+
+  /** The beat the UI is *showing* as current: optimistic press wins until
+   *  the server's cue lands, so feedback never waits on the network. */
+  const shownBeatId = () => S.pendingBeatId || (S.cue && S.cue.beatId) || null;
+
+  // ── FEEDBACK: inline, visible, and it does not go away on its own ──
+  let errTimer = null;
+  function ctrlError(msg) {
+    el.ctrlErr.textContent = msg;
+    el.ctrlErr.hidden = false;
+    clearTimeout(errTimer);
+    errTimer = setTimeout(() => { el.ctrlErr.hidden = true; }, 12000);
+  }
+  function clearCtrlError() {
+    clearTimeout(errTimer);
+    el.ctrlErr.hidden = true;
+  }
+  function fire(btn) {
+    if (!btn) return;
+    btn.classList.add('is-firing');
+    if (REDUCED_MOTION) btn.classList.add('is-reduced');
+    setTimeout(() => btn.classList.remove('is-firing'), 220);
+  }
+
+  /**
+   * Cue a beat by id. Transmits the beat's OWN cue object from the deck
+   * JSON verbatim — this screen never synthesises or edits a cue, so it
+   * physically cannot flip signalOpen/assembleOpen against Marcel's
+   * standing rules. If a deck beat itself would close one, we send it as
+   * authored and warn loudly in renderNow().
+   */
+  async function cueBeat(beatId, btn) {
+    const beat = findBeat(beatId);
+    if (!beat) { ctrlError(`NO BEAT ${String(beatId).toUpperCase()} IN DECK`); return; }
+    const key = getAdminKey();
+    if (!key) { ctrlError('CUE ABORTED · NO ADMIN KEY'); return; }
+
+    // 1. FEEDBACK FIRST — inside the same frame as the press.
+    fire(btn);
+    S.pendingBeatId = beat.id;
+    S.beatStartTs = Date.now();
+    clearCtrlError();
+    renderBeats();
+    renderNow();
+    renderClocks();
+    status(`CUE → ${(beat.label || beat.id).toUpperCase()}`);
+
+    const c = beat.cue || {};
+    const body = {
+      beatId: beat.id,                        // ID ONLY. never an index.
+      label: beat.label || beat.id,
+      mode: c.mode,
+      prompt: c.prompt || '',
+      signalOpen: !!c.signalOpen,
+      assembleOpen: !!c.assembleOpen,
+      key,
+    };
+
+    try {
+      const res = await fetch(API.cue, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (res.status === 403) {
+        localStorage.removeItem(ADMIN_KEY_LS);
+        S.pendingBeatId = null;
+        renderBeats(); renderNow();
+        ctrlError('CUE 403 · KEY REJECTED');
+        if (getAdminKey(true)) return cueBeat(beatId, btn);
+        return;
+      }
+      if (!res.ok) {
+        let detail = `HTTP ${res.status}`;
+        try { const j = await res.json(); if (j && j.error) detail = j.error; } catch { /* */ }
+        throw new Error(detail);
+      }
+      const json = await res.json();
+      // authoritative cue also arrives over SSE; applying here closes the
+      // loop even if this presenter's own stream is momentarily down.
+      if (json && json.cue) applyCue(json.cue);
+      status(`CUE OK · ${beat.id.toUpperCase()}`);
+    } catch (err) {
+      // WORST CASE: a silent failed cue mid-talk. Never silent.
+      S.pendingBeatId = null;
+      renderBeats(); renderNow(); renderClocks();
+      ctrlError(`CUE FAILED · ${beat.id.toUpperCase()} · ${String(err.message).toUpperCase()}`);
+      status(`CUE FAILED · ${err.message}`);
+    }
+  }
+
+  function stepBeat(delta, btn) {
+    if (!S.beats.length) { ctrlError('NO DECK LOADED'); return; }
+    const cur = shownBeatId();
+    const i = beatIndex(cur);
+    // no cue yet (or a beat from another deck): NEXT starts at the top
+    const target = i < 0 ? (delta > 0 ? 0 : S.beats.length - 1) : i + delta;
+    if (target < 0 || target >= S.beats.length) {
+      ctrlError(delta > 0 ? 'END OF DECK · NO NEXT BEAT' : 'START OF DECK · NO PREV BEAT');
+      return;
+    }
+    cueBeat(S.beats[target].id, btn);
+  }
+
+  /** Server/SSE cue landed — this is the authority, even if cued from
+   *  another device (phone, second laptop, curl). */
+  function applyCue(cue) {
+    if (!cue || typeof cue !== 'object') return;
+    const changed = !S.cue || S.cue.beatId !== cue.beatId;
+    S.cue = cue;
+    if (S.pendingBeatId && S.pendingBeatId === cue.beatId) S.pendingBeatId = null;
+    else if (changed) S.pendingBeatId = null;   // somebody else drove
+    if (changed || !S.beatStartTs) {
+      // prefer the server's cue timestamp so a reload mid-beat keeps the clock
+      S.beatStartTs = Number(cue.ts) || Date.now();
+    }
+    if (!S.t0 && S.beatStartTs) setT0(S.beatStartTs, false);
+    renderBeats();
+    renderNow();
+    renderClocks();
+  }
+
+  // ── Render: beat list ────────────────────────────────────────────
+  function renderBeats() {
+    if (!S.beats.length) {
+      el.beats.innerHTML = `<li class="beat" aria-disabled="true">
+        <span class="beat__idx">—</span>
+        <span class="beat__lbl">NO DECK</span>
+        <span class="beat__mins"></span></li>`;
+      return;
+    }
+    const shown = shownBeatId();
+    const curIdx = beatIndex(shown);
+    el.beats.innerHTML = S.beats.map((b, i) => {
+      const isCur = b.id === shown;
+      const pending = isCur && S.pendingBeatId === b.id;
+      const cls = ['beat'];
+      if (isCur) cls.push('is-current');
+      if (pending) cls.push('is-pending');
+      if (curIdx >= 0 && i < curIdx) cls.push('is-done');
+      const mins = Number(b.mins) || 0;
+      return `<li>
+        <button class="${cls.join(' ')}" type="button" data-beat="${esc(b.id)}"
+                ${isCur ? 'aria-current="true"' : ''}
+                title="Cue ${esc(b.label || b.id)}">
+          <span class="beat__idx readout">${pad(i + 1)}</span>
+          <span class="beat__lbl">${esc(b.label || b.id)}${b.panelOnly ? ' ·P' : ''}</span>
+          <span class="beat__mins readout">${pad(mins, 2)}M</span>
+        </button></li>`;
+    }).join('');
+  }
+
+  // ── Render: current beat state / pills / notes ────────────────────
+  function renderNow() {
+    const cue = S.cue;
+    const shown = shownBeatId();
+    const beat = findBeat(shown);
+    const i = beatIndex(shown);
+    const total = S.beats.length;
+
+    el.now.classList.toggle('is-standby', !shown);
+    // cued a beat that isn't in this deck: /deck will show NOT IN DECK
+    el.now.classList.toggle('is-foreign', !!shown && !beat);
+
+    el.nowIdx.textContent = beat ? `${pad(i + 1)}/${pad(total)}` : (shown ? '···/···' : '—/—');
+    el.nowLabel.textContent = beat
+      ? String(beat.label || beat.id).toUpperCase()
+      : (cue && cue.label ? String(cue.label).toUpperCase() : 'STANDBY');
+
+    const mode = (cue && cue.mode) || (beat && beat.cue && beat.cue.mode) || '—';
+    el.pillMode.textContent = `MODE ${String(mode).toUpperCase()}`;
+    setOpenPill(el.pillSignal, 'SIGNAL', !!(cue && cue.signalOpen));
+    setOpenPill(el.pillAssemble, 'ASSEMBLE', !!(cue && cue.assembleOpen));
+
+    const prompt = (cue && cue.prompt) || (beat && beat.cue && beat.cue.prompt) || '';
+    el.nowPrompt.textContent = prompt || '—';
+
+    // WARN, don't rewrite: Marcel's standing rules are SIGNAL opens once and
+    // never closes, ASSEMBLE stays editable. If the deck itself authored a
+    // regression we transmit it as written and say so here.
+    const warns = [];
+    if (!beat && shown) warns.push(`BEAT ${String(shown).toUpperCase()} NOT IN THIS DECK · /DECK WILL HOLD`);
+    if (beat) {
+      const i2 = i;
+      const everSignal = S.beats.slice(0, i2).some((b) => b.cue && b.cue.signalOpen);
+      const everAssemble = S.beats.slice(0, i2).some((b) => b.cue && b.cue.assembleOpen);
+      const c = beat.cue || {};
+      if (everSignal && !c.signalOpen && c.mode !== 'closed') warns.push('DECK CLOSES SIGNAL · RULE SAYS IT NEVER CLOSES');
+      if (everAssemble && !c.assembleOpen && c.mode !== 'closed') warns.push('DECK CLOSES ASSEMBLE · RULE SAYS IT STAYS EDITABLE');
+    }
+    el.nowWarn.textContent = warns.join(' // ');
+    el.nowWarn.hidden = warns.length === 0;
+
+    // CONSTRAINT: dead ends are visibly unavailable
+    el.btnPrev.disabled = !S.beats.length || i === 0;
+    el.btnNext.disabled = !S.beats.length || (i >= 0 && i === total - 1);
+
+    renderNotes(beat);
+  }
+
+  function setOpenPill(pill, label, open) {
+    pill.classList.toggle('is-open', open);
+    pill.classList.toggle('is-shut', !open);
+    $('.pill__text', pill).textContent = `${label} ${open ? 'OPEN' : 'SHUT'}`;
+  }
+
+  function renderNotes(beat) {
+    el.notesBeat.textContent = beat ? String(beat.label || beat.id).toUpperCase() : '—';
+    const text = beat && typeof beat.presenterNotes === 'string' ? beat.presenterNotes.trim() : '';
+    if (!text) {
+      el.notes.innerHTML = `<p class="notes__empty micro-label">${
+        beat ? 'NO NOTES FOR THIS BEAT' : 'NO BEAT CUED · PRESS NEXT BEAT'}</p>`;
+      return;
+    }
+    el.notes.innerHTML = text.split(/\n{2,}/).map((p) => `<p>${esc(p.trim())}</p>`).join('');
+    el.notes.scrollTop = 0;
+  }
+
+  // ── Clocks: this beat vs its budget, talk vs totalMins ───────────
+  function setT0(ts, persist = true) {
+    S.t0 = ts;
+    if (persist) { try { localStorage.setItem(T0_LS, String(ts)); } catch { /* */ } }
+  }
+
+  function gradeBox(box, elapsedMs, budgetMs) {
+    const over = budgetMs > 0 && elapsedMs > budgetMs;
+    box.classList.toggle('is-warn', over && elapsedMs <= budgetMs * OVER_HARD);
+    box.classList.toggle('is-over', over && elapsedMs > budgetMs * OVER_HARD);
+  }
+
+  function renderClocks() {
+    const now = Date.now();
+    const beat = findBeat(shownBeatId());
+    const budget = (Number(beat && beat.mins) || 0) * 60000;
+    const elapsed = S.beatStartTs ? now - S.beatStartTs : 0;
+    el.beatElapsed.textContent = S.beatStartTs ? mmss(elapsed) : '--:--';
+    el.beatBudget.textContent = `/ ${budget ? mmss(budget) : '--:--'}`;
+    gradeBox(el.beatClockBox, S.beatStartTs ? elapsed : 0, budget);
+
+    const tBudget = deckTotalMins() * 60000;
+    const tElapsed = S.t0 ? now - S.t0 : 0;
+    el.totalElapsed.textContent = S.t0 ? mmss(tElapsed) : '--:--';
+    el.totalBudget.textContent = `/ ${tBudget ? mmss(tBudget) : '--:--'}`;
+    gradeBox(el.totalClockBox, S.t0 ? tElapsed : 0, tBudget);
+  }
+
+  // ── STAGE: throw a submission full-screen on the deck ────────────
+  async function stageSubmission(id, btn) {
+    const key = getAdminKey();
+    if (!key) { ctrlError('STAGE ABORTED · NO ADMIN KEY'); return; }
+    fire(btn);
+    if (btn) btn.disabled = true;
+    // optimistic mark, reverted if the POST fails
+    const prev = S.staged;
+    setStaged(id === null ? null : id);
+    status(id === null ? 'UNSTAGE →' : `STAGE → ${id}`);
+    try {
+      const res = await fetch(API.stage, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id === null ? null : id, key }),
+      });
+      if (res.status === 403) {
+        localStorage.removeItem(ADMIN_KEY_LS);
+        setStaged(prev);
+        if (btn) btn.disabled = false;
+        ctrlError('STAGE 403 · KEY REJECTED');
+        if (getAdminKey(true)) return stageSubmission(id, btn);
+        return;
+      }
+      if (!res.ok) {
+        let detail = `HTTP ${res.status}`;
+        try { const j = await res.json(); if (j && j.error) detail = j.error; } catch { /* */ }
+        throw new Error(detail);
+      }
+      const json = await res.json();
+      setStaged(json && 'staged' in json ? json.staged : id);
+      if (btn) btn.disabled = false;
+      clearCtrlError();
+      status(id === null ? 'UNSTAGED' : `STAGED ${id}`);
+    } catch (err) {
+      setStaged(prev);
+      if (btn) btn.disabled = false;
+      ctrlError(`STAGE FAILED · ${String(err.message).toUpperCase()}`);
+      status(`STAGE FAILED · ${err.message}`);
+    }
+  }
+
+  function setStaged(id) {
+    S.staged = id || null;
+    el.stagedId.textContent = S.staged || 'NONE';
+    el.btnUnstage.hidden = !S.staged;
+    document.querySelector('.staged-bar').classList.toggle('is-live', !!S.staged);
+    for (const li of el.cards.children) {
+      const on = !!S.staged && li.dataset.id === S.staged;
+      li.classList.toggle('is-staged', on);
+      const b = li.querySelector('[data-stage]');
+      if (b) b.textContent = on ? 'STAGED' : 'STAGE';
+    }
+  }
+
+  // ── Session label in the header ──────────────────────────────────
+  function renderSession() {
+    const s = S.session || { n: 1, label: 'SESSION 001' };
+    const raw = String(s.label || 'SESSION 001').toUpperCase();
+    const n = Number(s.n);
+    el.hdrSession.textContent = /^SESSION\b/.test(raw)
+      ? raw
+      : `SESSION ${pad(Number.isFinite(n) ? n : 1)} · ${raw}`;
+  }
+
+  function initControlTrack() {
+    const stored = Number(localStorage.getItem(T0_LS));
+    if (Number.isFinite(stored) && stored > 0) S.t0 = stored;
+
+    el.btnNext.addEventListener('click', () => stepBeat(+1, el.btnNext));
+    el.btnPrev.addEventListener('click', () => stepBeat(-1, el.btnPrev));
+    el.btnT0.addEventListener('click', () => {
+      setT0(Date.now());
+      renderClocks();
+      fire(el.btnT0);
+      status('T0 SET · TOTAL CLOCK ZEROED');
+    });
+    el.btnUnstage.addEventListener('click', () => stageSubmission(null, el.btnUnstage));
+    el.beats.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-beat]');
+      if (!btn) return;
+      cueBeat(btn.dataset.beat, btn);
+    });
+
+    renderBeats();
+    renderNow();
+    renderClocks();
+    renderSession();
+    setStaged(null);
+    clearInterval(S.clockTimer);
+    S.clockTimer = setInterval(renderClocks, 1000);
+  }
+
   // ── Data: /api/state ─────────────────────────────────────────────
   async function loadState() {
     setLink('linking');
@@ -474,11 +917,16 @@
       : new Array(10).fill(0);
     S.componentTally = st.componentTally && typeof st.componentTally === 'object' ? { ...st.componentTally } : {};
     S.klassIdx = 0;
+    if (st.session) { S.session = st.session; renderSession(); }
     renderFeed();
     renderCounts();
     renderSpectrum();
     renderTally();
     renderKlass(false);
+    // control track: server is authoritative for both cue and staged
+    if ('staged' in st) setStaged(st.staged || null);
+    if (st.cue) applyCue(st.cue);
+    else { renderBeats(); renderNow(); renderClocks(); }
   }
 
   // best-effort: component labels for the tally (frontend agent authors this file)
@@ -531,9 +979,37 @@
       try {
         const m = JSON.parse(e.data);
         if (!m || !m.id) return;
+        if (m.hidden && S.staged === m.id) setStaged(null);
         if (m.hidden) removeSubmission(m.id);
         else loadState();     // un-hide: simplest correct path is a resync
       } catch { /* ignore */ }
+    });
+
+    // THE cue event — keeps this presenter correct even when the room was
+    // cued from another device. Beat is resolved by id.
+    es.addEventListener('cue', (e) => {
+      try { applyCue(JSON.parse(e.data)); } catch { /* ignore */ }
+    });
+
+    es.addEventListener('staged', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        setStaged(d && d.staged ? d.staged : null);
+      } catch { /* ignore */ }
+    });
+
+    // new session: logs archived, cue back to default. Full resync.
+    es.addEventListener('reset', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d && d.session) { S.session = d.session; renderSession(); }
+      } catch { /* ignore */ }
+      S.pendingBeatId = null;
+      S.beatStartTs = 0;
+      setStaged(null);
+      setT0(Date.now());
+      status('RESET · NEW SESSION');
+      loadState();
     });
 
     es.addEventListener('ping', () => { if (S.link !== 'live') setLink('live'); });
@@ -565,6 +1041,17 @@
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
       switch (e.key) {
+        // ── BEAT transport. Deliberately NOT ArrowRight/ArrowLeft/PageUp/
+        // PageDown: a presenter clicker sends those and /deck consumes them
+        // for slides. Down/Up (and n/p) are beats, and only on this screen.
+        case 'ArrowDown': case 'n': case 'N':
+          e.preventDefault();
+          stepBeat(+1, el.btnNext);
+          break;
+        case 'ArrowUp': case 'p': case 'P':
+          e.preventDefault();
+          stepBeat(-1, el.btnPrev);
+          break;
         case 'f': case 'F':
           e.preventDefault();
           if (document.fullscreenElement) document.exitFullscreen?.();
@@ -596,6 +1083,13 @@
   function initEvents() {
     el.filters.forEach((b) => b.addEventListener('click', () => setFilter(b.dataset.filter)));
     el.cards.addEventListener('click', (e) => {
+      const stageBtn = e.target.closest('[data-stage]');
+      if (stageBtn) {
+        const id = stageBtn.dataset.stage;
+        // toggle: pressing STAGE on the already-staged card clears the deck
+        stageSubmission(S.staged === id ? null : id, stageBtn);
+        return;
+      }
       const btn = e.target.closest('[data-hide]');
       if (!btn) return;
       hideSubmission(btn.dataset.hide, btn);
@@ -612,6 +1106,7 @@
     initKeys();
     initCursor();
     initEvents();
+    initControlTrack();
     setLink('offline');
     renderCounts();
     renderSpectrum();
@@ -620,6 +1115,7 @@
     updateEmpty();
     startKlassRotation();
     loadComponentLabels();
+    loadDeck();
     // loadState runs inside the SSE 'open' handler so we never miss events
     // between state fetch and stream attach; if SSE never opens we still
     // try state once so a static-served presenter shows whatever it can.
@@ -631,5 +1127,9 @@
   else boot();
 
   // tiny debug hook for the operator console
-  window.CYBORG_PRESENTER = { state: S, setFilter, reload: loadState, reconnect: connectFeed };
+  window.CYBORG_PRESENTER = {
+    state: S, setFilter, reload: loadState, reconnect: connectFeed,
+    // control track — exposed for the operator console / smoke tests
+    cueBeat, stepBeat, stageSubmission, loadDeck, findBeat,
+  };
 })();

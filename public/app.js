@@ -163,13 +163,13 @@
   // signalOpen / assembleOpen are AUTHORITATIVE booleans — we never infer
   // availability from the mode name. Mode only supplies framing + where to look.
   const MODE_COPY = {
-    intro:    { look: null,       line: 'Talk is starting. Nothing to do yet — keep the phone out.' },
-    assemble: { look: 'assemble', line: 'Build your assemblage. Tap what is genuinely part of you.' },
-    reveal:   { look: 'assemble', line: "That's the room. You can still revise your picks any time." },
-    present:  { look: 'signal',   line: 'Listening block. Send a question the moment it lands.' },
-    panel:    { look: 'signal',   line: 'Panel is running off this feed. Send it now or it misses the room.' },
-    steward:  { look: 'signal',   line: 'One sentence. The language you want to leave with.' },
-    closed:   { look: null,       line: 'Room is closed. Thanks — nothing more to send.' },
+    intro:    { look: null },
+    assemble: { look: 'assemble' },
+    reveal:   { look: 'assemble' },
+    present:  { look: 'signal' },
+    panel:    { look: 'signal' },
+    steward:  { look: 'signal' },
+    closed:   { look: null },
   };
 
   // Two standing rules from Marcel, enforced client-side as a ratchet:
@@ -196,12 +196,11 @@
   cueGates.append(gatePills.signal, gatePills.assemble);
   cueMeta.append(cueBeat, cueGates);
   const cuePrompt = el('p', { class: 'cuebar-prompt display', id: 'cue-prompt' });
-  const cueLine = el('p', { class: 'cuebar-line', id: 'cue-line' });
   const cueChange = el('div', { class: 'cuebar-change', id: 'cue-change', role: 'status', hidden: true });
   const cueChangeText = el('span', { class: 'cuebar-change-text' });
   const cueChangeBtn = el('button', { class: 'cuebar-change-go', type: 'button', hidden: true });
   cueChange.append(el('span', { class: 'cuebar-change-mark', 'aria-hidden': 'true', text: '▸' }), cueChangeText, cueChangeBtn);
-  cueBar.append(cueMeta, cuePrompt, cueLine, cueChange);
+  cueBar.append(cueMeta, cuePrompt, cueChange);
   const mainEl = $('#main');
   document.body.insertBefore(cueBar, mainEl);
 
@@ -314,8 +313,7 @@
     const paint = () => {
       cuePrompt.textContent = promptText;
       cuePrompt.hidden = !promptText;
-      cueLine.textContent = MODE_COPY[mode].line;
-      cueBeat.textContent = `${(c.label || mode).toUpperCase()} · ${mode.toUpperCase()}`;
+      cueBeat.textContent = (c.label || mode).toUpperCase();
       cueBar.dataset.mode = mode;
       cueBar.classList.remove('is-swap');
     };
@@ -785,7 +783,8 @@
       // visible, not silent: the phone says it doesn't know the beat
       cueBeat.textContent = 'BEAT UNKNOWN — NO LINK';
       cueBar.classList.add('is-stale');
-      cueLine.textContent = `Couldn't reach the room (${e.message}). Retrying…`;
+      cuePrompt.textContent = `Couldn't reach the room (${e.message}). Retrying…`;
+      cuePrompt.hidden = false;
       setTimeout(bootstrapState, 3000);
     }
   }
