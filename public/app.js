@@ -10,6 +10,9 @@
     picks: 'cyborg.picks',
     log: 'cyborg.log',
     open: 'cyborg.slots.open',
+    cue: 'cyborg.cue',
+    gates: 'cyborg.gates',
+    card: 'cyborg.card',
   };
   const uuid = () => (crypto.randomUUID ? crypto.randomUUID()
     : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -96,6 +99,26 @@
     es.addEventListener('moderate', ev => {
       try { const m = JSON.parse(ev.data); markHidden(m.id, m.hidden); } catch { /* ignore */ }
     });
+    // ---- control track: the presenter drives what this phone offers ----
+    es.addEventListener('cue', ev => {
+      try { onCueFrame(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
+    });
+    es.addEventListener('reset', ev => {
+      // new session: drop the sticky open-gates ratchet, take the fresh cue
+      try {
+        const d = JSON.parse(ev.data);
+        onCueFrame(d && d.cue ? d.cue : null, { reset: true });
+      } catch { /* ignore */ }
+    });
+  }
+  // connectFeed() runs before the cue block's bindings exist, so frames that
+  // land during boot are queued rather than dropped (or thrown into a TDZ).
+  let booted = false;
+  let pendingCue = null;
+  function onCueFrame(c, opts = {}) {
+    if (!booted) { pendingCue = { c, opts }; return; }
+    if (opts.reset) gates = { signal: false, assemble: false };
+    applyCue(c, opts);
   }
   function scheduleRetry() {
     clearTimeout(retryT);
@@ -125,12 +148,206 @@
     if (scroll) window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
   }
   tabs.forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+  // a locked tab is still tappable: tapping it shows the gate that explains why,
+  // which beats a dead control that silently does nothing.
+  tabs.forEach(t => t.addEventListener('click', () => noteTabTap(t.dataset.mode)));
   seg.addEventListener('keydown', e => {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
     const next = tabs[seg.dataset.on === 'assemble' ? 0 : 1]; // two tabs: either arrow toggles
     setMode(next.dataset.mode); next.focus();
   });
   setMode(location.hash === '#assemble' ? 'assemble' : lsGet(LS.mode, 'signal'), { scroll: false });
+
+  // ================================================================ CONTROL TRACK (cue)
+  // The presenter advances beats; state.cue tells forty phones what they may do.
+  // signalOpen / assembleOpen are AUTHORITATIVE booleans — we never infer
+  // availability from the mode name. Mode only supplies framing + where to look.
+  const MODE_COPY = {
+    intro:    { look: null,       line: 'Talk is starting. Nothing to do yet — keep the phone out.' },
+    assemble: { look: 'assemble', line: 'Build your assemblage. Tap what is genuinely part of you.' },
+    reveal:   { look: 'assemble', line: "That's the room. You can still revise your picks any time." },
+    present:  { look: 'signal',   line: 'Listening block. Send a question the moment it lands.' },
+    panel:    { look: 'signal',   line: 'Panel is running off this feed. Send it now or it misses the room.' },
+    steward:  { look: 'signal',   line: 'One sentence. The language you want to leave with.' },
+    closed:   { look: null,       line: 'Room is closed. Thanks — nothing more to send.' },
+  };
+
+  // Two standing rules from Marcel, enforced client-side as a ratchet:
+  //   SIGNAL opens once and never closes.  ASSEMBLE stays editable all talk.
+  // A cue can only ever OPEN a gate. The single exception is an explicit
+  // `closed` beat, which is allowed to shut the room down.
+  let gates = lsGet(LS.gates, { signal: false, assemble: false }) || { signal: false, assemble: false };
+  gates = { signal: !!gates.signal, assemble: !!gates.assemble };
+  let cue = lsGet(LS.cue, null);
+
+  // ---- cue bar (built here: index.html is fixed, so new UI comes from JS) ----
+  const cueBar = el('section', { class: 'cuebar', id: 'cuebar', 'aria-live': 'polite' });
+  const cueMeta = el('div', { class: 'cuebar-meta' });
+  const cueBeat = el('span', { class: 'micro-label cuebar-beat', text: 'STANDBY' });
+  const cueGates = el('div', { class: 'cuebar-gates' });
+  const gatePills = {
+    signal: el('span', { class: 'pill gate-pill', 'data-for': 'signal' },
+      el('span', { class: 'dot', 'aria-hidden': 'true' }), el('span', { text: 'SIGNAL' }),
+      el('span', { class: 'pill-state', text: 'LOCKED' })),
+    assemble: el('span', { class: 'pill gate-pill', 'data-for': 'assemble' },
+      el('span', { class: 'dot', 'aria-hidden': 'true' }), el('span', { text: 'ASSEMBLE' }),
+      el('span', { class: 'pill-state', text: 'LOCKED' })),
+  };
+  cueGates.append(gatePills.signal, gatePills.assemble);
+  cueMeta.append(cueBeat, cueGates);
+  const cuePrompt = el('p', { class: 'cuebar-prompt display', id: 'cue-prompt' });
+  const cueLine = el('p', { class: 'cuebar-line', id: 'cue-line' });
+  const cueChange = el('div', { class: 'cuebar-change', id: 'cue-change', role: 'status', hidden: true });
+  const cueChangeText = el('span', { class: 'cuebar-change-text' });
+  const cueChangeBtn = el('button', { class: 'cuebar-change-go', type: 'button', hidden: true });
+  cueChange.append(el('span', { class: 'cuebar-change-mark', 'aria-hidden': 'true', text: '▸' }), cueChangeText, cueChangeBtn);
+  cueBar.append(cueMeta, cuePrompt, cueLine, cueChange);
+  const mainEl = $('#main');
+  document.body.insertBefore(cueBar, mainEl);
+
+  // ---- gate panels: what you see INSTEAD of a composer that isn't offered ----
+  function buildGate(which, title, body) {
+    const g = el('div', { class: 'fui-panel gate', id: `gate-${which}` },
+      el('span', { class: 'fui-corners', 'aria-hidden': 'true' }),
+      el('span', { class: 'gate-lock', 'aria-hidden': 'true' }),
+      el('span', { class: 'micro-label gate-tag', text: 'NOT OPEN YET' }),
+      el('p', { class: 'gate-title display', text: title }),
+      el('p', { class: 'gate-body', id: `gate-body-${which}` , text: body }),
+      el('p', { class: 'micro-label gate-wait', text: 'WAITS FOR THE PRESENTER · OPENS ON ITS OWN' }));
+    return g;
+  }
+  const gateEls = {
+    signal: buildGate('signal', 'Signal is not open',
+      'Marcel opens this at the reveal. Once it opens it stays open for the rest of the talk.'),
+    assemble: buildGate('assemble', 'Assemble is not open',
+      'The builder opens a couple of minutes in. Once it opens you can revise your picks for the whole talk.'),
+  };
+  modes.signal.insertBefore(gateEls.signal, $('.signal-form', modes.signal));
+  modes.assemble.insertBefore(gateEls.assemble, $('#spectrum-panel'));
+
+  // lock signifier on the mode tabs
+  const tabLocks = {};
+  tabs.forEach(t => {
+    const lk = el('span', { class: 'seg-lock', 'aria-hidden': 'true', text: '⊘' });
+    t.append(lk);
+    tabLocks[t.dataset.mode] = lk;
+  });
+
+  const isOpen = which => !!gates[which];
+
+  function renderGates() {
+    for (const which of ['signal', 'assemble']) {
+      const on = isOpen(which);
+      const sec = modes[which];
+      sec.classList.toggle('is-locked', !on);
+      const pill = gatePills[which];
+      pill.classList.toggle('is-live', on);
+      $('.pill-state', pill).textContent = on ? 'OPEN' : 'LOCKED';
+      const tab = tabs.find(t => t.dataset.mode === which);
+      tab.classList.toggle('is-locked', !on);
+      tab.setAttribute('aria-disabled', String(!on));
+      tabLocks[which].hidden = on;
+    }
+    // never leave someone parked on a section that offers nothing
+    const cur = seg.dataset.on;
+    if (!isOpen(cur)) {
+      const other = cur === 'signal' ? 'assemble' : 'signal';
+      if (isOpen(other)) setMode(other, { scroll: false });
+    }
+  }
+
+  function noteTabTap(which) {
+    if (isOpen(which)) return;
+    // tapped a locked tab: say why, out loud, instead of failing silently
+    const sec = modes[which];
+    sec.classList.remove('is-flash'); void sec.offsetWidth; sec.classList.add('is-flash');
+    say(`${which.toUpperCase()} NOT OPEN YET`);
+  }
+
+  let cueChangeT = 0;
+  function flashChange(msg, goTo) {
+    cueChangeText.textContent = msg;
+    if (goTo && isOpen(goTo)) {
+      cueChangeBtn.hidden = false;
+      cueChangeBtn.textContent = `GO TO ${goTo.toUpperCase()} →`;
+      cueChangeBtn.onclick = () => { setMode(goTo); cueChange.hidden = true; };
+    } else {
+      cueChangeBtn.hidden = true;
+      cueChangeBtn.onclick = null;
+    }
+    cueChange.hidden = false;
+    cueChange.classList.remove('is-in'); void cueChange.offsetWidth; cueChange.classList.add('is-in');
+    clearTimeout(cueChangeT);
+    cueChangeT = setTimeout(() => {
+      cueChange.classList.remove('is-in');
+      // pull it out of layout once faded, so it doesn't hold dead vertical space
+      setTimeout(() => { if (!cueChange.classList.contains('is-in')) cueChange.hidden = true; }, 220);
+    }, 12000);
+  }
+
+  function applyCue(next, { reset = false, initial = false } = {}) {
+    const prev = cue;
+    const c = next && typeof next === 'object' ? next : { mode: 'intro', beatId: 'intro', label: 'INTRO', prompt: '', signalOpen: false, assembleOpen: false };
+    const mode = MODE_COPY[c.mode] ? c.mode : 'intro';
+    const before = { ...gates };
+
+    if (c.mode === 'closed') {
+      // the ONLY path that closes anything
+      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen };
+    } else if (reset) {
+      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen };
+    } else {
+      // ratchet: a gate can open, never close
+      gates = {
+        signal: gates.signal || !!c.signalOpen,
+        assemble: gates.assemble || !!c.assembleOpen,
+      };
+    }
+
+    cue = c;
+    lsSet(LS.cue, cue);
+    lsSet(LS.gates, gates);
+
+    // --- headline instruction, 120-200ms legible swap ---
+    const promptText = (c.prompt || '').trim();
+    const changedPrompt = !prev || prev.prompt !== c.prompt || prev.beatId !== c.beatId;
+    const paint = () => {
+      cuePrompt.textContent = promptText;
+      cuePrompt.hidden = !promptText;
+      cueLine.textContent = MODE_COPY[mode].line;
+      cueBeat.textContent = `${(c.label || mode).toUpperCase()} · ${mode.toUpperCase()}`;
+      cueBar.dataset.mode = mode;
+      cueBar.classList.remove('is-swap');
+    };
+    if (changedPrompt && !initial && !reducedMotion) {
+      cueBar.classList.add('is-swap');           // 140ms out
+      setTimeout(paint, 140);                     // then in
+    } else paint();
+
+    renderGates();
+    syncAssembleAffordances();
+
+    if (initial) return;
+
+    // --- make the change legible: what opened, and where to look ---
+    const opened = [];
+    if (!before.signal && gates.signal) opened.push('signal');
+    if (!before.assemble && gates.assemble) opened.push('assemble');
+    const closed = (before.signal && !gates.signal) || (before.assemble && !gates.assemble);
+    const look = MODE_COPY[mode].look;
+
+    if (opened.length) {
+      const w = opened[0];
+      flashChange(`${opened.map(s => s.toUpperCase()).join(' + ')} JUST OPENED`, isOpen(look) ? look : w);
+      if (!isOpen(seg.dataset.on)) setMode(w);
+      say(`${opened.map(s => s.toUpperCase()).join(' + ')} OPEN`);
+    } else if (closed) {
+      flashChange('ROOM CLOSED — NOTHING MORE TO SEND', null);
+      say('ROOM CLOSED');
+    } else if (changedPrompt) {
+      flashChange('NEW INSTRUCTION FROM THE STAGE', look && look !== seg.dataset.on ? look : null);
+    }
+  }
 
   // ---------------------------------------------------------------- shared handle inputs
   const handleInputs = [$('#handle'), $('#handle-2')];
@@ -249,6 +466,7 @@
   form.addEventListener('submit', e => {
     e.preventDefault();
     if (sending) return;
+    if (!isOpen('signal')) { showErr(sigErr, 'Signal is not open yet. It opens from the stage.'); return; }
     const text = ta.value.replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim();
     if (!text) { showErr(sigErr, 'Write something first.'); return; }
     if ([...text].length > MAX) { showErr(sigErr, `Over ${MAX} characters. Trim it.`); return; }
@@ -332,7 +550,15 @@
     const archAt = String(ARCHETYPES.find(a => a[1] === arch)[0]);
     rulerLabels.forEach(li => li.classList.toggle('is-near', !!s.n && li.dataset.at === archAt));
     transmitBtn.disabled = !s.n || transmitting;
-    transmitHint.textContent = s.n ? `${arch} · ${s.klass}` : 'PICK AT LEAST ONE COMPONENT';
+    if (!transmitting) {
+      transmitLabel.textContent = sentCard
+        ? (cardStale ? 'RE-TRANSMIT — UPDATE MY ASSEMBLAGE' : 'RE-TRANSMIT ASSEMBLAGE')
+        : 'TRANSMIT ASSEMBLAGE';
+    }
+    transmitHint.textContent = !s.n ? 'PICK AT LEAST ONE COMPONENT'
+      : cardStale ? `UNSENT CHANGES · ${arch} · ${s.klass}`
+      : `${arch} · ${s.klass}`;
+    transmitHint.classList.toggle('is-stale', !!cardStale && !!s.n);
     transmitHint.classList.toggle('is-ok', !!s.n);
     // slot counts
     for (const g of catalog.groups) {
@@ -350,7 +576,10 @@
     btn.setAttribute('aria-pressed', String(on));       // state flips synchronously (<100ms)
     hideErr(asmErr);
     renderState();
-    if (!card.hidden) card.hidden = true;                 // editing after transmit invalidates the card
+    // ASSEMBLE STAYS EDITABLE ALL TALK: never hide the card, never lock the picks.
+    // Editing after a transmit just marks the card STALE until you re-transmit
+    // (the server upserts one assemblage per sid, latest wins).
+    if (sentCard) { cardStale = true; renderCardStale(); }
   }
 
   function buildSlots() {
@@ -410,6 +639,9 @@
       picks = new Set([...picks].filter(id => byId.has(id)));
       buildSlots();
       renderState();
+      // a refresh mid-talk must not lose your card — rebuild it from localStorage
+      if (sentCard && picks.size) renderCard(compute(), sentCard, { scroll: false });
+      syncAssembleAffordances();
     } catch (e) {
       slotsRoot.replaceChildren(el('p', { class: 'inline-error', role: 'alert', text: `Catalog failed to load (${e.message}). Reload to retry.` }));
     }
@@ -423,8 +655,40 @@
     list: $('#card-list'), status: $('#card-status'),
   };
   let lastCard = null;
+  // sentCard: has this sid ever transmitted?  cardStale: picks changed since.
+  // The card NEVER becomes read-only and NEVER disappears — Marcel's rule.
+  let sentCard = lsGet(LS.card, null);
+  let cardStale = false;
+  const cardEdit = $('#card-edit');
+  cardEdit.textContent = 'EDIT MY PICKS';
+  cardEdit.classList.add('is-edit-cta');
+  // high-signifier stale banner, injected above the card actions
+  const cardStaleBar = el('p', { class: 'card-stale micro-label', id: 'card-stale', hidden: true,
+    text: 'PICKS CHANGED · RE-TRANSMIT TO UPDATE THE ROOM' });
+  card.insertBefore(cardStaleBar, $('.card-actions', card));
 
-  function renderCard(s, r) {
+  function renderCardStale() {
+    cardStaleBar.hidden = !(sentCard && cardStale);
+    card.classList.toggle('is-stale', !!(sentCard && cardStale));
+    if (typeof catalog === 'object' && catalog.groups && catalog.groups.length) renderState();
+  }
+
+  // The assemblage builder is only *offered* when assembleOpen has ever been true.
+  // Once offered it is never withdrawn (except an explicit closed beat).
+  function syncAssembleAffordances() {
+    const open = isOpen('assemble');
+    $('#transmit-panel').hidden = !open;
+    $('#spectrum-panel').hidden = !open;
+    slotsRoot.hidden = !open;
+    // the card stays visible whenever it exists — you built it, you keep it
+    card.hidden = !lastCard;
+    $('#gate-assemble').hidden = open;
+    $('#gate-signal').hidden = isOpen('signal');
+    $('.signal-form').hidden = !isOpen('signal');
+    $('#mode-signal .log').hidden = !isOpen('signal') && !log.length;
+  }
+
+  function renderCard(s, r, { scroll = true } = {}) {
     const chosen = [...picks].map(id => byId.get(id)).filter(Boolean);
     cardEls.id.textContent = r && r.id ? `ID ${r.id}` : 'ID — LOCAL ONLY';
     cardEls.klass.textContent = s.klass;
@@ -440,11 +704,14 @@
     card.classList.toggle('is-danger', !(r && r.id));
     card.hidden = false;
     lastCard = { s, r, chosen };
-    card.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    if (r && r.id) { sentCard = { id: r.id, ts: r.ts }; lsSet(LS.card, sentCard); cardStale = false; }
+    renderCardStale();
+    if (scroll) card.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
   }
 
   transmitBtn.addEventListener('click', async () => {
     if (transmitting) return;
+    if (!isOpen('assemble')) { showErr(asmErr, 'Assemble is not open right now.'); return; }
     const s = compute();
     if (!s.n) { showErr(asmErr, 'Pick at least one component first.'); return; }
     hideErr(asmErr);
@@ -468,14 +735,18 @@
     } finally {
       transmitting = false;
       transmitBtn.classList.remove('is-busy');
-      renderState();
-      setTimeout(() => { transmitLabel.textContent = 'TRANSMIT ASSEMBLAGE'; }, 1600);
+      setTimeout(() => { renderState(); }, 1600);
     }
   });
 
-  $('#card-edit').addEventListener('click', () => {
-    card.hidden = true;
+  // Way back to editing. The card is NOT dismissed — it stays on screen as the
+  // record of what the room currently has for you, while you revise above it.
+  cardEdit.addEventListener('click', () => {
+    setMode('assemble', { scroll: false });
+    const firstSlot = $('.slot', slotsRoot);
+    if (firstSlot && !firstSlot.classList.contains('is-open')) $('.slot-head', firstSlot).click();
     $('#spectrum-panel').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    say('EDIT YOUR PICKS — RE-TRANSMIT WHEN DONE');
   });
 
   $('#card-share').addEventListener('click', async () => {
@@ -495,5 +766,32 @@
     catch { cardEls.status.textContent = text; say('COPY MANUALLY'); }
   });
 
+  // ================================================================ BOOT
+  // 1. paint whatever cue we cached (so a refresh mid-talk isn't a blank beat)
+  // 2. GET ./api/state and apply the authoritative cue
+  // 3. from then on, live `cue` SSE events drive everything
+  applyCue(cue, { initial: true });
+  booted = true;
+  if (pendingCue) { const p = pendingCue; pendingCue = null; onCueFrame(p.c, p.opts); }
   loadCatalog();
+
+  async function bootstrapState() {
+    try {
+      const res = await fetch('api/state', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const st = await res.json();
+      applyCue(st.cue, { initial: !cue || !cue.beatId });
+    } catch (e) {
+      // visible, not silent: the phone says it doesn't know the beat
+      cueBeat.textContent = 'BEAT UNKNOWN — NO LINK';
+      cueBar.classList.add('is-stale');
+      cueLine.textContent = `Couldn't reach the room (${e.message}). Retrying…`;
+      setTimeout(bootstrapState, 3000);
+    }
+  }
+  bootstrapState();
+  // re-sync on wake: iOS backgrounds the tab and SSE frames get dropped
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') bootstrapState();
+  });
 })();

@@ -22,6 +22,123 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 /* ---------- main / mode ---------- */
 .main { max-width: 640px; margin: 0 auto; padding: 18px 14px 24px; }
+
+/* ================= CUE BAR — the control track, made visible =================
+   Sits directly under the sticky header. This is the one thing a person
+   glancing down should be able to read: what beat we're on, what they're
+   being asked to do, and which of the two modes is actually open. */
+.cuebar {
+  position: sticky; top: 48px; z-index: 15;
+  max-width: 640px; margin: 0 auto;
+  padding: 12px 14px 13px;
+  background: rgba(15, 15, 13, 0.94);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 7px;
+}
+/* left edge = mode mapping. accent only for live/data, per the tokens. */
+.cuebar::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--rule-strong);
+  transition: background var(--t-med) var(--ease);
+}
+.cuebar[data-mode="assemble"]::before,
+.cuebar[data-mode="reveal"]::before,
+.cuebar[data-mode="panel"]::before { background: var(--accent); }
+.cuebar[data-mode="closed"]::before { background: var(--danger); }
+.cuebar.is-stale::before { background: var(--warn); }
+
+.cuebar-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cuebar-beat { color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cuebar-gates { display: flex; gap: 5px; flex: none; }
+
+/* gate pills: STATE, separate from the signifier and from the feedback */
+.gate-pill { height: 20px; padding: 0 6px; font-size: 9px; gap: 5px; }
+.gate-pill .pill-state { color: var(--mid); }
+.gate-pill.is-live .pill-state { color: var(--accent); }
+
+/* the headline instruction */
+.cuebar-prompt {
+  font-family: var(--font-display);
+  font-size: 19px; line-height: 1.2; font-weight: 500;
+  letter-spacing: -0.01em; color: var(--fg);
+  margin: 1px 0 0;
+}
+.cuebar-prompt[hidden] { display: none; }
+@media (min-width: 480px) { .cuebar-prompt { font-size: 22px; } }
+.cuebar-line { font-size: 11px; line-height: 1.35; color: var(--mid); }
+
+/* 140ms out / 180ms in: the swap is legible, not a jump-cut */
+.cuebar-prompt, .cuebar-line, .cuebar-beat {
+  transition: opacity var(--t-med) var(--ease), transform var(--t-med) var(--ease);
+}
+.cuebar.is-swap .cuebar-prompt,
+.cuebar.is-swap .cuebar-line,
+.cuebar.is-swap .cuebar-beat { opacity: 0; transform: translateY(-3px); }
+
+/* FEEDBACK on a cue change — distinct from the state above it */
+.cuebar-change {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 2px; padding: 7px 9px;
+  border: 1px solid var(--accent);
+  background: rgba(0, 229, 204, 0.07);
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--fg);
+  opacity: 0; transform: translateY(-3px);
+  transition: opacity var(--t-med) var(--ease), transform var(--t-med) var(--ease);
+}
+.cuebar-change[hidden] { display: none; }
+.cuebar-change.is-in { opacity: 1; transform: none; }
+.cuebar-change-mark { color: var(--accent); }
+.cuebar-change-text { flex: 1; min-width: 0; }
+.cuebar-change-go {
+  flex: none; min-height: 32px; padding: 0 10px; margin: -4px -4px -4px 0;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.cuebar-change-go[hidden] { display: none; }
+.cuebar-change-go:active { background: rgba(0, 229, 204, 0.14); }
+
+/* ================= GATES — a mode that isn't offered =================
+   Not a greyed-out composer. The composer is GONE and this is here instead,
+   so there is nothing to poke at and no ambiguity about why. */
+.gate {
+  display: flex; flex-direction: column; gap: 7px;
+  padding: 20px 16px 18px;
+  border-style: dashed;
+  --bracket-color: var(--rule);
+  text-align: left;
+}
+.gate[hidden] { display: none; }
+.gate-lock {
+  width: 22px; height: 22px; position: relative; margin-bottom: 2px;
+  border: 1px solid var(--warn);
+}
+.gate-lock::before {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 8px; height: 6px; transform: translate(-50%, -20%);
+  border: 1px solid var(--warn);
+}
+.gate-lock::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 6px; height: 5px; transform: translate(-50%, -125%);
+  border: 1px solid var(--warn); border-bottom: 0;
+}
+.gate-tag { color: var(--warn); }
+.gate-title { font-size: 20px; line-height: 1.15; font-weight: 500; color: var(--fg); }
+.gate-body { font-size: 12px; line-height: 1.45; color: var(--mid); max-width: 40ch; }
+.gate-wait { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--rule); }
+
+/* a locked section flashes when its tab is tapped — never a silent no-op */
+.mode.is-flash .gate { animation: gate-flash 320ms var(--ease); }
+@keyframes gate-flash {
+  0%   { border-color: var(--warn); background: rgba(255, 176, 32, 0.1); }
+  100% { border-color: var(--rule); background: rgba(15, 15, 13, 0.88); }
+}
+
+/* dim the mode-head copy while its mode is locked */
+.mode.is-locked .mode-head h2 { color: var(--mid); }
+
 .mode { display: flex; flex-direction: column; gap: 14px; }
 .mode[hidden] { display: none; }
 .mode-head { display: flex; flex-direction: column; gap: 4px; padding: 2px 2px 4px; }
@@ -256,8 +373,10 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 /* ---------- transmit ---------- */
 .transmit-panel { display: flex; flex-direction: column; gap: 12px; }
+.transmit-panel[hidden], .spectrum-panel[hidden], .slots[hidden], .signal-form[hidden], .log[hidden] { display: none; }
 .transmit-hint { text-align: center; }
 .transmit-hint.is-ok { color: var(--fg); }
+.transmit-hint.is-stale { color: var(--warn); }
 
 /* ---------- class card ---------- */
 .class-card { display: flex; flex-direction: column; gap: 12px; padding: 18px 16px; }
@@ -284,6 +403,24 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .card-list li::before { content: "▸"; color: var(--mid); }
 .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 6px; }
 .card-status { min-height: 14px; text-align: center; }
+
+/* The card is a LIVING record, never a read-only trophy. EDIT MY PICKS is the
+   primary way out of it, so it carries the stronger signifier of the two. */
+.card-actions .is-edit-cta { border-color: var(--accent); color: var(--accent); }
+.card-actions .is-edit-cta::before { content: "✎"; margin-right: 2px; }
+.card-actions .is-edit-cta:active { background: rgba(0, 229, 204, 0.1); }
+
+/* picks changed since the last transmit — visible, not silent */
+.card-stale {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid var(--warn); border-left-width: 3px;
+  background: rgba(255, 176, 32, 0.07);
+  color: var(--warn);
+}
+.card-stale[hidden] { display: none; }
+.card-stale::before { content: "▲"; font-size: 8px; }
+.class-card.is-stale { --bracket-color: var(--warn); }
 
 /* ---------- bottom mode bar / segmented control ---------- */
 .modebar {
@@ -314,6 +451,16 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 }
 .seg-btn.is-on { color: var(--fg); }
 .seg-btn.is-on .seg-key { border-color: var(--accent); color: var(--accent); }
+
+/* locked tab: still tappable (it explains itself), but clearly not on offer */
+.seg-btn.is-locked { color: rgba(102, 102, 102, 0.75); }
+.seg-btn.is-locked .seg-name { text-decoration: line-through; text-decoration-color: var(--rule-strong); }
+.seg-btn.is-locked .seg-key { border-color: var(--rule); }
+.seg-lock { font-size: 10px; color: var(--warn); line-height: 1; }
+.seg-lock[hidden] { display: none; }
+.seg-btn.is-locked.is-on { color: var(--mid); }
+.seg[data-on] .seg-btn.is-locked.is-on .seg-key { border-color: var(--warn); color: var(--warn); }
+
 .seg-indicator {
   position: absolute; top: -1px; bottom: -1px; left: -1px; width: calc(50% + 1px);
   border: 1px solid var(--accent);

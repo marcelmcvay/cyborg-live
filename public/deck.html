@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>CYBORG // LIVE — DECK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css">
+  <link rel="stylesheet" href="deck.css">
+</head>
+<body class="deck">
+
+  <!-- projector surface: no chrome, no controls, pure listener -->
+  <main class="deck__stage" id="stage" aria-live="polite">
+    <section class="slide slide--boot is-current" id="bootSlide">
+      <span class="micro-label slide__kind">STANDBY</span>
+      <div class="boot">
+        <span class="reticle" aria-hidden="true"></span>
+        <span class="readout boot__msg" id="bootMsg">LOADING DECK…</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- persistent minimal status strip -->
+  <footer class="strip" role="contentinfo">
+    <div class="strip__left">
+      <span class="strip__brand micro-label is-fg">CYBORG <span class="strip__sep">//</span> LIVE</span>
+      <span class="strip__rule" aria-hidden="true"></span>
+      <span class="micro-label" id="sessionLabel">SESSION 001</span>
+    </div>
+
+    <div class="strip__center">
+      <span class="micro-label" id="beatLabel">—</span>
+    </div>
+
+    <div class="strip__right">
+      <span class="readout strip__slides" id="slideReadout">01/01</span>
+      <span class="strip__rule" aria-hidden="true"></span>
+      <span class="readout strip__beat" id="beatReadout">000/000</span>
+      <span class="pill" id="linkPill" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="pill__text">LINK ○ OFFLINE</span>
+      </span>
+    </div>
+  </footer>
+
+  <script src="deck.js"></script>
+</body>
+</html>

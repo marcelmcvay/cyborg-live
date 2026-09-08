@@ -1,0 +1,147 @@
+{
+  "slug": "design-week-ri",
+  "title": "You're Already Designing for Cyborgs",
+  "venue": "Design Week RI — panel",
+  "totalMins": 30,
+  "format": "panel",
+  "beats": [
+    {
+      "id": "intro",
+      "label": "INTRO",
+      "mins": 2,
+      "cue": {
+        "mode": "intro",
+        "prompt": "Phones out. Join the room.",
+        "signalOpen": false,
+        "assembleOpen": false
+      },
+      "slides": [
+        { "kind": "statement", "text": "You're already designing for cyborgs." },
+        { "kind": "prompt", "text": "Phones out. This talk runs on you." }
+      ],
+      "presenterNotes": "Name, studio, why you're here. Do NOT explain the app yet — just get the URL on screen and the phones up. Opening diagnostic, verbally, no slide: 'Quick show of hands: who's used AI for design work in the last month? Keep them up. Now — who's worried about saying I used AI versus I made this?' Let the hands hang there. That tension is the whole talk. Then: 'We're going to build something together in the next three minutes.'"
+    },
+    {
+      "id": "assemble-open",
+      "label": "ASSEMBLE",
+      "mins": 3,
+      "cue": {
+        "mode": "assemble",
+        "prompt": "Pick the tech that is genuinely part of you.",
+        "signalOpen": false,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "Pick the tech that is genuinely part of you." },
+        { "kind": "spectrum", "labels": ["0 DAILY DESIGNER", "25 RACE CAR DRIVER", "50 PILOT", "75 ASTRONAUT", "100 VADER"] }
+      ],
+      "presenterNotes": "Zero-risk tap entry — no typing, no names required. Say the constraint out loud: not what you own, what you'd feel the loss of. Glasses count. Your car counts. Your keyboard layout counts. Language counts. Read the spectrum aloud once, left to right, and note it's a continuum, not a binary — no wrong answers. ASSEMBLE stays open the whole talk; tell them they can revise later, because they will after the Regent story. Work the room while it fills. Watch the count climb."
+    },
+    {
+      "id": "reveal",
+      "label": "REVEAL",
+      "mins": 2,
+      "cue": {
+        "mode": "reveal",
+        "prompt": "This is the room.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "histogram" },
+        { "kind": "statement", "text": "This room is already a cyborg." }
+      ],
+      "presenterNotes": "The hook is that the data is theirs, made thirty seconds ago. Read the shape, don't editorialize: where's the mass, where are the outliers. Call out the far-right tail warmly — that person knows something. SIGNAL opens here and never closes: 'The other button on your phone is now live. Questions, objections, one-liners — anything you send from here on is material. I will read them out.' From this minute on the feed is running in the background and by the panel block it's the content."
+    },
+    {
+      "id": "recognition",
+      "label": "RECOGNITION",
+      "mins": 5,
+      "cue": {
+        "mode": "present",
+        "prompt": "Where does technology stop and you begin?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "quote", "text": "Did you invent the words you are using? Did you design the glyphs?", "attrib": "the authorship tension" },
+        { "kind": "statement", "text": "You don't need implants to be a cyborg." },
+        { "kind": "list", "items": ["Self-checkout kiosks", "Autocorrect", "Noise-cancelling headphones", "GPS-guided mapping"] }
+      ],
+      "presenterNotes": "Open on the authorship tension: 'that was written by AI' versus 'I wrote this by hand' is awkward and unbalanced. Did you invent the words? Did you design the glyphs? What actually constitutes authorship? Then the claim from 'The Cyborgs Aren't Coming': you don't need implants to be a cyborg. The normalcy of our daily interactions with technology makes incredibly immersive and technologically complex moments feel mundane. Walk the spectrum: Vader is obvious — life support hardware. The astronaut is managing the psychology of drinking recycled urine — the body as a system under constraint. Same job as Vader's suit: life support as identity. Then the pilot. Then the race car driver. Then you, with Figma and a model open in the next tab. Land it: cyborg describes what we are, not how we should be. Keep it to five minutes — recognition before theory."
+    },
+    {
+      "id": "responsibility",
+      "label": "RESPONSIBILITY",
+      "mins": 7,
+      "cue": {
+        "mode": "present",
+        "prompt": "For whose interests does the interface serve?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "REGENT / THE SEAGLIDER",
+          "beats": [
+            "Brief: an interface for a captain who can fly.",
+            "Then the test pilot showed up. Call sign: Bob Dylan.",
+            "\"That's not where I expect it to be.\"",
+            "We weren't designing interface. We were translating fluency."
+          ]
+        },
+        {
+          "kind": "caseStudy",
+          "title": "SELF-CHECKOUT",
+          "beats": [
+            "\"Self\"-checkout is a misnomer.",
+            "The chain protecting margins. The card companies extracting fees.",
+            "Age verification. Municipal regulation. Produce indexing.",
+            "And the machine — sensor-driven, impatient."
+          ]
+        },
+        { "kind": "statement", "text": "For whose interests does the interface serve?" }
+      ],
+      "presenterNotes": "Regent, told fast. A ground-effect craft that skims above the water. The client's operator was defined as a mariner — one wheel, one throttle — a captain that can fly. The operational scope was aviation-grade; the mental model was maritime. That gap was the entire design problem. Then a test pilot joined: ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. We called him Bob Dylan — his call sign was a folksinger's name. He liked every concept. Every concept was wrong. Not messy, not unpolished — they didn't match the logic his body had spent decades building. He'd tell us what he couldn't see, not because it was absent from the UI but because it was absent from where his body expected it to be. The real user changed and the entire prompt changed with it. Note who was at that table: me, business development, product management, the CTO, program directors — all genuinely good. And then the pilot arrived and reordered everything. Pivot to self-checkout as the everyday version of the same table: the grocery chain, the credit card companies, age verification, regulations, produce vendors, and the machine itself, ever-ready to flag 'unexpected item in the bagging area.' What looks frictionless is a dense web of actors with motives, limits and influence. To design responsibly in a cyborg world is to name these actors, question their power, and decide how — and whether — they belong at the table. Craft distinction: it is one thing to design a beautiful interface in your tool of choice. It is another to negotiate with stakeholders. Both are valid, both land in the interface — the place where that negotiation is painted. Close on the diagnostic question and leave it on screen. Cue the room: send your answer to SIGNAL now, we're using them next."
+    },
+    {
+      "id": "panel",
+      "label": "PANEL",
+      "mins": 8,
+      "panelOnly": true,
+      "cue": {
+        "mode": "panel",
+        "prompt": "Who else is at your negotiation table?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "prompt", "text": "Who else is at your negotiation table?" },
+        { "kind": "staged" },
+        { "kind": "staged" },
+        { "kind": "prompt", "text": "In-house, agency, solo — whose interests are you suspended between?" },
+        { "kind": "staged" }
+      ],
+      "presenterNotes": "Facilitator, not expert. The feed is the running order — stage cards, read them out, credit them by handle. Sequence: stage two or three SIGNAL cards on 'who else is at your table,' let the panel react to each rather than lecturing. Hand the second prompt to your boss deliberately — in-house designers sit in the tension between business interest and the interests of the person using the thing; agency designers sit in a confluence of that plus agency profitability. You are always suspended in that pool, and in every case you're also designing for our shared technological progress: later interfaces inherit from yours, yours inherited from someone else's. Let the boss contribute as a peer — that creates peer dynamic, not hierarchy. Directed audience discussion: 'turn to someone you haven't talked to — one stakeholder your current project pretends isn't there.' Thirty seconds, then stage the best card that lands. Credit audience insights explicitly by name. Watch the histogram; if it has visibly moved since the reveal, say so out loud — that's the room re-authoring itself in real time. If the feed goes thin, fall back to: what assumptions were embedded in 'a captain that can fly'?"
+    },
+    {
+      "id": "steward",
+      "label": "STEWARD",
+      "mins": 3,
+      "cue": {
+        "mode": "steward",
+        "prompt": "One sentence: how does 'cyborg designer' change your practice?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "Cyborg describes what we are, not how we should be." },
+        { "kind": "list", "items": ["Steward — maintains, oversees", "Curator — arranges stuff and context", "Negotiator — works the table", "Not: user"] },
+        { "kind": "prompt", "text": "One sentence: how does 'cyborg designer' change your practice?" },
+        { "kind": "staged" }
+      ],
+      "presenterNotes": "The language hack. I've been using the word 'cyborg' to describe your practice for twenty-seven minutes. That word is the intervention — language is cyborg technology, it changes how we think while we're using it. Steward maintains and oversees. A curator is a professional arranger of stuff and context. These are roles to borrow from. 'User' fuses the person and the tool — what is a user without something to use? Harvest fast: one sentence each, three or four voices, stage the sharpest one full screen. Close: 'Cyborg designer isn't prescriptive. It's diagnostic. It reveals the negotiation table you're already sitting at.' Last thing before you sit down — you are all sailing some ship, some assemblage. That's what makes you cyborgs. Go arrange it how you want."
+    }
+  ]
+}

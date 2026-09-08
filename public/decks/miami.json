@@ -1,0 +1,182 @@
+{
+  "slug": "miami",
+  "title": "Designing Assemblages: A Cyborg Foundation for Interaction Design",
+  "venue": "University of Miami — graduate lecture",
+  "totalMins": 40,
+  "format": "lecture",
+  "beats": [
+    {
+      "id": "intro",
+      "label": "INTRO",
+      "mins": 2,
+      "cue": {
+        "mode": "intro",
+        "prompt": "Phones out. Join the room.",
+        "signalOpen": false,
+        "assembleOpen": false
+      },
+      "slides": [
+        { "kind": "statement", "text": "Designing Assemblages." },
+        { "kind": "prompt", "text": "Phones out. This lecture runs on you." }
+      ],
+      "presenterNotes": "Introduce yourself as a practitioner, not an academic — that's the value here. Reference the pre-read if it went out: everyone was asked to identify one interface they use daily that demonstrates cyborg integration. Hold that example; you'll come back to it three times. Get the join URL up and the phones out before anything else."
+    },
+    {
+      "id": "assemble-open",
+      "label": "ASSEMBLE",
+      "mins": 3,
+      "cue": {
+        "mode": "assemble",
+        "prompt": "Pick the tech that is genuinely part of you.",
+        "signalOpen": false,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "Pick the tech that is genuinely part of you." },
+        { "kind": "spectrum", "labels": ["0 DAILY DESIGNER", "25 RACE CAR DRIVER", "50 PILOT", "75 ASTRONAUT", "100 VADER"] }
+      ],
+      "presenterNotes": "Constraint out loud: not what you own, what you would feel the loss of. Glasses, keyboard layout, your car, your language, your dialect. Read the spectrum left to right once. It's a continuum, not a binary — no wrong answers, which is the point of running it before any theory. Tell them ASSEMBLE stays open for the full forty minutes and they should revise as the argument moves. Revision is data."
+    },
+    {
+      "id": "reveal",
+      "label": "REVEAL",
+      "mins": 2,
+      "cue": {
+        "mode": "reveal",
+        "prompt": "This is the room.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "histogram" },
+        { "kind": "statement", "text": "This room is already a cyborg." }
+      ],
+      "presenterNotes": "Read the distribution, don't interpret it yet — you'll return to this histogram at the end and the shape will have changed. SIGNAL opens here and never closes: questions, objections, challenges. Tell them explicitly that disagreement is welcome and that you'd rather have a challenge than a clarification — challenge means they're building with it."
+    },
+    {
+      "id": "etymology",
+      "label": "ETYMOLOGY",
+      "mins": 6,
+      "cue": {
+        "mode": "present",
+        "prompt": "1960. An engineering requirement.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "quote", "text": "For the exogenously extended organizational complex functioning as an integrated homeostatic system unconsciously, we propose the term 'Cyborg.'", "attrib": "Manfred Clynes & Nathan Kline, \"Cyborgs and Space,\" 1960" },
+        { "kind": "statement", "text": "They were describing space travel. I'm describing your phone." },
+        { "kind": "statement", "text": "The word began as an engineering requirement." }
+      ],
+      "presenterNotes": "Coined in 1960 by Manfred Clynes and Nathan Kline in a paper titled 'Cyborgs and Space.' They were solving a concrete NASA problem: how to keep a human body alive in an environment that wants to destroy it. Their proposal was to modify the human biologically and technologically rather than build massive artificial Earth-born chambers — integrate the human directly into the mechanical loops of the vehicle. Unpack the definition word by word. 'Exogenously extended' — the extension is outside the skin. 'Homeostatic system' — self-regulating. 'Unconsciously' — that's the load-bearing word. The whole definition turns on the system running below attention. If you notice your prosthesis constantly, integration has failed. Then the pivot: 'They were describing space travel. I'm describing your smartphone.' The word did not start as metaphor, and it does not start as science fiction. It started as a spec."
+    },
+    {
+      "id": "cybernetics",
+      "label": "CYBERNETICS",
+      "mins": 5,
+      "cue": {
+        "mode": "present",
+        "prompt": "Where does your toolchain sit on this timeline?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "quote", "text": "Feedback is the key. Feedback is the key to cybernetics, which is the key to the AI era.", "attrib": "John Maeda, Design in Tech Report 2026, SXSW" },
+        { "kind": "list", "items": ["Open loop — no feedback", "Closed loop — learning while you go", "Aircraft autopilot. Lane control.", "Agent autoapprovals"] },
+        { "kind": "statement", "text": "Technology is anything we intentionally co-evolved." }
+      ],
+      "presenterNotes": "The throughline: feedback → cybernetics → AI era. Same underlying architecture across aircraft autopilot, car lane control, and coding-agent autoapprovals — the loop is the fundamental unit of agentic systems. Maeda's framing from SXSW 2026: open loop means no feedback; closed loop means learning while you're getting along. Now widen the definition of technology: it is broad — from supercomputers and laptops to books, language and dialect. But cybernetics is the inflection point, because that's when technology starts talking back and bidirectional influence becomes impossible to ignore. Design implication: if everything is feedback loops, interface design becomes conversation architecture. You are not designing screens, you are designing the terms of negotiation. Cybernetics has always required this — it's the DNA of McLuhan's argument. What's new is that the negotiation surface is now linguistic, which makes it obvious. Student engagement, quick: map your own tools onto the timeline. Where does Figma sit? Where does a language model sit? Take two answers from the feed, no more."
+    },
+    {
+      "id": "recognition",
+      "label": "RECOGNITION",
+      "mins": 5,
+      "cue": {
+        "mode": "present",
+        "prompt": "Where does technology stop and you begin?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "You don't need implants to be a cyborg." },
+        { "kind": "quote", "text": "Did you invent the words you are using? Did you design the glyphs?", "attrib": "the authorship tension" },
+        { "kind": "list", "items": ["Vader — prosthesis as life support", "Astronaut — body as system under constraint", "Pilot — trained reflex as instrument", "You — with a model open in the next tab"] }
+      ],
+      "presenterNotes": "From 'The Cyborgs Aren't Coming': you don't need implants to be a cyborg. The normalcy of our daily interactions with technology makes incredibly immersive and technologically complex moments feel mundane. Self-checkout kiosks, autocorrect, noise-cancelling headphones, GPS. This is the apparatus we are dressed in, and it is growing. Walk the spectrum as one continuous argument, not four separate examples: Vader's suit keeps him alive in a hostile environment; the astronaut's suit does the same job, and the astronaut is also managing the psychology of drinking recycled urine — the body as a system under constraint. Life support as identity. The pilot is subtler: the apparatus is trained reflex. The daily designer is subtlest of all. Then the authorship tension as the contemporary hook: 'that was written by AI' versus 'I wrote this by hand' is awkward and unbalanced. Did you invent the words? Did you design the glyphs? What constitutes authorship? Superpower note, briefly — imagine a world full of superheroes who don't realize they have this incredible power. There's simultaneous sadness and danger in a society of ultrapowerful beings not knowing their strength."
+    },
+    {
+      "id": "authentication",
+      "label": "AUTHENTICATION",
+      "mins": 6,
+      "cue": {
+        "mode": "present",
+        "prompt": "In your portfolio, how do you distinguish human from machine contribution? Should you?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "Language models destroyed the Turing test." },
+        { "kind": "quote", "text": "The veil between I, we and technology is thinner than ever.", "attrib": "Marcel McVay, cyborg talk notes" },
+        { "kind": "statement", "text": "Verification systems for fluid, distributed selves." },
+        { "kind": "prompt", "text": "How do you distinguish human from machine contribution in your own work? Should you?" },
+        { "kind": "staged" }
+      ],
+      "presenterNotes": "The authentication crisis. Section 9's obsession with confirming identity in a world where identity can be forged, copied and transferred maps directly onto our moment: deepfakes, model impersonation, digital identity verification. If the Major questions the authenticity of her own memories, what does that say about models trained on human text — are those responses memories or fabricated experiences? The GITS frame suggests that's the wrong question entirely: when consciousness operates as technical process, the distinction between authentic and artificial memory collapses. The Major's uncertainty isn't psychological crisis, it's a design specification. Section 9's authentication protocols break down because they assume fixed identity; the design challenge is verification systems for fluid, constructable, distributed selves. Snow Crash as the cognitive limit case: we're edging toward the invisible terminal, where abstracted code can rewrite our wet operating systems in an instant — and Stephenson's parallel with the drug was no coincidence. Then hand it to them: in your portfolio work, how do you distinguish human from machine contribution, and should you? Take submissions on the feed and stage two. This is the beat where grad students will push back hardest — welcome it, model the uncertainty, don't defend the framework."
+    },
+    {
+      "id": "responsibility",
+      "label": "RESPONSIBILITY",
+      "mins": 7,
+      "cue": {
+        "mode": "present",
+        "prompt": "For whose interests does the interface serve?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "REGENT / THE SEAGLIDER",
+          "beats": [
+            "Brief: an interface for a captain who can fly.",
+            "Then the test pilot showed up. Call sign: Bob Dylan.",
+            "\"That's not where I expect it to be.\"",
+            "We weren't designing interface. We were translating fluency."
+          ]
+        },
+        {
+          "kind": "caseStudy",
+          "title": "SELF-CHECKOUT",
+          "beats": [
+            "\"Self\"-checkout is a misnomer.",
+            "The chain protecting margins. The card companies extracting fees.",
+            "Age verification. Municipal regulation. Produce indexing.",
+            "And the machine — sensor-driven, impatient."
+          ]
+        },
+        { "kind": "statement", "text": "Technological coevolution is not an even playing field." },
+        { "kind": "statement", "text": "For whose interests does the interface serve?" }
+      ],
+      "presenterNotes": "Regent as the applied case. A ground-effect craft skimming above the water, hovering below FAA classification. The target operator was defined as a mariner — one wheel, one throttle — a captain that can fly. But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem. Then a test pilot joined: ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — we called him Bob Dylan. He liked every concept. Every concept was wrong, not because they were messy but because they didn't match the logic his body had spent decades building. Pilots scan; they feel for what's off; they process feedback faster than conscious thought. His most common note was 'that's not where I expect it to be.' I spent hours in Microsoft Flight Simulator learning how altimeters behave and where attitude indicators live. Every cockpit had a language; I needed to be fluent enough to design in dialect. We ended with a recalibrated vocabulary, not a reinvented one — semantic color held to aviation standard, teal for set values, magenta for actuals. Theoretical payload for this room: the negotiated agency concept. The user isn't just an actor — they're being acted upon. Systems push back; by design they suggest, limit, surveil and even discipline. The experience is not a smoothly-paved one-way street, it's a negotiation table. Self-checkout makes the table visible: the grocery chain protecting margins, the card companies extracting fees, age verification enforcing policy, municipal regulations, produce vendors dictating indexing, and the machine itself, ever-ready to flag 'unexpected item in the bagging area.' To design responsibly in a cyborg world is to name these actors, question their power, and decide how — and whether — they belong at the table. Political frame, stated plainly: technological coevolution is not an even playing field; it is always enacted on and mediated by a field of power. Applied prompt: return to your pre-read interface. Whose interests does it serve? What negotiation table is it representing?"
+    },
+    {
+      "id": "steward",
+      "label": "STEWARD",
+      "mins": 4,
+      "cue": {
+        "mode": "steward",
+        "prompt": "One sentence: what changes in your thesis if you frame it as assemblage integration?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        { "kind": "statement", "text": "Cyborg describes what we are, not how we should be." },
+        { "kind": "list", "items": ["Steward — maintains, oversees", "Curator — arranges stuff and context", "Negotiator — works the table", "Not: user"] },
+        { "kind": "histogram" },
+        { "kind": "prompt", "text": "Reframe your thesis as assemblage integration. What research question appears?" },
+        { "kind": "staged" }
+      ],
+      "presenterNotes": "Role evolution. Steward maintains, oversees. A curator is a professional arranger of stuff and context. These aren't metaphors, they're job descriptions — roles to borrow from. 'User' fuses the person and the tool: what is a user without their apparatus, without something to use? The theoretical distinction to leave them with: tool operation treats an external object manipulated by a separate person; assemblage integration treats a component of an extended identity system. If you can see yourself as a cyborg, you understand that your assemblage is part of you — which means you get to choose, like with clothing, how you build from and extend yourself. You should feel compelled to arrange it how you want, and frustrated when you can't control it. You probably already do. Bring the histogram back up and compare it to minute seven. If it moved, that movement is the lecture's actual argument, made by them. Close with an invitation, not a prescription: the cyborg frame is generative, not directive. Using the word is the intervention — it's a linguistic hack. Take one sentence each from three students on what changes in their thesis, stage the sharpest, then Q&A."
+    }
+  ]
+}
