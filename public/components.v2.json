@@ -1,0 +1,1299 @@
+{
+  "version": 2,
+  "supersedes": "spectrum (1-D daily-designer→vader scale)",
+  "aggregation": {
+    "method": "mean",
+    "note": "MEAN, not sum. Sum makes more picks = bigger polygon, which rebuilds the scoreboard the spectrum was removed for. Mean makes shape = character. Surface pick COUNT separately (polygon opacity / fill density), never as radius.",
+    "axisOrder": [
+      "INTIMACY",
+      "DEPENDENCE",
+      "AGENCY",
+      "VISIBILITY",
+      "CONSENT",
+      "MASTERY",
+      "SURVEILLANCE"
+    ],
+    "axisOrderNote": "FIXED. Radar silhouettes change dramatically with spoke order on identical data. Never sort spokes by value.",
+    "scoring": "Never rank participants by enclosed area. Perceived area scales with r^2, so area is a misleading and un-authored metric."
+  },
+  "axes": [
+    {
+      "id": "INTIMACY",
+      "label": "Intimacy",
+      "short": "INTIM",
+      "desc": "How close to the body the coupling sits.",
+      "lo": "ambient",
+      "hi": "metabolized"
+    },
+    {
+      "id": "DEPENDENCE",
+      "label": "Dependence",
+      "short": "DEPEND",
+      "desc": "What breaks if it stops.",
+      "lo": "inconvenience",
+      "hi": "death"
+    },
+    {
+      "id": "AGENCY",
+      "label": "Agency Loss",
+      "short": "AGENCY",
+      "desc": "Who dispatches whom. High means it dispatches you.",
+      "lo": "you command",
+      "hi": "it dispatches you"
+    },
+    {
+      "id": "VISIBILITY",
+      "label": "Visibility",
+      "short": "VISIB",
+      "desc": "Whether others can see the coupling.",
+      "lo": "invisible",
+      "hi": "conspicuous"
+    },
+    {
+      "id": "CONSENT",
+      "label": "Consent Gap",
+      "short": "CONSENT",
+      "desc": "How little choice you had. High means none.",
+      "lo": "freely chosen",
+      "hi": "born into it"
+    },
+    {
+      "id": "MASTERY",
+      "label": "Mastery",
+      "short": "MASTERY",
+      "desc": "Whether you can operate, fix, modify, own it.",
+      "lo": "sealed black box",
+      "hi": "expert / moddable"
+    },
+    {
+      "id": "SURVEILLANCE",
+      "label": "Surveillance",
+      "short": "SURVEIL",
+      "desc": "Whether the coupling reports upstream.",
+      "lo": "reports nowhere",
+      "hi": "state / employer legible"
+    }
+  ],
+  "groups": [
+    {
+      "id": "BODY",
+      "label": "Body",
+      "hint": "prosthetic / wearable / bio",
+      "klass": "Exo-Steward"
+    },
+    {
+      "id": "SENSES",
+      "label": "Senses",
+      "hint": "glasses, hearing, camera, GPS",
+      "klass": "Sensor Witch"
+    },
+    {
+      "id": "COGNITION",
+      "label": "Cognition",
+      "hint": "LLM, search, notes, calendar",
+      "klass": "Curator"
+    },
+    {
+      "id": "VOICE",
+      "label": "Voice",
+      "hint": "language, dialect, code, keys",
+      "klass": "Linguist"
+    },
+    {
+      "id": "VEHICLE",
+      "label": "Vehicle",
+      "hint": "car, bike, plane, exoskeleton",
+      "klass": "Exo-Pilot"
+    },
+    {
+      "id": "SOCIAL",
+      "label": "Social",
+      "hint": "feeds, messaging, payments",
+      "klass": "Interface Negotiator"
+    },
+    {
+      "id": "CRAFT",
+      "label": "Craft",
+      "hint": "Figma, pen, terminal, DAW",
+      "klass": "Toolsmith"
+    },
+    {
+      "id": "LABOR",
+      "label": "Labor",
+      "hint": "badge, work chat, scheduling",
+      "klass": "Shift Ghost"
+    },
+    {
+      "id": "DOMESTIC",
+      "label": "Domestic",
+      "hint": "heat, power, wifi, appliances",
+      "klass": "Hearth Sysadmin"
+    }
+  ],
+  "components": [
+    {
+      "id": "body.glasses-contacts",
+      "label": "Corrective lenses",
+      "group": "BODY",
+      "blurb": "The oldest mass-market body mod. Nobody calls you a cyborg for it. That's the point.",
+      "vector": {
+        "INTIMACY": 62,
+        "DEPENDENCE": 70,
+        "AGENCY": 10,
+        "VISIBILITY": 30,
+        "CONSENT": 60,
+        "MASTERY": 45,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "body.watch",
+      "label": "Smartwatch / fitness band",
+      "group": "BODY",
+      "blurb": "A sensor strapped to the wrist that tells you how you slept. You believe it over yourself.",
+      "vector": {
+        "INTIMACY": 58,
+        "DEPENDENCE": 30,
+        "AGENCY": 55,
+        "VISIBILITY": 40,
+        "CONSENT": 15,
+        "MASTERY": 35,
+        "SURVEILLANCE": 75
+      }
+    },
+    {
+      "id": "body.pacemaker",
+      "label": "Pacemaker / implant",
+      "group": "BODY",
+      "blurb": "Firmware inside the chest cavity. Heartbeat as a scheduled task.",
+      "vector": {
+        "INTIMACY": 92,
+        "DEPENDENCE": 98,
+        "AGENCY": 70,
+        "VISIBILITY": 10,
+        "CONSENT": 75,
+        "MASTERY": 5,
+        "SURVEILLANCE": 65
+      }
+    },
+    {
+      "id": "body.prosthetic",
+      "label": "Prosthetic limb",
+      "group": "BODY",
+      "blurb": "Body schema extends to fit the tool. The tool becomes body. Merleau-Ponty was early.",
+      "vector": {
+        "INTIMACY": 88,
+        "DEPENDENCE": 85,
+        "AGENCY": 30,
+        "VISIBILITY": 75,
+        "CONSENT": 70,
+        "MASTERY": 50,
+        "SURVEILLANCE": 20
+      }
+    },
+    {
+      "id": "body.meds",
+      "label": "Daily medication",
+      "group": "BODY",
+      "blurb": "Chemistry-as-config. A dosage is a setting you don't get to hot-reload.",
+      "vector": {
+        "INTIMACY": 95,
+        "DEPENDENCE": 80,
+        "AGENCY": 45,
+        "VISIBILITY": 10,
+        "CONSENT": 65,
+        "MASTERY": 20,
+        "SURVEILLANCE": 30
+      }
+    },
+    {
+      "id": "body.shoes",
+      "label": "Shoes",
+      "group": "BODY",
+      "blurb": "Interface between foot and planet. Highly optimised, rarely considered.",
+      "vector": {
+        "INTIMACY": 55,
+        "DEPENDENCE": 45,
+        "AGENCY": 5,
+        "VISIBILITY": 45,
+        "CONSENT": 70,
+        "MASTERY": 55,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "body.dental",
+      "label": "Fillings / crowns / braces",
+      "group": "BODY",
+      "blurb": "Ceramic and metal, permanently installed in the skull. You stopped noticing on day three.",
+      "vector": {
+        "INTIMACY": 90,
+        "DEPENDENCE": 50,
+        "AGENCY": 5,
+        "VISIBILITY": 25,
+        "CONSENT": 65,
+        "MASTERY": 5,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "body.contraception",
+      "label": "Hormonal contraception / IUD",
+      "group": "BODY",
+      "blurb": "An endocrine system running a patch. Invisible, elective, and politically contested.",
+      "vector": {
+        "INTIMACY": 93,
+        "DEPENDENCE": 55,
+        "AGENCY": 40,
+        "VISIBILITY": 5,
+        "CONSENT": 35,
+        "MASTERY": 25,
+        "SURVEILLANCE": 30
+      }
+    },
+    {
+      "id": "body.vaccination",
+      "label": "Vaccination",
+      "group": "BODY",
+      "blurb": "Your immune system was handed a threat signature it never encountered. Recorded in a state registry.",
+      "vector": {
+        "INTIMACY": 88,
+        "DEPENDENCE": 45,
+        "AGENCY": 20,
+        "VISIBILITY": 15,
+        "CONSENT": 70,
+        "MASTERY": 5,
+        "SURVEILLANCE": 70
+      }
+    },
+    {
+      "id": "body.caffeine",
+      "label": "Caffeine / daily stimulant",
+      "group": "BODY",
+      "blurb": "A psychoactive dependency so normalised it has its own furniture. Skip a day, meet the baseline.",
+      "vector": {
+        "INTIMACY": 95,
+        "DEPENDENCE": 55,
+        "AGENCY": 40,
+        "VISIBILITY": 20,
+        "CONSENT": 25,
+        "MASTERY": 45,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "body.cpap",
+      "label": "CPAP / sleep apnea machine",
+      "group": "BODY",
+      "blurb": "A machine breathes with you all night and files a compliance report your insurer can read.",
+      "vector": {
+        "INTIMACY": 75,
+        "DEPENDENCE": 80,
+        "AGENCY": 50,
+        "VISIBILITY": 30,
+        "CONSENT": 70,
+        "MASTERY": 25,
+        "SURVEILLANCE": 80
+      }
+    },
+    {
+      "id": "body.insulin",
+      "label": "Insulin pump / CGM",
+      "group": "BODY",
+      "blurb": "A closed loop keeping you alive. The DIY community jailbroke it because the vendor wouldn't ship.",
+      "vector": {
+        "INTIMACY": 90,
+        "DEPENDENCE": 96,
+        "AGENCY": 65,
+        "VISIBILITY": 45,
+        "CONSENT": 80,
+        "MASTERY": 40,
+        "SURVEILLANCE": 75
+      }
+    },
+    {
+      "id": "senses.glasses",
+      "label": "Glasses (worn daily)",
+      "group": "SENSES",
+      "blurb": "Vision is a rendering pipeline. You patched it.",
+      "vector": {
+        "INTIMACY": 58,
+        "DEPENDENCE": 72,
+        "AGENCY": 8,
+        "VISIBILITY": 40,
+        "CONSENT": 60,
+        "MASTERY": 40,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "senses.hearing",
+      "label": "Hearing aid / earbuds",
+      "group": "SENSES",
+      "blurb": "Audio in, audio processed, audio out. The ear now has a DSP stage.",
+      "vector": {
+        "INTIMACY": 70,
+        "DEPENDENCE": 55,
+        "AGENCY": 35,
+        "VISIBILITY": 35,
+        "CONSENT": 45,
+        "MASTERY": 40,
+        "SURVEILLANCE": 45
+      }
+    },
+    {
+      "id": "senses.camera",
+      "label": "Phone camera as memory",
+      "group": "SENSES",
+      "blurb": "You photograph the parking spot so you don't have to remember it. Memory offloaded to sensor.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 35,
+        "AGENCY": 25,
+        "VISIBILITY": 20,
+        "CONSENT": 20,
+        "MASTERY": 55,
+        "SURVEILLANCE": 70
+      }
+    },
+    {
+      "id": "senses.gps",
+      "label": "GPS / maps",
+      "group": "SENSES",
+      "blurb": "A satellite constellation tells you where you are. You've stopped checking.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 70,
+        "AGENCY": 65,
+        "VISIBILITY": 20,
+        "CONSENT": 45,
+        "MASTERY": 20,
+        "SURVEILLANCE": 90
+      }
+    },
+    {
+      "id": "senses.notifications",
+      "label": "Haptic notifications",
+      "group": "SENSES",
+      "blurb": "A new sense: the buzz. It has no name in any pre-2007 language.",
+      "vector": {
+        "INTIMACY": 45,
+        "DEPENDENCE": 35,
+        "AGENCY": 85,
+        "VISIBILITY": 15,
+        "CONSENT": 35,
+        "MASTERY": 30,
+        "SURVEILLANCE": 60
+      }
+    },
+    {
+      "id": "senses.night",
+      "label": "Dark mode / blue light filter",
+      "group": "SENSES",
+      "blurb": "You tuned the colour temperature of reality between 21:00 and 07:00.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 15,
+        "AGENCY": 15,
+        "VISIBILITY": 10,
+        "CONSENT": 10,
+        "MASTERY": 60,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "senses.noise",
+      "label": "Noise cancelling",
+      "group": "SENSES",
+      "blurb": "You subtract the city with a button. Selective deafness, sold as focus.",
+      "vector": {
+        "INTIMACY": 65,
+        "DEPENDENCE": 30,
+        "AGENCY": 20,
+        "VISIBILITY": 45,
+        "CONSENT": 15,
+        "MASTERY": 45,
+        "SURVEILLANCE": 30
+      }
+    },
+    {
+      "id": "senses.doorbell",
+      "label": "Video doorbell / home camera",
+      "group": "SENSES",
+      "blurb": "You extended your perimeter vision and deputised it to the police department.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 25,
+        "AGENCY": 45,
+        "VISIBILITY": 55,
+        "CONSENT": 30,
+        "MASTERY": 15,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "cog.llm",
+      "label": "LLM assistant",
+      "group": "COGNITION",
+      "blurb": "A second cortex you rent. Draft-thinking outsourced; judgement hopefully not.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 45,
+        "AGENCY": 50,
+        "VISIBILITY": 25,
+        "CONSENT": 20,
+        "MASTERY": 40,
+        "SURVEILLANCE": 80
+      }
+    },
+    {
+      "id": "cog.search",
+      "label": "Web search",
+      "group": "COGNITION",
+      "blurb": "Transactive memory with a datacenter. You don't know it, you know where it is.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 70,
+        "AGENCY": 40,
+        "VISIBILITY": 10,
+        "CONSENT": 40,
+        "MASTERY": 45,
+        "SURVEILLANCE": 85
+      }
+    },
+    {
+      "id": "cog.notes",
+      "label": "Notes app / second brain",
+      "group": "COGNITION",
+      "blurb": "An external hippocampus, tagged and searchable. Recall is now grep.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 55,
+        "AGENCY": 15,
+        "VISIBILITY": 10,
+        "CONSENT": 15,
+        "MASTERY": 65,
+        "SURVEILLANCE": 40
+      }
+    },
+    {
+      "id": "cog.calendar",
+      "label": "Calendar",
+      "group": "COGNITION",
+      "blurb": "Your sense of time is a shared .ics file. Miss the sync, miss the meeting.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 65,
+        "AGENCY": 70,
+        "VISIBILITY": 20,
+        "CONSENT": 55,
+        "MASTERY": 40,
+        "SURVEILLANCE": 65
+      }
+    },
+    {
+      "id": "cog.autocorrect",
+      "label": "Autocorrect / predictive text",
+      "group": "COGNITION",
+      "blurb": "A model finishes your sentences. Sometimes it's right. Sometimes it's ducking wrong.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 30,
+        "AGENCY": 60,
+        "VISIBILITY": 15,
+        "CONSENT": 55,
+        "MASTERY": 20,
+        "SURVEILLANCE": 55
+      }
+    },
+    {
+      "id": "cog.alarm",
+      "label": "Alarm clock",
+      "group": "COGNITION",
+      "blurb": "Circadian rhythm overridden by cron. The first automation most humans install.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 60,
+        "AGENCY": 80,
+        "VISIBILITY": 10,
+        "CONSENT": 50,
+        "MASTERY": 60,
+        "SURVEILLANCE": 15
+      }
+    },
+    {
+      "id": "cog.translation",
+      "label": "Machine translation",
+      "group": "COGNITION",
+      "blurb": "A model stands between you and a stranger, and you both agree to trust it.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 40,
+        "AGENCY": 35,
+        "VISIBILITY": 30,
+        "CONSENT": 25,
+        "MASTERY": 30,
+        "SURVEILLANCE": 65
+      }
+    },
+    {
+      "id": "cog.recommendation",
+      "label": "Recommendation engine",
+      "group": "COGNITION",
+      "blurb": "Taste, precomputed. You think you chose it. The ranking chose it and let you feel authorship.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 35,
+        "AGENCY": 80,
+        "VISIBILITY": 15,
+        "CONSENT": 45,
+        "MASTERY": 10,
+        "SURVEILLANCE": 90
+      }
+    },
+    {
+      "id": "cog.password",
+      "label": "Password manager",
+      "group": "COGNITION",
+      "blurb": "Your entire identity behind one string you also can't remember. Single point of self.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 85,
+        "AGENCY": 25,
+        "VISIBILITY": 10,
+        "CONSENT": 40,
+        "MASTERY": 50,
+        "SURVEILLANCE": 40
+      }
+    },
+    {
+      "id": "voice.language",
+      "label": "A natural language",
+      "group": "VOICE",
+      "blurb": "Language IS technology. You were compiled into one before you could consent.",
+      "vector": {
+        "INTIMACY": 90,
+        "DEPENDENCE": 95,
+        "AGENCY": 45,
+        "VISIBILITY": 70,
+        "CONSENT": 98,
+        "MASTERY": 70,
+        "SURVEILLANCE": 20
+      }
+    },
+    {
+      "id": "voice.dialect",
+      "label": "A dialect / code-switching",
+      "group": "VOICE",
+      "blurb": "Runtime selection of protocol based on who's listening. Dialect is a driver.",
+      "vector": {
+        "INTIMACY": 85,
+        "DEPENDENCE": 60,
+        "AGENCY": 35,
+        "VISIBILITY": 75,
+        "CONSENT": 80,
+        "MASTERY": 75,
+        "SURVEILLANCE": 25
+      }
+    },
+    {
+      "id": "voice.code",
+      "label": "A programming language",
+      "group": "VOICE",
+      "blurb": "You speak to machines in a grammar with no irregular verbs. It changed how you think.",
+      "vector": {
+        "INTIMACY": 55,
+        "DEPENDENCE": 45,
+        "AGENCY": 25,
+        "VISIBILITY": 30,
+        "CONSENT": 15,
+        "MASTERY": 80,
+        "SURVEILLANCE": 20
+      }
+    },
+    {
+      "id": "voice.keyboard",
+      "label": "Keyboard (touch-typing)",
+      "group": "VOICE",
+      "blurb": "Thought exits through ten fingers at 80wpm. The keyboard has vanished from awareness.",
+      "vector": {
+        "INTIMACY": 45,
+        "DEPENDENCE": 75,
+        "AGENCY": 10,
+        "VISIBILITY": 25,
+        "CONSENT": 45,
+        "MASTERY": 80,
+        "SURVEILLANCE": 15
+      }
+    },
+    {
+      "id": "voice.emoji",
+      "label": "Emoji / reactions",
+      "group": "VOICE",
+      "blurb": "A pictographic layer bolted onto text. Tone, finally, has a codepoint.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 20,
+        "AGENCY": 20,
+        "VISIBILITY": 55,
+        "CONSENT": 25,
+        "MASTERY": 65,
+        "SURVEILLANCE": 35
+      }
+    },
+    {
+      "id": "voice.stt",
+      "label": "Voice-to-text / dictation",
+      "group": "VOICE",
+      "blurb": "Speech transcribed by a model, edited by a thumb. Two systems, one utterance.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 25,
+        "AGENCY": 45,
+        "VISIBILITY": 40,
+        "CONSENT": 20,
+        "MASTERY": 35,
+        "SURVEILLANCE": 75
+      }
+    },
+    {
+      "id": "voice.sign",
+      "label": "Sign language",
+      "group": "VOICE",
+      "blurb": "A full language running on hands and face. Suppressed by institutions for a century, and it survived.",
+      "vector": {
+        "INTIMACY": 80,
+        "DEPENDENCE": 70,
+        "AGENCY": 30,
+        "VISIBILITY": 80,
+        "CONSENT": 60,
+        "MASTERY": 75,
+        "SURVEILLANCE": 10
+      }
+    },
+    {
+      "id": "veh.bike",
+      "label": "Bicycle",
+      "group": "VEHICLE",
+      "blurb": "The most efficient human-machine coupling ever shipped. Balance is done by the body-bike system.",
+      "vector": {
+        "INTIMACY": 50,
+        "DEPENDENCE": 40,
+        "AGENCY": 15,
+        "VISIBILITY": 65,
+        "CONSENT": 15,
+        "MASTERY": 75,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "veh.car",
+      "label": "Car",
+      "group": "VEHICLE",
+      "blurb": "A two-tonne exoskeleton. You say 'I' when you mean 'the car'. ('Someone hit me.')",
+      "vector": {
+        "INTIMACY": 40,
+        "DEPENDENCE": 75,
+        "AGENCY": 35,
+        "VISIBILITY": 70,
+        "CONSENT": 70,
+        "MASTERY": 30,
+        "SURVEILLANCE": 70
+      }
+    },
+    {
+      "id": "veh.transit",
+      "label": "Public transit",
+      "group": "VEHICLE",
+      "blurb": "Shared exoskeleton, timetable-driven. Assemblage at city scale.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 60,
+        "AGENCY": 75,
+        "VISIBILITY": 50,
+        "CONSENT": 65,
+        "MASTERY": 10,
+        "SURVEILLANCE": 60
+      }
+    },
+    {
+      "id": "veh.plane",
+      "label": "Airplane (as passenger)",
+      "group": "VEHICLE",
+      "blurb": "Pressurised tube, 11km up. You watched a film and forgot you were a payload.",
+      "vector": {
+        "INTIMACY": 15,
+        "DEPENDENCE": 30,
+        "AGENCY": 88,
+        "VISIBILITY": 40,
+        "CONSENT": 55,
+        "MASTERY": 5,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "veh.exo",
+      "label": "Exoskeleton / powered mobility",
+      "group": "VEHICLE",
+      "blurb": "Motors in the loop with your muscles. Closer to VADER than you'd like to admit.",
+      "vector": {
+        "INTIMACY": 78,
+        "DEPENDENCE": 70,
+        "AGENCY": 55,
+        "VISIBILITY": 90,
+        "CONSENT": 60,
+        "MASTERY": 35,
+        "SURVEILLANCE": 50
+      }
+    },
+    {
+      "id": "veh.escooter",
+      "label": "E-bike / e-scooter",
+      "group": "VEHICLE",
+      "blurb": "Battery-assisted legs. The hill is now a UI detail.",
+      "vector": {
+        "INTIMACY": 45,
+        "DEPENDENCE": 30,
+        "AGENCY": 30,
+        "VISIBILITY": 65,
+        "CONSENT": 15,
+        "MASTERY": 40,
+        "SURVEILLANCE": 55
+      }
+    },
+    {
+      "id": "veh.elevator",
+      "label": "Elevator / escalator",
+      "group": "VEHICLE",
+      "blurb": "Vertical transit you never chose, cannot inspect, and organise entire cities around.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 55,
+        "AGENCY": 60,
+        "VISIBILITY": 20,
+        "CONSENT": 85,
+        "MASTERY": 5,
+        "SURVEILLANCE": 45
+      }
+    },
+    {
+      "id": "veh.wheelchair",
+      "label": "Wheelchair",
+      "group": "VEHICLE",
+      "blurb": "The chair is not the limitation. The stairs are. Users are expert mechanics of their own mobility.",
+      "vector": {
+        "INTIMACY": 70,
+        "DEPENDENCE": 95,
+        "AGENCY": 20,
+        "VISIBILITY": 85,
+        "CONSENT": 75,
+        "MASTERY": 70,
+        "SURVEILLANCE": 10
+      }
+    },
+    {
+      "id": "soc.messaging",
+      "label": "Messaging app",
+      "group": "SOCIAL",
+      "blurb": "Your relationships have a transport layer. It has read receipts.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 70,
+        "AGENCY": 55,
+        "VISIBILITY": 25,
+        "CONSENT": 60,
+        "MASTERY": 35,
+        "SURVEILLANCE": 75
+      }
+    },
+    {
+      "id": "soc.feed",
+      "label": "Social feed",
+      "group": "SOCIAL",
+      "blurb": "An algorithm curates what you see of other humans. Steward it or be stewarded.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 40,
+        "AGENCY": 85,
+        "VISIBILITY": 30,
+        "CONSENT": 35,
+        "MASTERY": 15,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "soc.payments",
+      "label": "Contactless payments",
+      "group": "SOCIAL",
+      "blurb": "Value transfers by proximity. Money became a gesture.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 65,
+        "AGENCY": 30,
+        "VISIBILITY": 25,
+        "CONSENT": 65,
+        "MASTERY": 15,
+        "SURVEILLANCE": 90
+      }
+    },
+    {
+      "id": "soc.id",
+      "label": "Digital ID / passport chip",
+      "group": "SOCIAL",
+      "blurb": "Who you are, as far as the state is concerned, is an NFC read.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 80,
+        "AGENCY": 60,
+        "VISIBILITY": 35,
+        "CONSENT": 95,
+        "MASTERY": 5,
+        "SURVEILLANCE": 98
+      }
+    },
+    {
+      "id": "soc.calendar-shared",
+      "label": "Shared calendars / invites",
+      "group": "SOCIAL",
+      "blurb": "Other people can write to your time. Negotiate the permissions.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 55,
+        "AGENCY": 80,
+        "VISIBILITY": 30,
+        "CONSENT": 70,
+        "MASTERY": 30,
+        "SURVEILLANCE": 70
+      }
+    },
+    {
+      "id": "soc.dating",
+      "label": "Dating app",
+      "group": "SOCIAL",
+      "blurb": "Intimacy, ranked and rate-limited. The matching function is a trade secret.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 30,
+        "AGENCY": 75,
+        "VISIBILITY": 30,
+        "CONSENT": 30,
+        "MASTERY": 10,
+        "SURVEILLANCE": 88
+      }
+    },
+    {
+      "id": "soc.review",
+      "label": "Ratings / star scores",
+      "group": "SOCIAL",
+      "blurb": "You are scored by strangers and the score precedes you into every room.",
+      "vector": {
+        "INTIMACY": 15,
+        "DEPENDENCE": 35,
+        "AGENCY": 70,
+        "VISIBILITY": 40,
+        "CONSENT": 55,
+        "MASTERY": 10,
+        "SURVEILLANCE": 80
+      }
+    },
+    {
+      "id": "soc.credit",
+      "label": "Credit score",
+      "group": "SOCIAL",
+      "blurb": "A number you never applied for decides where you may live. Nobody will show you the model.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 85,
+        "AGENCY": 88,
+        "VISIBILITY": 15,
+        "CONSENT": 95,
+        "MASTERY": 5,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "craft.figma",
+      "label": "Figma / design tool",
+      "group": "CRAFT",
+      "blurb": "Your visual thinking lives in someone else's multiplayer canvas. Cmd+Z is part of your hand.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 65,
+        "AGENCY": 30,
+        "VISIBILITY": 25,
+        "CONSENT": 55,
+        "MASTERY": 70,
+        "SURVEILLANCE": 60
+      }
+    },
+    {
+      "id": "craft.pen",
+      "label": "Pen & notebook",
+      "group": "CRAFT",
+      "blurb": "Ancient write-head. Still the lowest-latency thought interface available.",
+      "vector": {
+        "INTIMACY": 40,
+        "DEPENDENCE": 25,
+        "AGENCY": 5,
+        "VISIBILITY": 30,
+        "CONSENT": 10,
+        "MASTERY": 85,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "craft.terminal",
+      "label": "Terminal / shell",
+      "group": "CRAFT",
+      "blurb": "Text in, consequences out. The most honest interface: it tells you exactly what it did.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 60,
+        "AGENCY": 15,
+        "VISIBILITY": 20,
+        "CONSENT": 15,
+        "MASTERY": 95,
+        "SURVEILLANCE": 25
+      }
+    },
+    {
+      "id": "craft.daw",
+      "label": "DAW / synth",
+      "group": "CRAFT",
+      "blurb": "Time-domain editing of sound. Undo for music. Bach didn't have that.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 30,
+        "AGENCY": 20,
+        "VISIBILITY": 25,
+        "CONSENT": 10,
+        "MASTERY": 75,
+        "SURVEILLANCE": 30
+      }
+    },
+    {
+      "id": "craft.instrument",
+      "label": "Guitar / instrument",
+      "group": "CRAFT",
+      "blurb": "Wood and wire that disappears when played. Peak transparent tool.",
+      "vector": {
+        "INTIMACY": 55,
+        "DEPENDENCE": 25,
+        "AGENCY": 10,
+        "VISIBILITY": 60,
+        "CONSENT": 5,
+        "MASTERY": 85,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "craft.camera",
+      "label": "Camera (as craft)",
+      "group": "CRAFT",
+      "blurb": "Framing is a cognitive act performed through glass. You see differently with it on you.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 30,
+        "AGENCY": 15,
+        "VISIBILITY": 55,
+        "CONSENT": 10,
+        "MASTERY": 75,
+        "SURVEILLANCE": 35
+      }
+    },
+    {
+      "id": "craft.spreadsheet",
+      "label": "Spreadsheet",
+      "group": "CRAFT",
+      "blurb": "The most consequential programming environment on earth, operated almost entirely by non-programmers.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 60,
+        "AGENCY": 25,
+        "VISIBILITY": 25,
+        "CONSENT": 50,
+        "MASTERY": 70,
+        "SURVEILLANCE": 35
+      }
+    },
+    {
+      "id": "craft.handtools",
+      "label": "Sewing machine / hand tools",
+      "group": "CRAFT",
+      "blurb": "Fully ownable, fully repairable, reports to nobody. The control case for everything else here.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 15,
+        "AGENCY": 5,
+        "VISIBILITY": 35,
+        "CONSENT": 5,
+        "MASTERY": 85,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "craft.genai",
+      "label": "Generative image tools",
+      "group": "CRAFT",
+      "blurb": "You describe, it renders, and authorship becomes a question rather than a fact.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 25,
+        "AGENCY": 55,
+        "VISIBILITY": 35,
+        "CONSENT": 15,
+        "MASTERY": 35,
+        "SURVEILLANCE": 70
+      }
+    },
+    {
+      "id": "labor.badge",
+      "label": "Access badge / keycard",
+      "group": "LABOR",
+      "blurb": "A door decides whether you exist here, and logs the question either way.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 70,
+        "AGENCY": 65,
+        "VISIBILITY": 45,
+        "CONSENT": 88,
+        "MASTERY": 5,
+        "SURVEILLANCE": 92
+      }
+    },
+    {
+      "id": "labor.chat",
+      "label": "Workplace chat",
+      "group": "LABOR",
+      "blurb": "Presence as a green dot. Availability became a rendered UI state your manager can read.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 75,
+        "AGENCY": 80,
+        "VISIBILITY": 30,
+        "CONSENT": 85,
+        "MASTERY": 25,
+        "SURVEILLANCE": 90
+      }
+    },
+    {
+      "id": "labor.timetrack",
+      "label": "Time tracking / timesheet",
+      "group": "LABOR",
+      "blurb": "Your hours are a data structure someone else validates.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 60,
+        "AGENCY": 85,
+        "VISIBILITY": 35,
+        "CONSENT": 92,
+        "MASTERY": 5,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "labor.email",
+      "label": "Work email",
+      "group": "LABOR",
+      "blurb": "An inbox that assigns you tasks. You did not agree to the queue discipline.",
+      "vector": {
+        "INTIMACY": 30,
+        "DEPENDENCE": 80,
+        "AGENCY": 75,
+        "VISIBILITY": 25,
+        "CONSENT": 85,
+        "MASTERY": 35,
+        "SURVEILLANCE": 88
+      }
+    },
+    {
+      "id": "labor.mdm",
+      "label": "Managed device / MDM / VPN",
+      "group": "LABOR",
+      "blurb": "Your employer holds root on a machine you carry in your pocket to dinner.",
+      "vector": {
+        "INTIMACY": 35,
+        "DEPENDENCE": 65,
+        "AGENCY": 70,
+        "VISIBILITY": 15,
+        "CONSENT": 90,
+        "MASTERY": 5,
+        "SURVEILLANCE": 96
+      }
+    },
+    {
+      "id": "labor.dispatch",
+      "label": "Algorithmic dispatch / shift scheduler",
+      "group": "LABOR",
+      "blurb": "The route, the pace, and the shift arrive from a model. Peak dispatch. No appeal path.",
+      "vector": {
+        "INTIMACY": 25,
+        "DEPENDENCE": 85,
+        "AGENCY": 95,
+        "VISIBILITY": 25,
+        "CONSENT": 90,
+        "MASTERY": 5,
+        "SURVEILLANCE": 95
+      }
+    },
+    {
+      "id": "dom.thermostat",
+      "label": "Smart thermostat",
+      "group": "DOMESTIC",
+      "blurb": "The utility can raise your temperature remotely on a demand-response event. You agreed in a rebate form.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 40,
+        "AGENCY": 55,
+        "VISIBILITY": 15,
+        "CONSENT": 40,
+        "MASTERY": 20,
+        "SURVEILLANCE": 75
+      }
+    },
+    {
+      "id": "dom.speaker",
+      "label": "Smart speaker / voice assistant",
+      "group": "DOMESTIC",
+      "blurb": "A microphone you paid for, installed yourself, and named.",
+      "vector": {
+        "INTIMACY": 20,
+        "DEPENDENCE": 25,
+        "AGENCY": 50,
+        "VISIBILITY": 40,
+        "CONSENT": 20,
+        "MASTERY": 15,
+        "SURVEILLANCE": 92
+      }
+    },
+    {
+      "id": "dom.washing",
+      "label": "Washing machine",
+      "group": "DOMESTIC",
+      "blurb": "Arguably the most liberating machine of the twentieth century. It gave back a day a week.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 70,
+        "AGENCY": 25,
+        "VISIBILITY": 15,
+        "CONSENT": 45,
+        "MASTERY": 40,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "dom.fridge",
+      "label": "Refrigerator",
+      "group": "DOMESTIC",
+      "blurb": "A continuously-powered cold pocket without which your diet collapses to what is in season.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 85,
+        "AGENCY": 15,
+        "VISIBILITY": 10,
+        "CONSENT": 70,
+        "MASTERY": 25,
+        "SURVEILLANCE": 5
+      }
+    },
+    {
+      "id": "dom.power",
+      "label": "Mains electricity",
+      "group": "DOMESTIC",
+      "blurb": "The substrate every other item here runs on. Invisible until the grid drops.",
+      "vector": {
+        "INTIMACY": 5,
+        "DEPENDENCE": 96,
+        "AGENCY": 40,
+        "VISIBILITY": 5,
+        "CONSENT": 97,
+        "MASTERY": 5,
+        "SURVEILLANCE": 55
+      }
+    },
+    {
+      "id": "dom.wifi",
+      "label": "Home broadband / wifi",
+      "group": "DOMESTIC",
+      "blurb": "Your dwelling has a nervous system, and it is rented from a monopoly.",
+      "vector": {
+        "INTIMACY": 10,
+        "DEPENDENCE": 90,
+        "AGENCY": 45,
+        "VISIBILITY": 5,
+        "CONSENT": 80,
+        "MASTERY": 30,
+        "SURVEILLANCE": 85
+      }
+    }
+  ],
+  "ghosts": [
+    {
+      "id": "ghost.rat",
+      "label": "Clynes & Kline's rat",
+      "year": 1960,
+      "vector": {
+        "INTIMACY": 95,
+        "DEPENDENCE": 92,
+        "AGENCY": 88,
+        "VISIBILITY": 60,
+        "CONSENT": 100,
+        "MASTERY": 0,
+        "SURVEILLANCE": 70
+      },
+      "note": "The osmotic-pump rat from the paper that coined 'cyborg'. Total consent gap, zero mastery. The word was born describing something done TO a body."
+    },
+    {
+      "id": "ghost.astronaut",
+      "label": "Mercury-era astronaut",
+      "year": 1962,
+      "vector": {
+        "INTIMACY": 70,
+        "DEPENDENCE": 96,
+        "AGENCY": 80,
+        "VISIBILITY": 95,
+        "CONSENT": 55,
+        "MASTERY": 45,
+        "SURVEILLANCE": 98
+      },
+      "note": "Clynes & Kline's actual proposal was to modify the human so the capsule could be simpler. NASA built the capsule instead. Attribute the framing, don't assert intent."
+    },
+    {
+      "id": "ghost.vader",
+      "label": "Darth Vader",
+      "year": 1977,
+      "vector": {
+        "INTIMACY": 95,
+        "DEPENDENCE": 98,
+        "AGENCY": 40,
+        "VISIBILITY": 100,
+        "CONSENT": 85,
+        "MASTERY": 55,
+        "SURVEILLANCE": 15
+      },
+      "note": "Maximum visibility and intimacy, but note the LOW surveillance and mid agency-loss. Fiction's cyborg is conspicuous and self-directed. Ours is invisible and dispatched. That inversion is the talk."
+    },
+    {
+      "id": "ghost.farmer",
+      "label": "Farmer, 1890",
+      "year": 1890,
+      "vector": {
+        "INTIMACY": 45,
+        "DEPENDENCE": 60,
+        "AGENCY": 20,
+        "VISIBILITY": 40,
+        "CONSENT": 50,
+        "MASTERY": 90,
+        "SURVEILLANCE": 5
+      },
+      "note": "The control case. Deeply coupled to tools and animals, near-total mastery over all of them, legible to nobody. Not less cyborg — differently shaped."
+    },
+    {
+      "id": "ghost.room",
+      "label": "This room (live)",
+      "year": null,
+      "vector": null,
+      "note": "Computed at runtime from the audience mean. Never hardcode."
+    }
+  ]
+}
