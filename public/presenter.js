@@ -53,6 +53,7 @@
     staged: null,           // submission id currently full-screen on the deck
     session: null,
     clockTimer: null,
+    tab: 'control',         // control | notes | signal
   };
 
   // ── DOM ──────────────────────────────────────────────────────────
@@ -106,6 +107,13 @@
     notesBeat: $('#notesBeat'),
     stagedId: $('#stagedId'),
     btnUnstage: $('#btnUnstage'),
+    // tabs
+    tabs: $$('.tab'),
+    tabPanels: $$('.tab-panel'),
+    tabSignalN: $('#tabSignalN'),
+    notesIdx: $('#notesIdx'),
+    notesTime: $('#notesTime'),
+    btnResetBeat: $('#btnResetBeat'),
   };
 
   // ── Utils ────────────────────────────────────────────────────────
@@ -278,6 +286,8 @@
     readout(el.cAssemblages, c.assemblages || S.assemblages.length);
     $('[data-count="all"]').textContent = pad(signals);
     for (const k of KINDS) $(`[data-count="${k}"]`).textContent = pad(c[k] || 0);
+    // badge on the SIGNAL tab so a hidden feed still announces volume
+    if (el.tabSignalN) el.tabSignalN.textContent = pad(signals);
   }
 
   // ── Spectrum histogram ───────────────────────────────────────────
@@ -786,6 +796,17 @@
     el.totalElapsed.textContent = S.t0 ? mmss(tElapsed) : '--:--';
     el.totalBudget.textContent = `/ ${tBudget ? mmss(tBudget) : '--:--'}`;
     gradeBox(el.totalClockBox, S.t0 ? tElapsed : 0, tBudget);
+
+    // mirror onto the NOTES tab header so the script surface is self-sufficient
+    if (el.notesTime) {
+      el.notesTime.textContent = `${S.beatStartTs ? mmss(elapsed) : '--:--'} / ${budget ? mmss(budget) : '--:--'}`;
+      el.notesTime.classList.toggle('is-warn', budget > 0 && elapsed > budget && elapsed <= budget * OVER_HARD);
+      el.notesTime.classList.toggle('is-over', budget > 0 && elapsed > budget * OVER_HARD);
+    }
+    if (el.notesIdx) {
+      const i = S.beats.findIndex((b) => b.id === shownBeatId());
+      el.notesIdx.textContent = i >= 0 ? `${pad(i + 1, 2)}/${pad(S.beats.length, 2)}` : '—/—';
+    }
   }
 
   // ── STAGE: throw a submission full-screen on the deck ────────────
@@ -853,6 +874,37 @@
       : `SESSION ${pad(Number.isFinite(n) ? n : 1)} · ${raw}`;
   }
 
+  // ── Tabs ─────────────────────────────────────────────────────────
+  const TAB_LS = 'cyborg.tab';
+  const TAB_ORDER = ['control', 'notes', 'signal'];
+
+  function setTab(name) {
+    if (!TAB_ORDER.includes(name)) return;
+    S.tab = name;
+    try { localStorage.setItem(TAB_LS, name); } catch { /* */ }
+    el.tabs.forEach((t) => {
+      const on = t.dataset.tab === name;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    el.tabPanels.forEach((p) => {
+      p.classList.toggle('is-active', p.dataset.panel === name);
+    });
+    status(`TAB · ${name.toUpperCase()}`);
+  }
+
+  function cycleTab(dir = 1) {
+    const i = TAB_ORDER.indexOf(S.tab);
+    setTab(TAB_ORDER[(i + dir + TAB_ORDER.length) % TAB_ORDER.length]);
+  }
+
+  function initTabs() {
+    let stored = 'control';
+    try { stored = localStorage.getItem(TAB_LS) || 'control'; } catch { /* */ }
+    el.tabs.forEach((t) => t.addEventListener('click', () => setTab(t.dataset.tab)));
+    setTab(TAB_ORDER.includes(stored) ? stored : 'control');
+  }
+
   function initControlTrack() {
     const stored = Number(localStorage.getItem(T0_LS));
     if (Number.isFinite(stored) && stored > 0) S.t0 = stored;
@@ -863,7 +915,13 @@
       setT0(Date.now());
       renderClocks();
       fire(el.btnT0);
-      status('T0 SET · TOTAL CLOCK ZEROED');
+      status('TOTAL CLOCK ZEROED');
+    });
+    el.btnResetBeat.addEventListener('click', () => {
+      S.beatStartTs = Date.now();
+      renderClocks();
+      fire(el.btnResetBeat);
+      status('BEAT CLOCK ZEROED');
     });
     el.btnUnstage.addEventListener('click', () => stageSubmission(null, el.btnUnstage));
     el.beats.addEventListener('click', (e) => {
@@ -1041,6 +1099,11 @@
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
       switch (e.key) {
+        // ── TAB switching. Tab / Shift+Tab cycles the three surfaces.
+        case 'Tab':
+          e.preventDefault();
+          cycleTab(e.shiftKey ? -1 : +1);
+          break;
         // ── BEAT transport. Deliberately NOT ArrowRight/ArrowLeft/PageUp/
         // PageDown: a presenter clicker sends those and /deck consumes them
         // for slides. Down/Up (and n/p) are beats, and only on this screen.
@@ -1062,7 +1125,22 @@
         case '3': setFilter('discussion'); break;
         case '4': setFilter('note'); break;
         case 'h': case 'H': setModVisible(!S.modVisible); break;
-        case 'r': case 'R': loadState(); break;
+        // ── CLOCKS: r zeroes this beat, t zeroes the whole talk.
+        case 'r': case 'R':
+          e.preventDefault();
+          S.beatStartTs = Date.now();
+          renderClocks();
+          fire(el.btnResetBeat);
+          status('BEAT CLOCK ZEROED');
+          break;
+        case 't': case 'T':
+          e.preventDefault();
+          setT0(Date.now());
+          renderClocks();
+          fire(el.btnT0);
+          status('TOTAL CLOCK ZEROED');
+          break;
+        case 'l': case 'L': loadState(); break;
         default: return;
       }
     });
@@ -1107,6 +1185,7 @@
     initCursor();
     initEvents();
     initControlTrack();
+    initTabs();
     setLink('offline');
     renderCounts();
     renderSpectrum();

@@ -33,198 +33,243 @@
     </div>
   </header>
 
+  <!-- TAB NAVIGATION -->
+  <nav class="tabs" role="tablist" aria-label="Presenter modes">
+    <button class="tab is-active" data-tab="control" role="tab" aria-selected="true" id="tabControl">
+      CONTROL
+    </button>
+    <button class="tab" data-tab="notes" role="tab" aria-selected="false" id="tabNotes">
+      NOTES
+    </button>
+    <button class="tab" data-tab="signal" role="tab" aria-selected="false" id="tabSignal">
+      SIGNAL <span class="tab__n readout" id="tabSignalN">000</span>
+    </button>
+    <span class="tabs__hint micro-label"><kbd>TAB</kbd> CYCLE</span>
+  </nav>
+
   <main class="stage">
+    
+    <!-- TAB PANEL: CONTROL -->
+    <section class="tab-panel is-active" data-panel="control" role="tabpanel" aria-labelledby="tabControl">
+      
+      <!-- ── LEFT: CONTROL TRACK ──────────────────────────────── -->
+      <section class="fui-panel ctrl" aria-label="Run of show control track">
+        <span class="fui-corners" aria-hidden="true"></span>
 
-    <!-- ── LEFT COLUMN : CONTROL TRACK (run of show) ──────────── -->
-    <section class="fui-panel ctrl" aria-label="Run of show control track">
-      <span class="fui-corners" aria-hidden="true"></span>
-
-      <div class="panel__head panel__head--tight">
-        <div class="panel__title">
-          <span class="micro-label">CONTROL TRACK</span>
-          <h2>RUN OF SHOW</h2>
-        </div>
-        <span class="micro-label" id="ctrlDeck">DECK LOADING…</span>
-      </div>
-
-      <!-- STATE: what the room is doing right now -->
-      <div class="now" id="now">
-        <div class="now__head">
-          <span class="now__idx readout" id="nowIdx">—/—</span>
-          <span class="now__label" id="nowLabel">STANDBY</span>
-        </div>
-
-        <div class="clocks">
-          <div class="clock-box" id="beatClockBox">
-            <span class="micro-label">BEAT</span>
-            <span class="clock-box__val readout" id="beatElapsed">00:00</span>
-            <span class="clock-box__bud readout" id="beatBudget">/ 00:00</span>
+        <div class="panel__head panel__head--tight">
+          <div class="panel__title">
+            <span class="micro-label">CONTROL TRACK</span>
+            <h2>RUN OF SHOW</h2>
           </div>
-          <div class="clock-box" id="totalClockBox">
-            <span class="micro-label">TOTAL</span>
-            <span class="clock-box__val readout" id="totalElapsed">00:00</span>
-            <span class="clock-box__bud readout" id="totalBudget">/ 00:00</span>
+          <span class="micro-label" id="ctrlDeck">DECK LOADING…</span>
+        </div>
+
+        <!-- STATE: what the room is doing right now -->
+        <div class="now" id="now">
+          <div class="now__head">
+            <span class="now__idx readout" id="nowIdx">—/—</span>
+            <span class="now__label" id="nowLabel">STANDBY</span>
           </div>
-          <button class="t0" id="btnT0" title="Set the total-elapsed clock to zero (talk starts now)">T0</button>
+
+          <div class="clocks">
+            <div class="clock-box" id="beatClockBox">
+              <span class="micro-label">BEAT</span>
+              <span class="clock-box__val readout" id="beatElapsed">00:00</span>
+              <span class="clock-box__bud readout" id="beatBudget">/ 00:00</span>
+            </div>
+            <div class="clock-box" id="totalClockBox">
+              <span class="micro-label">TOTAL</span>
+              <span class="clock-box__val readout" id="totalElapsed">00:00</span>
+              <span class="clock-box__bud readout" id="totalBudget">/ 00:00</span>
+            </div>
+            <div class="timer-controls">
+              <button class="timer-btn timer-btn--reset" id="btnResetBeat" title="Reset beat timer to 00:00" aria-label="Reset beat timer">
+                <kbd>R</kbd> BEAT
+              </button>
+              <button class="timer-btn timer-btn--reset" id="btnT0" title="Reset total timer to 00:00 (talk starts now)" aria-label="Reset total timer">
+                <kbd>T</kbd> TOTAL
+              </button>
+            </div>
+          </div>
+
+          <div class="cue-pills">
+            <span class="pill pill--mode" id="pillMode">MODE —</span>
+            <span class="pill" id="pillSignal"><span class="dot" aria-hidden="true"></span><span class="pill__text">SIGNAL SHUT</span></span>
+            <span class="pill" id="pillAssemble"><span class="dot" aria-hidden="true"></span><span class="pill__text">ASSEMBLE SHUT</span></span>
+          </div>
+
+          <p class="now__prompt" id="nowPrompt">—</p>
+          <p class="now__warn" id="nowWarn" hidden></p>
         </div>
 
-        <div class="cue-pills">
-          <span class="pill pill--mode" id="pillMode">MODE —</span>
-          <span class="pill" id="pillSignal"><span class="dot" aria-hidden="true"></span><span class="pill__text">SIGNAL SHUT</span></span>
-          <span class="pill" id="pillAssemble"><span class="dot" aria-hidden="true"></span><span class="pill__text">ASSEMBLE SHUT</span></span>
+        <!-- SIGNIFIER + MAPPING: transport -->
+        <div class="transport">
+          <button class="tbtn" id="btnPrev" type="button" aria-label="Cue previous beat">
+            <span class="tbtn__key"><kbd>↑</kbd><kbd>P</kbd></span>
+            <span class="tbtn__lbl">PREV BEAT</span>
+          </button>
+          <button class="tbtn tbtn--next" id="btnNext" type="button" aria-label="Cue next beat">
+            <span class="tbtn__key"><kbd>↓</kbd><kbd>N</kbd></span>
+            <span class="tbtn__lbl">NEXT BEAT</span>
+          </button>
         </div>
 
-        <p class="now__prompt" id="nowPrompt">—</p>
-        <p class="now__warn" id="nowWarn" hidden></p>
-      </div>
+        <p class="ctrl__err" id="ctrlErr" role="alert" hidden></p>
 
-      <!-- SIGNIFIER + MAPPING: transport -->
-      <div class="transport">
-        <button class="tbtn" id="btnPrev" type="button" aria-label="Cue previous beat">
-          <span class="tbtn__key"><kbd>↑</kbd><kbd>P</kbd></span>
-          <span class="tbtn__lbl">PREV BEAT</span>
-        </button>
-        <button class="tbtn tbtn--next" id="btnNext" type="button" aria-label="Cue next beat">
-          <span class="tbtn__key"><kbd>↓</kbd><kbd>N</kbd></span>
-          <span class="tbtn__lbl">NEXT BEAT</span>
-        </button>
-      </div>
+        <ol class="beats" id="beats" aria-label="Beats"></ol>
 
-      <p class="ctrl__err" id="ctrlErr" role="alert" hidden></p>
-
-      <ol class="beats" id="beats" aria-label="Beats"></ol>
-
-      <div class="staged-bar">
-        <span class="micro-label">STAGED ON DECK</span>
-        <span class="readout staged-bar__id" id="stagedId">NONE</span>
-        <button class="ubtn" id="btnUnstage" type="button" hidden>UNSTAGE</button>
-      </div>
-
-      <div class="notes">
-        <div class="notes__head">
-          <span class="micro-label">PRESENTER NOTES</span>
-          <span class="micro-label" id="notesBeat">—</span>
+        <div class="staged-bar">
+          <span class="micro-label">STAGED ON DECK</span>
+          <span class="readout staged-bar__id" id="stagedId">NONE</span>
+          <button class="ubtn" id="btnUnstage" type="button" hidden>UNSTAGE</button>
         </div>
-        <div class="notes__body" id="notes">
+      </section>
+
+      <!-- ── RIGHT: TELEMETRY ─────────────────────────────────── -->
+      <aside class="tele" aria-label="Assemble telemetry">
+
+        <section class="fui-panel counters">
+        <span class="fui-corners" aria-hidden="true"></span>
+          <div class="counter">
+            <span class="micro-label">SIGNALS</span>
+            <span class="counter__val readout" id="cSignals">000</span>
+          </div>
+          <div class="counter">
+            <span class="micro-label">ASSEMBLAGES</span>
+            <span class="counter__val readout" id="cAssemblages">000</span>
+          </div>
+        </section>
+
+        <section class="fui-panel spectrum">
+        <span class="fui-corners" aria-hidden="true"></span>
+          <div class="panel__head panel__head--tight">
+            <div class="panel__title">
+              <span class="micro-label">MODE B</span>
+              <h2>SPECTRUM</h2>
+            </div>
+            <span class="micro-label" id="spectrumMeta">N=000 · μ=—</span>
+          </div>
+
+          <div class="hist" id="hist" role="img" aria-label="Spectrum histogram, 10 buckets">
+            <!-- 10 .hist__bar filled by JS -->
+          </div>
+
+          <div class="ruler" aria-hidden="true">
+            <div class="ruler__ticks" id="rulerTicks"></div>
+            <div class="ruler__labels">
+              <span style="--x:0">DAILY<br>DESIGNER</span>
+              <span style="--x:25">RACE CAR<br>DRIVER</span>
+              <span style="--x:50">PILOT</span>
+              <span style="--x:75">ASTRONAUT</span>
+              <span style="--x:100">VADER</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="fui-panel tally">
+        <span class="fui-corners" aria-hidden="true"></span>
+          <div class="panel__head panel__head--tight">
+            <div class="panel__title">
+              <span class="micro-label">COMPONENTS</span>
+              <h2>TOP 08</h2>
+            </div>
+          </div>
+          <ol class="tally__list" id="tally"></ol>
+          <p class="tally__empty micro-label" id="tallyEmpty">NO ASSEMBLAGES · TALLY IDLE</p>
+        </section>
+
+        <section class="fui-panel klass" id="klassCard" aria-live="polite">
+        <span class="fui-corners" aria-hidden="true"></span>
+          <div class="panel__head panel__head--tight">
+            <div class="panel__title">
+              <span class="micro-label">LATEST CLASS</span>
+            </div>
+            <span class="micro-label" id="klassIdx">— / —</span>
+          </div>
+          <div class="klass__body" id="klassBody">
+            <div class="klass__name is-empty">STANDBY</div>
+            <div class="klass__meta">
+              <span class="readout" id="klassHandle">—</span>
+              <span class="klass__picks readout" id="klassPicks">PICKS 00</span>
+              <span class="readout" id="klassSpectrum">SPEC 000</span>
+            </div>
+          </div>
+        </section>
+
+      </aside>
+    </section>
+
+    <!-- TAB PANEL: NOTES -->
+    <section class="tab-panel" data-panel="notes" role="tabpanel" aria-labelledby="tabNotes">
+      <div class="fui-panel notes-expanded">
+        <span class="fui-corners" aria-hidden="true"></span>
+        
+        <div class="panel__head">
+          <div class="panel__title">
+            <span class="micro-label">PRESENTER NOTES</span>
+            <h2 id="notesBeat">—</h2>
+          </div>
+          <div class="notes-meta">
+            <span class="micro-label" id="notesIdx">—/—</span>
+            <span class="micro-label" id="notesTime">00:00 / 00:00</span>
+          </div>
+        </div>
+
+        <div class="notes-expanded__body" id="notes">
           <p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>
         </div>
       </div>
     </section>
 
-    <!-- ── LEFT 2/3 : SIGNAL FEED ────────────────────────────── -->
-    <section class="fui-panel feed" aria-label="Signal feed">
-      <span class="fui-corners" aria-hidden="true"></span>
-      <div class="panel__head">
-        <div class="panel__title">
-          <span class="micro-label">MODE A</span>
-          <h2>SIGNAL</h2>
+    <!-- TAB PANEL: SIGNAL -->
+    <section class="tab-panel" data-panel="signal" role="tabpanel" aria-labelledby="tabSignal">
+      <div class="fui-panel feed-expanded">
+        <span class="fui-corners" aria-hidden="true"></span>
+        
+        <div class="panel__head">
+          <div class="panel__title">
+            <span class="micro-label">SIGNAL FEED</span>
+            <h2>INCOMING TRANSMISSIONS</h2>
+          </div>
+
+          <div class="filters" role="tablist" aria-label="Filter feed">
+            <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">
+              <kbd>1</kbd> ALL <span class="filter__n readout" data-count="all">000</span>
+            </button>
+            <button class="filter" data-filter="question" role="tab" aria-selected="false">
+              <kbd>2</kbd> QUESTION <span class="filter__n readout" data-count="question">000</span>
+            </button>
+            <button class="filter" data-filter="discussion" role="tab" aria-selected="false">
+              <kbd>3</kbd> DISCUSSION <span class="filter__n readout" data-count="discussion">000</span>
+            </button>
+            <button class="filter" data-filter="note" role="tab" aria-selected="false">
+              <kbd>4</kbd> NOTE <span class="filter__n readout" data-count="note">000</span>
+            </button>
+          </div>
         </div>
 
-        <div class="filters" role="tablist" aria-label="Filter feed">
-          <button class="filter is-active" data-filter="all" role="tab" aria-selected="true">
-            <kbd>1</kbd> ALL <span class="filter__n readout" data-count="all">000</span>
-          </button>
-          <button class="filter" data-filter="question" role="tab" aria-selected="false">
-            <kbd>2</kbd> QUESTION <span class="filter__n readout" data-count="question">000</span>
-          </button>
-          <button class="filter" data-filter="discussion" role="tab" aria-selected="false">
-            <kbd>3</kbd> DISCUSSION <span class="filter__n readout" data-count="discussion">000</span>
-          </button>
-          <button class="filter" data-filter="note" role="tab" aria-selected="false">
-            <kbd>4</kbd> NOTE <span class="filter__n readout" data-count="note">000</span>
-          </button>
+        <ol class="cards cards--expanded" id="cards" aria-live="polite" aria-relevant="additions"></ol>
+
+        <div class="empty" id="feedEmpty">
+          <div class="empty__reticle" aria-hidden="true"></div>
+          <p class="micro-label">AWAITING SIGNAL</p>
+          <p class="empty__hint">NO TRANSMISSIONS RECEIVED · CHANNEL OPEN</p>
         </div>
-      </div>
-
-      <ol class="cards" id="cards" aria-live="polite" aria-relevant="additions"></ol>
-
-      <div class="empty" id="feedEmpty">
-        <div class="empty__reticle" aria-hidden="true"></div>
-        <p class="micro-label">AWAITING SIGNAL</p>
-        <p class="empty__hint">NO TRANSMISSIONS RECEIVED · CHANNEL OPEN</p>
       </div>
     </section>
-
-    <!-- ── RIGHT 1/3 : ASSEMBLE TELEMETRY ────────────────────── -->
-    <aside class="tele" aria-label="Assemble telemetry">
-
-      <section class="fui-panel counters">
-      <span class="fui-corners" aria-hidden="true"></span>
-        <div class="counter">
-          <span class="micro-label">SIGNALS</span>
-          <span class="counter__val readout" id="cSignals">000</span>
-        </div>
-        <div class="counter">
-          <span class="micro-label">ASSEMBLAGES</span>
-          <span class="counter__val readout" id="cAssemblages">000</span>
-        </div>
-      </section>
-
-      <section class="fui-panel spectrum">
-      <span class="fui-corners" aria-hidden="true"></span>
-        <div class="panel__head panel__head--tight">
-          <div class="panel__title">
-            <span class="micro-label">MODE B</span>
-            <h2>SPECTRUM</h2>
-          </div>
-          <span class="micro-label" id="spectrumMeta">N=000 · μ=—</span>
-        </div>
-
-        <div class="hist" id="hist" role="img" aria-label="Spectrum histogram, 10 buckets">
-          <!-- 10 .hist__bar filled by JS -->
-        </div>
-
-        <div class="ruler" aria-hidden="true">
-          <div class="ruler__ticks" id="rulerTicks"></div>
-          <div class="ruler__labels">
-            <span style="--x:0">DAILY<br>DESIGNER</span>
-            <span style="--x:25">RACE CAR<br>DRIVER</span>
-            <span style="--x:50">PILOT</span>
-            <span style="--x:75">ASTRONAUT</span>
-            <span style="--x:100">VADER</span>
-          </div>
-        </div>
-      </section>
-
-      <section class="fui-panel tally">
-      <span class="fui-corners" aria-hidden="true"></span>
-        <div class="panel__head panel__head--tight">
-          <div class="panel__title">
-            <span class="micro-label">COMPONENTS</span>
-            <h2>TOP 08</h2>
-          </div>
-        </div>
-        <ol class="tally__list" id="tally"></ol>
-        <p class="tally__empty micro-label" id="tallyEmpty">NO ASSEMBLAGES · TALLY IDLE</p>
-      </section>
-
-      <section class="fui-panel klass" id="klassCard" aria-live="polite">
-      <span class="fui-corners" aria-hidden="true"></span>
-        <div class="panel__head panel__head--tight">
-          <div class="panel__title">
-            <span class="micro-label">LATEST CLASS</span>
-          </div>
-          <span class="micro-label" id="klassIdx">— / —</span>
-        </div>
-        <div class="klass__body" id="klassBody">
-          <div class="klass__name is-empty">STANDBY</div>
-          <div class="klass__meta">
-            <span class="readout" id="klassHandle">—</span>
-            <span class="klass__picks readout" id="klassPicks">PICKS 00</span>
-            <span class="readout" id="klassSpectrum">SPEC 000</span>
-          </div>
-        </div>
-      </section>
-
-    </aside>
+    
   </main>
 
   <footer class="ftr" aria-hidden="true">
-    <span class="micro-label"><kbd>F</kbd> FULLSCREEN</span>
+    <span class="micro-label"><kbd>TAB</kbd> SWITCH VIEW</span>
     <span class="micro-label"><kbd>↓</kbd>/<kbd>N</kbd> NEXT BEAT</span>
     <span class="micro-label"><kbd>↑</kbd>/<kbd>P</kbd> PREV BEAT</span>
+    <span class="micro-label"><kbd>R</kbd> ZERO BEAT</span>
+    <span class="micro-label"><kbd>T</kbd> ZERO TOTAL</span>
     <span class="micro-label"><kbd>1-4</kbd> FILTER</span>
-    <span class="micro-label"><kbd>H</kbd> MOD CONTROLS</span>
+    <span class="micro-label"><kbd>F</kbd> FULLSCREEN</span>
+    <span class="micro-label"><kbd>H</kbd> MOD</span>
+    <span class="micro-label"><kbd>L</kbd> RELOAD</span>
     <span class="micro-label ftr__right" id="ftrStatus">BOOT</span>
   </footer>
 
