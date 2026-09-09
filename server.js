@@ -40,7 +40,7 @@ const MIME = {
 // ---------------------------------------------------------------- state
 const DEFAULT_CUE = Object.freeze({
   beatId: 'intro', label: 'INTRO', mode: 'intro',
-  prompt: '', signalOpen: false, assembleOpen: false, ts: 0,
+  prompt: '', signalOpen: false, assembleOpen: false, slide: 0, ts: 0,
 });
 
 const state = {
@@ -215,12 +215,38 @@ async function handleCue(req, res) {
     // Explicit booleans: the deck decides what the room can do, not the mode name.
     signalOpen: !!body.signalOpen,
     assembleOpen: !!body.assembleOpen,
+    // Slide position within the beat. A beat cue ALWAYS lands on slide 0 —
+    // the presenter drives individual slides via POST /api/slide so that
+    // stepping a slide never re-fires the beat (which would reset the clocks).
+    slide: 0,
     ts: Date.now(),
   };
   state.cue = cue;
   appendLog(ROOM_LOG, { cue });
   broadcast('cue', cue);
   sendJson(res, 200, { ok: true, cue });
+}
+
+// Slide position, decoupled from the beat cue. The presenter owns which slide
+// the projector shows so the operator never has to touch two interfaces; the
+// deck becomes a pure listener for slide as well as beat.
+async function handleSlide(req, res) {
+  const body = await readJsonBody(req);
+  if (!requireKey(body, res)) return;
+  const n = Number(body.slide);
+  if (!Number.isInteger(n) || n < 0 || n > 199) {
+    return sendError(res, 400, 'slide must be an integer 0..199');
+  }
+  // A stale presenter could try to drive a beat that is no longer cued; ignore
+  // it rather than desyncing the room. beatId is optional for back-compat.
+  const beatId = cleanText(body.beatId, 64);
+  if (beatId && beatId !== state.cue.beatId) {
+    return sendError(res, 409, `beat mismatch: room is on ${state.cue.beatId}`);
+  }
+  state.cue = { ...state.cue, slide: n };
+  appendLog(ROOM_LOG, { slide: { beatId: state.cue.beatId, slide: n, ts: Date.now() } });
+  broadcast('slide', { beatId: state.cue.beatId, slide: n });
+  sendJson(res, 200, { ok: true, beatId: state.cue.beatId, slide: n });
 }
 
 async function handleStage(req, res) {
@@ -396,6 +422,7 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/assemblage' && req.method === 'POST') return await handleAssemblage(req, res);
       if (p === '/api/moderate' && req.method === 'POST') return await handleModerate(req, res);
       if (p === '/api/cue' && req.method === 'POST') return await handleCue(req, res);
+      if (p === '/api/slide' && req.method === 'POST') return await handleSlide(req, res);
       if (p === '/api/stage' && req.method === 'POST') return await handleStage(req, res);
       if (p === '/api/reset' && req.method === 'POST') return await handleReset(req, res);
       if (p === '/api/state' && req.method === 'GET') return sendJson(res, 200, buildState());

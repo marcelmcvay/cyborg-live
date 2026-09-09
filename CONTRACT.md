@@ -57,6 +57,9 @@ Client also may store a display `handle` (<=24 chars, optional).
   events:  `submission` (data = submission object)
            `assemblage` (data = assemblage object)
            `moderate`   (data = { id, hidden: true|false })
+           `cue`        (data = cue object, incl. `slide`)
+           `slide`      (data = { beatId, slide })
+           `staged`     (data = { staged })
            `ping` every 20s
   On connect, send nothing historical (client calls /api/state first).
 
@@ -64,9 +67,25 @@ Client also may store a display `handle` (<=24 chars, optional).
   key must equal env ADMIN_KEY (default "cyborg"). -> 200 or 403.
   Presenter UI stores key in localStorage after prompt.
 
+### POST /api/slide       { slide: int 0..199, beatId?, key }
+  Sets which slide of the current beat the projector shows.
+  -> 200 { ok, beatId, slide } · 400 bad slide · 403 bad key
+  -> 409 if beatId is given and does not match the cued beat (stale presenter)
+
+  WHO OWNS SLIDE POSITION: the presenter (/presenter). It is the only surface
+  that POSTs here, so the operator drives one interface instead of two. /deck
+  is a pure LISTENER — it is unattended on a projector and holds NO admin key,
+  so it must never prompt for one and never pushes state upward.
+
+  Deliberately separate from /api/cue: stepping a slide must NOT re-fire the
+  beat cue, because the cue carries `ts` and re-firing would reset the beat
+  clock mid-beat. A beat cue always resets `slide` to 0; /api/slide leaves
+  `cue.ts` untouched.
+
 ### Objects
 submission = { id, ts, sid, handle, kind, text, hidden:false }
-assemblage = { id, ts, sid, handle, picks, spectrum, klass }
+assemblage = { id, ts, sid, handle, picks, spectrum, klass, vector? }
+cue        = { beatId, label, mode, prompt, signalOpen, assembleOpen, slide, ts }
 id = short random base36 (8 chars). ts = ms epoch.
 
 Persistence: append every event to data/*.jsonl; on boot replay to rebuild state.

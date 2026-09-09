@@ -1114,18 +1114,49 @@ kbd {
 .notes__body p:last-child { margin-bottom: 0; }
 .notes__empty { font-family: var(--font-mono); font-size: 11px; color: var(--mid); }
 
-/* ── Notes blocks: one per slide ───────────────────────────────────
-   A beat's script used to render as a single wall of prose, which is unreadable
-   at a lectern mid-sentence. Each slide now gets its own labelled block with
-   the projector's own words as the caption, so the operator matches script to
-   screen by eye. The presenter has no slide cue on the wire (the deck steps
-   slides locally), so all blocks show at once rather than guessing a current. */
+/* ── Notes blocks: one per slide, and they DRIVE the projector ─────
+   Each slide block is a button: clicking it cues that slide over /api/slide,
+   so the operator never moves between two interfaces. The block matching what
+   is currently on screen is marked .is-live.
+   Norman: the ON SCREEN badge + accent rail are the STATE, the hover/active
+   response is the AFFORDANCE, and the whole block being the hit target is the
+   MAPPING (you press the words you are about to say). */
 .nb {
+  display: block;
+  width: 100%;
+  border: 0;
   border-top: 1px solid var(--rule);
-  padding: 12px 0;
+  border-left: 2px solid transparent;
+  padding: 12px 10px 12px 12px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--t-fast, 120ms) var(--ease, ease),
+              border-color var(--t-fast, 120ms) var(--ease, ease);
 }
-.nb:first-child { border-top: 0; padding-top: 2px; }
-.nb:last-child { padding-bottom: 2px; }
+.nb--beat { cursor: default; }
+.nb:first-child { border-top: 0; }
+
+.nb--slide:hover { background: rgba(240, 239, 233, 0.04); }
+.nb--slide:active { background: rgba(240, 239, 233, 0.07); }
+.nb--slide:focus-visible { outline: 1px solid var(--accent); outline-offset: -2px; }
+
+/* STATE: this is the slide the room is looking at right now. */
+.nb--slide.is-live {
+  border-left-color: var(--accent);
+  background: rgba(0, 229, 204, 0.06);
+}
+.nb--slide.is-live .nb__n { color: var(--accent); }
+.nb--slide.is-live .nb__cap { color: var(--fg); }
+
+.nb__live {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 9px;
+  white-space: nowrap;
+}
 
 .nb__head {
   display: flex;
@@ -1137,7 +1168,7 @@ kbd {
 .nb__n {
   flex: 0 0 auto;
   font-size: 11px;
-  color: var(--accent);
+  color: var(--mid);
 }
 
 .nb__tag {
@@ -1148,7 +1179,7 @@ kbd {
   padding: 1px 5px;
 }
 
-/* the money line as it appears on the projector — quoted, dimmed, truncated */
+/* the money line as it appears on the projector — dimmed, clamped */
 .nb__cap {
   flex: 1 1 auto;
   min-width: 0;
@@ -1162,22 +1193,27 @@ kbd {
   -webkit-box-orient: vertical;
 }
 
+/* Paragraphs are spans (buttons take phrasing content only), so they need
+   explicit block layout. */
+.nb__body { display: block; }
+.nb__p,
 .nb__body p {
+  display: block;
   margin: 0 0 10px;
   font-size: 17px;
   line-height: 1.5;
 }
+.nb__p:last-child,
 .nb__body p:last-child { margin-bottom: 0; }
 
-/* The beat throughline is the primary script — mark it and give it the accent
-   rail so it is findable when scrolled. */
-.nb--beat { border-left: 2px solid var(--accent); padding-left: 12px; }
+/* The beat throughline is the standing script — accent rail, not clickable. */
+.nb--beat { border-left-color: var(--accent); }
 .nb--beat .nb__tag { color: var(--accent); border-color: var(--accent); }
 
-/* A slide with no authored note is just a positional marker: keep it thin so
-   it orients without eating vertical space. */
-.nb--slide.is-bare { padding: 7px 0; opacity: 0.62; }
+/* A slide with no authored note is a positional marker: keep it thin. */
+.nb--slide.is-bare { padding-top: 7px; padding-bottom: 7px; opacity: 0.62; }
 .nb--slide.is-bare .nb__head { margin-bottom: 0; }
+.nb--slide.is-bare.is-live { opacity: 1; }
 
 /* ── Feed card STAGE affordance ───────────────────────────────────── */
 .card__stage {
@@ -1277,3 +1313,19 @@ kbd {
   fill: var(--fg); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
 }
 .radar__val { fill: var(--accent); font-size: 10px; }
+
+/* Notes key. The prefix marks in the authored notes are a compact stage
+   language (→ say it, · context, ⚑ do not say, ⏱ timing); this legend keeps
+   them self-documenting on a lectern screen at 3am. */
+.notes-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  align-items: center;
+  padding: 6px var(--pad);
+  border-bottom: 1px solid var(--rule);
+  color: var(--mid);
+  font-size: 9px;
+}
+.notes-legend b { color: var(--fg); font-weight: 400; margin-right: 3px; }
+.notes-legend__hint { margin-left: auto; color: var(--accent); opacity: 0.8; }

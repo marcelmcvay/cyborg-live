@@ -14,6 +14,7 @@
     feed: 'api/feed',
     moderate: 'api/moderate',
     cue: 'api/cue',
+    slide: 'api/slide',
     stage: 'api/stage',
   };
   const ADMIN_KEY_LS = 'cyborg.adminKey';
@@ -39,6 +40,8 @@
     axisOrder: [],          // FIXED spoke order — never sort by value
     ghosts: [],             // authored reference polygons (Vader, farmer, ...)
     collapsed: new Set(),   // telemetry module keys collapsed by the operator
+    slideIdx: 0,            // slide the PROJECTOR is showing (authoritative)
+    pendingSlideIdx: null,  // optimistic local position while the POST is in flight
     filter: 'all',
     modVisible: true,
     link: 'offline',        // offline | linking | live
@@ -75,6 +78,7 @@
     cAssemblages: $('#cAssemblages'),
     hist: $('#hist'),
 
+    notesSlide: $('#notesSlide'),
     roomRadar: $('#roomRadar'),
     roomRadarMeta: $('#roomRadarMeta'),
     radarProxy: $('#radarProxy'),
@@ -644,6 +648,14 @@
       S.beatStartTs = Number(cue.ts) || Date.now();
     }
     if (!S.t0 && S.beatStartTs) setT0(S.beatStartTs, false);
+    // Slide position rides on the cue. A beat change always lands on slide 0;
+    // a reload mid-beat picks up wherever the room actually is.
+    if (changed) {
+      S.slideIdx = Number.isInteger(cue.slide) ? cue.slide : 0;
+      S.pendingSlideIdx = null;
+    } else if (Number.isInteger(cue.slide) && S.pendingSlideIdx == null) {
+      S.slideIdx = cue.slide;
+    }
     renderBeats();
     renderNow();
     renderClocks();
@@ -733,18 +745,14 @@
     $('.pill__text', pill).textContent = `${label} ${open ? 'OPEN' : 'SHUT'}`;
   }
 
-  // Notes are rendered as one block PER SLIDE in the beat, so the operator can
-  // see which line goes with what is currently on the projector instead of
-  // parsing a wall of prose. Two sources, in priority order:
+  // Notes are rendered as one block PER SLIDE in the beat. The block matching
+  // the slide currently on the projector is marked `is-live`, and clicking any
+  // block sends the projector to that slide — so this screen is the only
+  // interface the operator touches. Slide position is authoritative from the
+  // server (`cue.slide`, POST /api/slide, SSE `slide`).
   //
   //   1. slide.note      — authored per slide (preferred; see DECK-SCHEMA.md)
   //   2. presenterNotes  — beat-level prose, shown as a BEAT block
-  //
-  // The presenter deliberately does NOT track the projector's slide index: the
-  // deck owns slide stepping locally and there is no slide cue on the wire. So
-  // every slide's note is shown at once, labelled and numbered, and the
-  // operator matches by eye. Guessing a "current" slide here would be wrong
-  // more often than useful.
   function slideCaption(slide) {
     if (!slide || typeof slide !== 'object') return '';
     // the words actually on the projector, so the operator can match at a glance
@@ -769,6 +777,11 @@
     const slides = Array.isArray(beat.slides) ? beat.slides : [];
     const beatText = typeof beat.presenterNotes === 'string' ? beat.presenterNotes.trim() : '';
     const blocks = [];
+    if (el.notesSlide) {
+      el.notesSlide.textContent = slides.length
+        ? `SLIDE ${pad(shownSlideIdx() + 1, 2)}/${pad(slides.length, 2)}`
+        : 'SLIDE —/—';
+    }
 
     // Beat-level prose first: this is the throughline for the whole beat.
     if (beatText) {
@@ -785,20 +798,25 @@
     }
 
     // One block per slide, numbered to match the projector's step order.
+    // Buttons, not sections: clicking one drives the projector to that slide.
+    const live = shownSlideIdx();
     slides.forEach((slide, i) => {
       const note = typeof slide.note === 'string' ? slide.note.trim() : '';
       const cap = slideCaption(slide);
+      const isLive = i === live;
       blocks.push(`
-        <section class="nb nb--slide${note ? '' : ' is-bare'}">
-          <header class="nb__head">
+        <button type="button" class="nb nb--slide${note ? '' : ' is-bare'}${isLive ? ' is-live' : ''}"
+                data-slide="${i}" aria-current="${isLive ? 'true' : 'false'}">
+          <span class="nb__head">
             <span class="nb__n readout">${pad(i + 1, 2)}</span>
             <span class="nb__tag micro-label">${esc(String(slide.kind || '').toUpperCase())}</span>
             ${cap ? `<span class="nb__cap">${esc(cap)}</span>` : ''}
-          </header>
+            ${isLive ? '<span class="nb__live micro-label">ON SCREEN</span>' : ''}
+          </span>
           ${note
-            ? `<div class="nb__body">${note.split(/\n{2,}/).map((para) => `<p>${esc(para.trim())}</p>`).join('')}</div>`
+            ? `<span class="nb__body">${note.split(/\n{2,}/).map((para) => `<span class="nb__p">${esc(para.trim())}</span>`).join('')}</span>`
             : ''}
-        </section>`);
+        </button>`);
     });
 
     if (!blocks.length) {
@@ -807,7 +825,12 @@
     }
 
     el.notes.innerHTML = blocks.join('');
-    el.notes.scrollTop = 0;
+    // Keep the live block in view when the projector moves — the operator
+    // should never have to hunt for their place after a slide change.
+    const liveEl = $(`[data-slide="${live}"]`, el.notes);
+    if (liveEl && typeof liveEl.scrollIntoView === 'function') {
+      liveEl.scrollIntoView({ block: 'nearest', behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+    }
   }
 
   // ── Clocks: this beat vs its budget, talk vs totalMins ───────────
@@ -1018,6 +1041,13 @@
       if (!btn) return;
       cueBeat(btn.dataset.beat, btn);
     });
+    // Clicking a notes block drives the projector to that slide. Delegated,
+    // because renderNotes() replaces the whole subtree on every update.
+    el.notes.addEventListener('click', (e) => {
+      const blk = e.target.closest('[data-slide]');
+      if (!blk) return;
+      cueSlide(Number(blk.dataset.slide));
+    });
 
     renderBeats();
     renderNow();
@@ -1174,6 +1204,21 @@
       try { applyCue(JSON.parse(e.data)); } catch { /* ignore */ }
     });
 
+    // Slide moved — by this presenter, another presenter, or a clicker on the
+    // deck machine. Ignore frames for a beat we are not on.
+    es.addEventListener('slide', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.beatId && d.beatId !== shownBeatId()) return;
+        if (!Number.isInteger(d.slide)) return;
+        S.slideIdx = d.slide;
+        S.pendingSlideIdx = null;
+        if (S.cue) S.cue = { ...S.cue, slide: d.slide };
+        renderNotes(findBeat(shownBeatId()));
+        renderNow();
+      } catch { /* ignore */ }
+    });
+
     es.addEventListener('staged', (e) => {
       try {
         const d = JSON.parse(e.data);
@@ -1219,6 +1264,78 @@
   }
 
   // ── Keyboard ─────────────────────────────────────────────────────
+  // ── SLIDE transport ─────────────────────────────────────────────
+  // The presenter owns which slide the projector shows, so the operator never
+  // has to move between two interfaces. Clicking a notes block, or pressing
+  // Right/Left, POSTs /api/slide and the deck follows over SSE.
+  //
+  // Optimistic: the highlight moves in the same frame as the press and only
+  // rolls back if the POST fails. A lectern control that waits on a round trip
+  // feels broken even when it is working.
+  function shownSlideIdx() {
+    return S.pendingSlideIdx == null ? S.slideIdx : S.pendingSlideIdx;
+  }
+
+  function slideCountOf(beat) {
+    return Array.isArray(beat && beat.slides) ? beat.slides.length : 0;
+  }
+
+  async function cueSlide(n) {
+    const beat = findBeat(shownBeatId());
+    if (!beat) { ctrlError('NO BEAT CUED · CANNOT SET SLIDE'); return; }
+    const count = slideCountOf(beat);
+    if (!count) return;
+    const next = Math.min(count - 1, Math.max(0, Number(n) || 0));
+    if (next === shownSlideIdx()) return;
+
+    const key = getAdminKey();
+    if (!key) { ctrlError('SLIDE ABORTED · NO ADMIN KEY'); return; }
+
+    // 1. FEEDBACK FIRST — same frame as the press.
+    const prev = S.slideIdx;
+    S.pendingSlideIdx = next;
+    clearCtrlError();
+    renderNotes(beat);
+    status(`SLIDE → ${pad(next + 1, 2)}/${pad(count, 2)}`);
+
+    try {
+      const res = await fetch(API.slide, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ beatId: beat.id, slide: next, key }),
+      });
+      if (res.status === 403) {
+        localStorage.removeItem(ADMIN_KEY_LS);
+        S.pendingSlideIdx = null;
+        renderNotes(beat);
+        ctrlError('SLIDE 403 · KEY REJECTED');
+        if (getAdminKey(true)) return cueSlide(next);
+        return;
+      }
+      if (!res.ok) {
+        let detail = `HTTP ${res.status}`;
+        try { const j = await res.json(); if (j && j.error) detail = j.error; } catch { /* */ }
+        throw new Error(detail);
+      }
+      const json = await res.json();
+      S.slideIdx = Number.isInteger(json && json.slide) ? json.slide : next;
+      S.pendingSlideIdx = null;
+      renderNotes(beat);
+    } catch (err) {
+      // Roll back to what the room is actually showing — never leave the
+      // highlight claiming a slide the projector never received.
+      S.slideIdx = prev;
+      S.pendingSlideIdx = null;
+      renderNotes(beat);
+      ctrlError(`SLIDE FAILED · ${String(err.message).toUpperCase()}`);
+      status(`SLIDE FAILED · ${err.message}`);
+    }
+  }
+
+  function stepSlide(delta) {
+    cueSlide(shownSlideIdx() + delta);
+  }
+
   function initKeys() {
     document.addEventListener('keydown', (e) => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
@@ -1229,9 +1346,19 @@
           e.preventDefault();
           cycleTab(e.shiftKey ? -1 : +1);
           break;
-        // ── BEAT transport. Deliberately NOT ArrowRight/ArrowLeft/PageUp/
-        // PageDown: a presenter clicker sends those and /deck consumes them
-        // for slides. Down/Up (and n/p) are beats, and only on this screen.
+        // ── SLIDE transport. ArrowRight/Left + PageDown/Up, which is exactly
+        // what a presenter clicker sends: plug the clicker into THIS machine
+        // and it drives the projector's slides through the server.
+        case 'ArrowRight': case 'PageDown': case ' ': case 'Spacebar':
+          e.preventDefault();
+          stepSlide(+1);
+          break;
+        case 'ArrowLeft': case 'PageUp': case 'Backspace':
+          e.preventDefault();
+          stepSlide(-1);
+          break;
+        // ── BEAT transport on Down/Up (and n/p) so beats and slides never
+        // fight over the same key. Beats are the coarse move, slides the fine.
         case 'ArrowDown': case 'n': case 'N':
           e.preventDefault();
           stepBeat(+1, el.btnNext);

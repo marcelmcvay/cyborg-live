@@ -29,7 +29,12 @@ function extract(name) {
 
 const notesEl = { innerHTML: '', scrollTop: 0 };
 const sandbox = {
-  el: { notes: notesEl, notesBeat: { textContent: '' } },
+  el: { notes: notesEl, notesBeat: { textContent: '' }, notesSlide: { textContent: '' } },
+  // slide position the presenter believes the projector is on
+  S: { slideIdx: 0, pendingSlideIdx: null },
+  shownSlideIdx() { return sandbox.S.pendingSlideIdx == null ? sandbox.S.slideIdx : sandbox.S.pendingSlideIdx; },
+  $: () => null,           // scrollIntoView lookup; null is the no-op path
+  REDUCED_MOTION: true,
   esc: (s) => String(s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;'),
@@ -38,6 +43,7 @@ const sandbox = {
 sandbox.globalThis = sandbox;
 vm.createContext(sandbox);
 vm.runInContext(`${extract('slideCaption')}\n${extract('renderNotes')}`, sandbox);
+const setLive = (i) => { sandbox.S.slideIdx = i; sandbox.S.pendingSlideIdx = null; };
 
 let fails = 0;
 const check = (name, cond, detail) => {
@@ -130,6 +136,73 @@ for (const slug of ['design-week-ri', 'miami']) {
 {
   sandbox.renderNotes({ id: 'e', label: 'E', slides: [] });
   check('no slides + no notes -> empty state', /NO NOTES FOR THIS BEAT/.test(notesEl.innerHTML));
+}
+
+// 9. Slide blocks are BUTTONS carrying data-slide, so they can drive the deck
+{
+  setLive(0);
+  sandbox.renderNotes({
+    id: 't', label: 'T',
+    slides: [{ kind: 'statement', text: 'A' }, { kind: 'statement', text: 'B' }, { kind: 'radar' }],
+    presenterNotes: 'prose',
+  });
+  const html = notesEl.innerHTML;
+  const idxs = [...html.matchAll(/data-slide="(\d+)"/g)].map((m) => m[1]);
+  check('every slide block carries data-slide in order', idxs.join() === '0,1,2', idxs.join());
+  check('slide blocks are <button> (clickable)',
+    (html.match(/<button type="button" class="nb nb--slide/g) || []).length === 3);
+  check('beat block is NOT a button', /class="nb nb--beat"/.test(html) && !/<button[^>]*nb--beat/.test(html));
+}
+
+// 10. The live slide is marked, and only one is
+{
+  const deck = JSON.parse(fs.readFileSync(path.join(ROOT, 'public', 'decks', 'design-week-ri.json'), 'utf8'));
+  const beat = deck.beats.find((b) => b.id === 'reveal');
+  for (const i of [0, 1, 2, 3]) {
+    setLive(i);
+    sandbox.renderNotes(beat);
+    const html = notesEl.innerHTML;
+    const liveCount = (html.match(/ is-live"/g) || []).length;
+    const onLive = [...html.matchAll(/data-slide="(\d+)" aria-current="true"/g)].map((m) => Number(m[1]));
+    check(`slide ${i} live -> exactly one is-live on the right block`,
+      liveCount === 1 && onLive.length === 1 && onLive[0] === i, `live=${liveCount} at ${onLive.join()}`);
+  }
+}
+
+// 11. ON SCREEN badge + aria-current present for the live block only
+{
+  setLive(1);
+  sandbox.renderNotes({ id: 't', label: 'T', slides: [{ kind: 'statement', text: 'A' }, { kind: 'statement', text: 'B' }] });
+  const html = notesEl.innerHTML;
+  check('ON SCREEN badge appears once', (html.match(/ON SCREEN/g) || []).length === 1);
+  check('aria-current true appears once', (html.match(/aria-current="true"/g) || []).length === 1);
+  check('aria-current false on the other block', (html.match(/aria-current="false"/g) || []).length === 1);
+}
+
+// 12. Slide readout in the header tracks position and total
+{
+  setLive(2);
+  sandbox.renderNotes({ id: 't', label: 'T', slides: [{ kind: 'prompt', text: 'a' }, { kind: 'prompt', text: 'b' }, { kind: 'prompt', text: 'c' }] });
+  check('header slide readout reflects live position',
+    sandbox.el.notesSlide.textContent === 'SLIDE 03/03', sandbox.el.notesSlide.textContent);
+  sandbox.renderNotes({ id: 'e', label: 'E', slides: [] });
+  check('no slides -> readout blanked', sandbox.el.notesSlide.textContent === 'SLIDE —/—', sandbox.el.notesSlide.textContent);
+}
+
+// 13. Note bodies use spans, not <p> (invalid inside <button>)
+{
+  setLive(0);
+  sandbox.renderNotes({ id: 't', label: 'T', slides: [{ kind: 'statement', text: 'A', note: 'one\n\ntwo' }] });
+  const btn = notesEl.innerHTML.match(/<button[\s\S]*?<\/button>/)[0];
+  check('no <p> inside the slide button', !/<p[ >]/.test(btn));
+  check('paragraphs split into nb__p spans', (btn.match(/class="nb__p"/g) || []).length === 2);
+}
+
+// 14. An out-of-range live index must not mark anything (no crash, no ghost)
+{
+  setLive(99);
+  sandbox.renderNotes({ id: 't', label: 'T', slides: [{ kind: 'statement', text: 'A' }] });
+  check('out-of-range live index marks nothing', !/ is-live"/.test(notesEl.innerHTML));
 }
 
 console.log(`\n${fails === 0 ? 'ALL CHECKS PASSED' : `${fails} CHECK(S) FAILED`}`);

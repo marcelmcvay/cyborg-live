@@ -151,17 +151,48 @@
       return;
     }
     el.beatLabel.classList.remove('is-orphan');
-    if (!force && beat.id === S.beatId) { renderStrip(); return; }
+    // Same beat: do not re-render the whole beat (that would restart the entry
+    // animation), but DO honour a slide position carried on the cue. This is
+    // the reconnect path — a projector that refreshes mid-talk must land on the
+    // slide the presenter is actually on, not back at slide 0.
+    if (!force && beat.id === S.beatId) {
+      if (Number.isInteger(cue.slide)) setSlide(cue.slide, false);
+      renderStrip();
+      return;
+    }
     S.beatId = beat.id;
     S.beatIdx = S.beats.indexOf(beat);
-    S.slideIdx = 0;                          // cue change always jumps to slide 0
+    // A beat change lands on the cue's slide when it has one (reconnect),
+    // otherwise slide 0 (a genuinely new beat cue always carries slide: 0).
+    S.slideIdx = Number.isInteger(cue.slide) ? Math.max(0, cue.slide) : 0;
     renderBeat(true);
   }
 
-  // ── Slide navigation (clicker: Arrow keys, Space fallback) ───────
+  // ── Slide navigation ─────────────────────────────────────────────
+  // The PRESENTER is the sole authority on slide position: it POSTs
+  // /api/slide and the projector receives an SSE `slide` event. This screen is
+  // a pure LISTENER — it holds no admin key (it is unattended on a projector,
+  // so it must never prompt for one) and it never pushes state upward.
+  //
+  // The arrow keys below still work, because a presenter clicker plugged into
+  // THIS machine is a legitimate setup — but they move only the local view and
+  // the presenter's highlight will NOT follow. If you want the highlight to
+  // track, drive slides from /presenter (or plug the clicker into that
+  // machine); that is the supported path.
   function slidesOf(beat) {
     const arr = Array.isArray(beat && beat.slides) ? beat.slides.filter(Boolean) : [];
     return arr.length ? arr : [{ kind: 'statement', text: beat && beat.label ? beat.label : '' }];
+  }
+
+  // Apply a slide index that came off the wire.
+  function setSlide(n, animate = true) {
+    const beat = findBeat(S.beatId);
+    if (!beat) return;
+    const max = slidesOf(beat).length - 1;
+    const next = Math.min(max, Math.max(0, Number(n) || 0));
+    if (next === S.slideIdx) return;
+    S.slideIdx = next;
+    renderBeat(animate);
   }
 
   function step(delta) {
@@ -500,7 +531,17 @@
       } catch (_) { /* ignore */ }
     });
 
-    // assemblages move the LIVE histogram while the reveal slide is up
+    // Slide position pushed by the presenter. Ignore events for a beat we are
+    // not on — a race between cue and slide must not show the wrong slide.
+    es.addEventListener('slide', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d.beatId && d.beatId !== S.beatId) return;
+        setSlide(d.slide);
+      } catch { /* malformed frame */ }
+    });
+
+    // assemblages move the LIVE aggregate while a radar/histogram slide is up
     es.addEventListener('assemblage', (e) => {
       try {
         const a = JSON.parse(e.data);

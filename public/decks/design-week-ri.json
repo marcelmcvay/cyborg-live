@@ -21,44 +21,44 @@
         {
           "kind": "prompt",
           "text": "Designed by Systems. Join the room —",
-          "note": "Join URL must be readable from across the room. This slide is up longest — check it renders before you walk away."
+          "note": "→ \"Open the link on your phone — the talk runs on it.\"\n\n· Join URL has to read from across the room."
         },
         {
           "kind": "statement",
           "text": "What shapes the technologies of tomorrow?",
-          "note": "Rhetorical, no answer expected. It seeds the brief's own language so the room arrives already thinking about systems."
+          "note": "· Rhetorical. Seeds the brief's own language before I say a word."
         },
         {
           "kind": "prompt",
           "text": "Pick the tech that is genuinely part of you.",
-          "note": "The actual ask. If people are standing near you, say it out loud too — the screen alone converts poorly during a cocktail hour."
+          "note": "→ \"Pick the tech that's genuinely part of you — not what you own, what you'd feel the loss of.\"\n\n· Say it out loud to anyone standing near me. The screen alone converts badly at a cocktail hour."
         },
         {
           "kind": "histogram",
-          "note": "Populating live. Check the count before you go on — if it is under 15 by the time you're due, spend your first minute driving signups instead of the diagnostic."
+          "note": "⏱ Glance check: under 15 by the time I'm on? Spend minute one driving signups instead of the diagnostic."
         },
         {
           "kind": "prompt",
           "text": "What system have you worked around this week?",
-          "note": "SIGNAL prompt. Answers here become panel material later — this is where the 'worked around a system' stories come from."
+          "note": "· SIGNAL prompt. These answers become panel material — the \"worked around a system\" stories."
         },
         {
           "kind": "statement",
           "text": "You don't need implants to be a cyborg.",
-          "note": "The thesis, planted early and unexplained. Do not elaborate now; you land it properly in RECOGNITION."
+          "note": "· The thesis, planted and unexplained. Don't elaborate — RECOGNITION lands it."
         },
         {
           "kind": "prompt",
           "text": "Which machine decides something about you daily?",
-          "note": "Second SIGNAL prompt. Fishing for the dispatched-by-a-machine stories: scheduling, credit, algorithmic management."
+          "note": "· Fishing for dispatched-by-a-machine stories: scheduling, credit, algorithmic management."
         },
         {
           "kind": "radar",
           "title": "The shape of this room, so far",
-          "note": "The room's shape, already built. Do not narrate it during the lobby — you want it to be a surprise when you open on it."
+          "note": "⚑ Don't narrate the shape during the lobby. It should be a surprise when I open on it."
         }
       ],
-      "presenterNotes": "COCKTAIL HOUR — 30 min, unattended. Screen is up, join URL persistent, ASSEMBLE and SIGNAL both open. Slides auto-rotate; let people build over drinks. This is the whole reason the reveal lands later — by the time you speak the radar is already carrying 40 real answers and you are not asking a cold room to do homework. Work the room, tell people to open the link, do not explain the thesis yet."
+      "presenterNotes": "⏱ 30 min unattended · ASSEMBLE + SIGNAL open · slides auto-rotate\n\n⏱ Work the room. Tell people to open the link. Don't explain the thesis yet."
     },
     {
       "id": "intro",
@@ -74,20 +74,20 @@
         {
           "kind": "statement",
           "text": "Designed by systems.",
-          "note": "Say it plainly: 'You were promised an evening about how the systems we move through quietly shape behavior, decisions, and what gets built next. That's exactly what this is.'"
+          "note": "→ \"You were promised an evening about how the systems we move through quietly shape behavior, decisions, and what gets built next.\"\n\n→ \"That's exactly what this is.\""
         },
         {
           "kind": "statement",
           "text": "The world we move through shapes what we make.",
-          "note": "'I'm going to add one turn to it — the loop runs both ways.' This is the upgrade to the brief, stated as an addition and not a correction."
+          "note": "→ \"I'm going to add one turn to it: the loop runs both ways.\"\n\n· This is the upgrade to the brief — an addition, not a correction."
         },
         {
           "kind": "prompt",
           "text": "Phones out. This talk runs on you.",
-          "note": "The diagnostic, verbally, no slide needed: 'Who's used AI for design work in the last month? Keep them up. Now — who's worried about saying I used AI versus I made this?' Let the hands hang. That tension is the talk."
+          "note": "→ \"Who's used AI for design work in the last month? Keep them up.\"\n\n→ \"Now — who's worried about saying 'I used AI' versus 'I made this'?\"\n\n· Let the hands hang. That tension is the talk.\n\n· Name, studio, and move."
         }
       ],
-      "presenterNotes": "Answer the brief in the first sixty seconds — these people read a description weeks ago and came for it. Name, studio, and move. Do NOT explain the app; they have been using it for half an hour."
+      "presenterNotes": "⏱ 3 min · answer the brief in the first sixty seconds\n\n⚑ Don't explain the app — they've been using it for half an hour."
     },
     {
       "id": "reveal",
@@ -103,24 +103,24 @@
         {
           "kind": "radar",
           "title": "The shape of this room",
-          "note": "This is a radar, not a scale — no far end, nobody is 'more cyborg'. Point at the spokes with the most reach and name them: this room runs high on SURVEILLANCE and DEPENDENCE, low on MASTERY. That gap is the talk."
+          "note": "→ \"This is a radar, not a scale. There's no far end, and nobody here is more cyborg than anyone else.\"\n\n→ \"This room runs high on surveillance and dependence, and low on mastery.\"\n\n· Point at the actual spokes. That gap is the talk."
         },
         {
           "kind": "statement",
           "text": "This room is already a cyborg.",
-          "note": "Say the line: 'two people can enclose exactly the same area and be completely different shapes.'"
+          "note": "→ \"Two people can enclose exactly the same area and be completely different shapes.\""
         },
         {
           "kind": "statement",
           "text": "Same area. Different shape.",
-          "note": "The ghosts. Vader is the translucent shape behind yours — conspicuous, self-directed, obvious hardware. Ours is invisible and dispatched. The 1890 farmer is the other: near-total mastery, almost no surveillance. Difference in KIND, not progress along a line."
+          "note": "→ \"Vader is the shape behind yours — conspicuous, self-directed, obvious hardware. Ours is invisible and dispatched.\"\n\n→ \"The 1890 farmer is the other ghost: near-total mastery, almost no surveillance.\"\n\n→ \"That's a difference in kind. Not progress along a line.\""
         },
         {
           "kind": "histogram",
-          "note": "DEPENDENCE only — 'what breaks if it stops'. One number to point at, not a ranking. Remind them ASSEMBLE stays open: they will revise after the Regent story and the shape moving live is the point. SIGNAL has been open since the lobby — 'anything you send is material and I will read it out.'"
+          "note": "→ \"This one's dependence only — what breaks if it stops.\"\n\n→ \"ASSEMBLE stays open. Change your picks as we go; the shape moving is the point.\"\n\n→ \"SIGNAL's been open since the lobby. Anything you send is material and I will read it out.\""
         }
       ],
-      "presenterNotes": "The hook is that the data is theirs and they built it during cocktails without being told why. READ THE SHAPE, DO NOT RANK IT. Do NOT say 'spectrum', 'scale', or 'where are you on the line'; the instrument deliberately has no line."
+      "presenterNotes": "⏱ 4 min · the data is theirs and they built it over drinks\n\n⚑ Never say \"spectrum\", \"scale\", or \"where are you on the line.\" The instrument has no line."
     },
     {
       "id": "recognition",
@@ -137,12 +137,12 @@
           "kind": "quote",
           "text": "Did you invent the words you are using? Did you design the glyphs?",
           "attrib": "the authorship tension",
-          "note": "Open on the authorship tension: 'that was written by AI' versus 'I wrote this by hand' is awkward and unbalanced. Did you invent the words? Did you design the glyphs? What actually constitutes authorship?"
+          "note": "→ \"'That was written by AI' versus 'I wrote this by hand' — that's an awkward, unbalanced sentence.\"\n\n→ \"Did you invent the words you're using? Did you design the glyphs?\"\n\n→ \"So what actually constitutes authorship?\""
         },
         {
           "kind": "statement",
           "text": "You don't need implants to be a cyborg.",
-          "note": "The claim from 'The Cyborgs Aren't Coming': you don't need implants to be a cyborg. Land it: cyborg describes what we are, not how we should be. Diagnostic, not prescriptive."
+          "note": "→ \"You don't need implants to be a cyborg.\"\n\n→ \"Cyborg describes what we are, not how we should be. It's diagnostic, not prescriptive.\"\n\n· From 'The Cyborgs Aren't Coming'."
         },
         {
           "kind": "list",
@@ -152,10 +152,10 @@
             "Noise-cancelling headphones",
             "GPS-guided mapping"
           ],
-          "note": "The normalcy of daily interaction with technology makes immersive, technically complex moments feel mundane. Read two or three, not all four — the list is doing the work visually."
+          "note": "→ \"The normalcy of this makes genuinely complex moments feel mundane.\"\n\n· Read two or three, not all four. The list does the visual work."
         }
       ],
-      "presenterNotes": "Six minutes — recognition before theory, and do not get academic here. The word 'cyborg' is doing work you will name explicitly at the very end."
+      "presenterNotes": "⏱ 6 min · recognition before theory\n\n⚑ Don't get academic. The word \"cyborg\" is doing work I name explicitly at the end."
     },
     {
       "id": "shaped",
@@ -177,21 +177,31 @@
             "1989: the Wall falls. Two systems, one city, nobody can navigate.",
             "1992: one drawing, several metres long. Berlin becomes yellow."
           ],
-          "note": "Tell it as a twelve-year cold pitch — that is the honest version. Rejected in 1980 for 'unchangeable standards, a lack of responsibility and a lack of resources.' The 1987 meeting backfired but got him remembered. Then history did the work: the Wall came down and a city split since 1949 suddenly had one transit network nobody could read. 1992 he unrolls a several-metre wallpaper holding the whole system in one view."
+          "note": "→ \"This is a twelve-year cold pitch. That's the honest version of this story.\"\n\n→ \"1980, he tells the transit authority its city looks like a mess. They turn him down — 'unchangeable standards, a lack of responsibility and a lack of resources.'\"\n\n→ \"1987 he finally gets fifty minutes in a room, and insults every department head inside fifteen. It backfires — but they remember him.\"\n\n→ \"Then history does the work. 1989 the Wall comes down, and a city split since 1949 has one transit network that nobody can read.\"\n\n→ \"1992 he unrolls a drawing several metres long that holds the whole system in one view.\"\n\n⚑ He did NOT design the U-Bahn map. Dates above are verified — stick to them."
+        },
+        {
+          "kind": "statement",
+          "text": "Everything becomes yellow.",
+          "note": "→ \"One decision: everything becomes yellow. Buses, trams, signage — all of it.\"\n\n→ \"That's not a brand refresh. It's a cognitive system a citizen can navigate at speed.\"\n\n→ \"The city gets an identity that doesn't require explanation. Yellow becomes shorthand for movement.\"\n\n· And the board buys it partly because it CUT COSTS — fewer buttons, fewer materials, fewer colours.\n\n· This is my own line from the DDX writeup: branding at this scale behaves like electrical current. Invisible when it works, impossible to ignore when it's misaligned."
         },
         {
           "kind": "quote",
           "text": "Infrastructure works best when it disappears into use.",
           "attrib": "Erik Spiekermann",
-          "note": "The board buys it partly because it CUT COSTS: fewer buttons, fewer materials, fewer colours. Typography as nervous system, not ornament. Optional, only if it lands: when you told him you liked his attitude he said 'What attitude? I'm German.'"
+          "note": "→ \"Typography as nervous system, not ornament.\"\n\n→ \"The Deutsche Bahn typeface is recognizable with the logo removed. A mug with 'Bahn' on it in that face is unmistakable.\"\n\n→ \"Type isn't decoration. It carries identity through repetition and trust.\"\n\n· I called it a neural signature — how a place senses itself. Proprioception for a city.\n\n· Optional, only if the room is warm: I told him I liked his attitude and he said \"What attitude? I'm German.\""
         },
         {
           "kind": "statement",
           "text": "Does it work? Nobody knows.",
-          "note": "THE TURN, and the actual point. Eye magazine, 1995: MetaDesign had almost no control over how the work was used, no pilot evaluation, and Spiekermann kept complaining that what the signs said and where they were placed were beyond his control. Asked whether the system worked — 'nobody knows.' The designer shaped the city and the institution shaped the designer right back."
+          "note": "→ \"Here's the turn, and it's the actual point.\"\n\n→ \"Eye magazine, 1995: his studio had almost no control over how the work got used. No pilot evaluation. He kept complaining that what the signs said and where they were placed were beyond his control.\"\n\n→ \"Asked whether the system worked, the answer was 'nobody knows.'\"\n\n→ \"So he shaped the city — and the institution shaped him right back.\"\n\n⚑ No ridership or legibility numbers. No MetaDesign co-founder names. Never repeat the Green Party claim."
+        },
+        {
+          "kind": "statement",
+          "text": "The constraint is the container.",
+          "note": "→ \"His closing point at DDX was deceptively deep: never put more than seven people on a project.\"\n\n→ \"Past that, human cognition reorganizes into subgroups. Communication fragments and the work slows.\"\n\n→ \"His metaphor: work is a gas. It expands. The constraint is the container.\"\n\n· Tie it back — the shape of the org shapes the artifact. Berlin got legible because a small team with a hard constraint made one decision.\n\n· This is the bridge to the next beat: the system shaped him, and he shaped it back."
         }
       ],
-      "presenterNotes": "This is the brief's 'public transit and cities' beat and your credential — you have met Spiekermann and published on him. FACT DISCIPLINE — do NOT say he designed the U-Bahn map, do NOT cite ridership or legibility numbers, do NOT name MetaDesign co-founders, do NOT repeat the Green Party claim. Dates below are verified; stick to them."
+      "presenterNotes": "⏱ 6 min · this is the brief's \"public transit and cities\" beat, and my credential — I've met him and published on him\n\n⚑ Do NOT say he designed the U-Bahn map · no ridership/legibility numbers · no MetaDesign co-founder names · never repeat the Green Party claim"
     },
     {
       "id": "resist",
@@ -213,12 +223,12 @@
             "Flat ramps erase the edge blind pedestrians navigate by.",
             "So they mapped 125 of them and drew the compromise themselves."
           ],
-          "note": "Ed Roberts, polio at 14, admitted to Berkeley 1962; a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.' The only building that could hold his 800-pound iron lung was the campus hospital — he accepted on condition it be treated as a dorm, not a medical facility. More disabled students arrive, they name themselves the Rolling Quads, and they start using civil-rights language for what had always been framed as charity.\n\nAfter the 1969 People's Park riots Berkeley renovates Telegraph Avenue and installs wide flat curb ramps. The response is not gratitude: flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars. THE BEST DETAIL — the disabled community was itself split, wheelchair users and blind pedestrians wanted opposite things. So from 1970 to 1974 they mapped 125 curb-cut locations along Telegraph and Shattuck and proposed a steeper cut set outside the pedestrian crossing: a compromise they negotiated among themselves."
+          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.'\"\n\n→ \"The only building that could hold his 800-pound iron lung was the campus hospital. He took it — on condition it be treated as a dorm, not a medical facility.\"\n\n→ \"More disabled students arrive. They name themselves the Rolling Quads, and they start using civil-rights language for something that had always been framed as charity.\"\n\n→ \"1969, after the People's Park riots, Berkeley renovates Telegraph Avenue and puts in wide flat curb ramps.\"\n\n→ \"The response is not gratitude. Flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars.\"\n\n→ \"And here's the best detail — the disabled community was split against itself. Wheelchair users and blind pedestrians wanted opposite things.\"\n\n→ \"So from 1970 to 1974 they map 125 curb-cut locations along Telegraph and Shattuck, and propose a steeper cut set outside the pedestrian crossing. A compromise they negotiated among themselves.\""
         },
         {
           "kind": "statement",
           "text": "Everyone with a stroller uses what they won.",
-          "note": "First planned wheelchair-accessible route in the United States, designed by disabled people. Sixteen years later the ADA makes it federal law, and today every stroller, suitcase and hand truck rides it. That is the loop closing: the system defined them as unable to move, they moved anyway, they redrew the environment, and the redrawn environment redefined everyone else's mobility."
+          "note": "→ \"First planned wheelchair-accessible route in the United States, designed by disabled people.\"\n\n→ \"Sixteen years later the ADA makes it federal law. Today every stroller, suitcase and hand truck rides it.\"\n\n→ \"That's the loop closing: the system defined them as unable to move, they moved anyway, they redrew the environment — and the redrawn environment redefined everyone else's mobility.\""
         },
         {
           "kind": "list",
@@ -228,10 +238,10 @@
             "Reshape — redraw it",
             "Then it reshapes everyone"
           ],
-          "note": "The brief's three verbs, named explicitly so the room hears the promise being kept. Read them as a sequence, not options — the Berkeley story ran all four."
+          "note": "→ \"Adapt, resist, reshape — and then it inherits.\"\n\n· Read as a sequence, not options. Berkeley ran all four."
         }
       ],
-      "presenterNotes": "The brief promised 'adapt, resist, and reshape' — this is that beat, and it is the one your deck was missing. FACT DISCIPLINE — Roberts did NOT found the Center for Independent Living; say he led it or guided its growth. Berkeley did not invent the curb cut (Kalamazoo, 1940s, for disabled veterans); the precise claim is the first PLANNED accessible route, designed by disabled people. Source: Bess Williamson, 'The People's Sidewalks,' Boom, Spring 2012."
+      "presenterNotes": "⏱ 6 min · this is the brief's \"adapt, resist, reshape\" promise\n\n⚑ Roberts did NOT found the Center for Independent Living — say he led it or guided its growth · Berkeley did NOT invent the curb cut (Kalamazoo, 1940s, disabled veterans) · the defensible claim is first PLANNED accessible route, designed by disabled people\n\n· Source: Bess Williamson, \"The People's Sidewalks,\" Boom, Spring 2012"
     },
     {
       "id": "responsibility",
@@ -253,7 +263,7 @@
             "\"That's not where I expect it to be.\"",
             "We weren't designing interface. We were translating fluency."
           ],
-          "note": "Regent, told fast. A ground-effect craft that skims above the water. The client's operator was defined as a mariner — one wheel, one throttle, a captain that can fly. Operational scope was aviation-grade; the mental model was maritime. That gap was the entire design problem.\n\nThen a test pilot joined: ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — Bob Dylan. He liked every concept. Every concept was wrong. Not messy, not unpolished — they did not match the logic his body had spent decades building. He would tell us what he could not see, not because it was absent from the UI but because it was absent from where his body expected it to be. The real user changed and the entire prompt changed with it.\n\nNote who was at that table: me, business development, product management, the CTO, program directors — all genuinely good people. Then the pilot arrived and reordered everything."
+          "note": "→ \"Regent builds a ground-effect craft that skims above the water.\"\n\n→ \"The client defined the operator as a mariner. One wheel, one throttle — a captain that can fly.\"\n\n→ \"But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem.\"\n\n→ \"Then a test pilot joins. Ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — we called him Bob Dylan.\"\n\n→ \"He liked every concept. Every concept was wrong.\"\n\n→ \"Not messy, not unpolished — they didn't match the logic his body had spent decades building. He'd tell me what he couldn't see, not because it was missing from the UI but because it wasn't where his body expected it.\"\n\n→ \"The real user changed, and the entire prompt changed with it.\"\n\n· Name the table: me, business development, product management, the CTO, program directors — all genuinely good people. Then the pilot arrived and reordered everything."
         },
         {
           "kind": "caseStudy",
@@ -264,15 +274,15 @@
             "Age verification. Municipal regulation. Produce indexing.",
             "And the machine — sensor-driven, impatient."
           ],
-          "note": "Pivot to self-checkout as the everyday version of the same table: the grocery chain, the card companies, age verification, municipal regulation, produce vendors, and the machine itself ever-ready to flag an unexpected item in the bagging area. What looks frictionless is a dense web of actors with motives, limits and influence."
+          "note": "→ \"Self-checkout is the everyday version of the same table.\"\n\n→ \"The grocery chain protecting margins. The card companies extracting fees. Age verification. Municipal regulation. Produce vendors. And the machine itself, ever-ready to flag an unexpected item in the bagging area.\"\n\n→ \"What looks frictionless is a dense web of actors with motives, limits and influence.\""
         },
         {
           "kind": "statement",
           "text": "For whose interests does the interface serve?",
-          "note": "To design responsibly is to name those actors, question their power, and decide how — and whether — they belong at the table. Craft distinction: it is one thing to design a beautiful interface in your tool of choice, another to negotiate with stakeholders. Both are valid, both land in the interface — the place where the negotiation gets painted.\n\nCue the room: send your answer to SIGNAL now, we are using them next."
+          "note": "→ \"To design responsibly is to name those actors, question their power, and decide how — and whether — they belong at the table.\"\n\n→ \"It's one thing to design a beautiful interface in your tool of choice. It's another to negotiate with stakeholders. Both are valid, and both land in the interface — the place where the negotiation gets painted.\"\n\n→ \"Send me your answer on SIGNAL now. We're using them next.\""
         }
       ],
-      "presenterNotes": "Eight minutes, two case studies and a question. Close on the question and leave it up."
+      "presenterNotes": "⏱ 8 min · two case studies, then the question stays up"
     },
     {
       "id": "handoff",
@@ -288,20 +298,20 @@
         {
           "kind": "statement",
           "text": "Cyborg describes what we are, not how we should be.",
-          "note": "Close the loop out loud and tie it back to the title: the world you move through shaped what you make, and what you make becomes the world someone else moves through. Berlin shaped how a city reads itself; Berkeley shaped every curb in America; the seaglider cockpit will be inherited by whatever flies next."
+          "note": "→ \"Cyborg describes what we are, not how we should be.\""
         },
         {
           "kind": "statement",
           "text": "Designed by systems. Designing them back.",
-          "note": "You are always designing for shared technological progress — later interfaces inherit from yours, yours inherited from someone else's."
+          "note": "→ \"The world you move through shaped what you make. And what you make becomes the world someone else moves through.\"\n\n→ \"Berlin shaped how a city reads itself. Berkeley shaped every curb in America. The seaglider cockpit gets inherited by whatever flies next.\"\n\n→ \"You're always designing for shared technological progress — later interfaces inherit from yours, and yours inherited from someone else's.\""
         },
         {
           "kind": "prompt",
           "text": "Who else is at your negotiation table?",
-          "note": "Hand it over honestly: 'The brief said you'd become part of this conversation. That starts now, and the running order is whatever is on your phones.' Leave the question on screen and go to the panel."
+          "note": "→ \"The brief said you'd become part of this conversation. That starts now — and the running order is whatever's on your phones.\"\n\n⏱ Leave the question up. Go to the panel."
         }
       ],
-      "presenterNotes": "Two minutes, then you stop talking for the rest of the night."
+      "presenterNotes": "⏱ 2 min · then I stop talking for the rest of the night"
     },
     {
       "id": "panel",
@@ -318,50 +328,50 @@
         {
           "kind": "prompt",
           "text": "Who else is at your negotiation table?",
-          "note": "Stage two or three on this and let the panel react to each rather than lecturing."
+          "note": "→ \"Who else is at your negotiation table?\"\n\n· Stage two or three and let the panel react to each. Don't lecture."
         },
         {
           "kind": "staged",
-          "note": "Read it out, credit the handle. Let a panelist respond before you do."
+          "note": "· Read it out, credit the handle. Let a panelist respond before I do."
         },
         {
           "kind": "staged",
-          "note": "Second card. If two cards disagree, put them side by side verbally — that is the negotiation table made visible."
+          "note": "· Second card. If two disagree, put them side by side out loud — that's the negotiation table made visible."
         },
         {
           "kind": "prompt",
           "text": "In-house, agency, solo — whose interests are you suspended between?",
-          "note": "Hand this one to your boss deliberately: in-house designers sit between business interest and the interests of the person using the thing; agency designers sit in that plus agency profitability. Let the boss contribute as a peer — peer dynamic, not hierarchy."
+          "note": "→ \"In-house designers sit between business interest and the interests of the person using the thing. Agency designers sit in that, plus agency profitability.\"\n\n⏱ Hand this one to my boss deliberately. Peer dynamic, not hierarchy."
         },
         {
           "kind": "staged",
-          "note": "Stage whatever comes back on the in-house/agency split."
+          "note": "· Stage whatever comes back on the in-house/agency split."
         },
         {
           "kind": "prompt",
           "text": "RIPTA is moving the bus hub out of Kennedy Plaza. Who was at that table?",
-          "note": "THE LOCAL ONE, and ASK, never assert. RIPTA's board voted in August to move the bus hub from Kennedy Plaza to the train station, riders organized against it, and the Kennedy Plaza Resilience Coalition has been fighting it since 2021. People in this room know this fight better than you do — policymakers and community leaders were invited. Who was at that table, and who wasn't?\n\nDo NOT assert cost figures (they conflict — 17M bond, 77M set aside, 200M estimates) and do NOT attribute motive to any named developer; that is reported opinion, not fact."
+          "note": "→ \"RIPTA's board voted in August to move the bus hub from Kennedy Plaza to the train station. Riders organized against it. The Kennedy Plaza Resilience Coalition has been fighting it since 2021.\"\n\n→ \"People in this room know this fight better than I do. So: who was at that table, and who wasn't?\"\n\n⚑ ASK, never assert. Do NOT state cost figures — they conflict (17M bond, 77M set aside, 200M estimates). Do NOT attribute motive to any named developer; that's reported opinion."
         },
         {
           "kind": "staged",
-          "note": "Stage the sharpest RIPTA card. Let the room correct you if you have it wrong — that is the point of asking."
+          "note": "· Stage the sharpest RIPTA card. Let the room correct me — that's the point of asking."
         },
         {
           "kind": "radar",
           "title": "The room, revised",
-          "note": "Watch this against the reveal. If the shape has moved since the reveal, SAY SO OUT LOUD — that is the room re-authoring itself in real time, and it is the best evidence you will get all night."
+          "note": "→ \"Look at this against where we started.\"\n\n⏱ If the shape has moved since the reveal, SAY SO. That's the room re-authoring itself in real time — best evidence I'll get all night."
         },
         {
           "kind": "prompt",
           "text": "What system have you worked around this week?",
-          "note": "Directed audience dialogue — the brief's explicit promise. 'Turn to someone you haven't talked to — name one stakeholder your current project pretends isn't there.' Ninety seconds."
+          "note": "→ \"Turn to someone you haven't talked to. Name one stakeholder your current project pretends isn't there.\"\n\n⏱ Ninety seconds. This is the brief's explicit promise."
         },
         {
           "kind": "staged",
-          "note": "Stage the sharpest card from that exchange. Credit people by name."
+          "note": "· Stage the sharpest card from that exchange. Credit by name."
         }
       ],
-      "presenterNotes": "Facilitator, not expert. The feed IS the running order — stage cards, read them out, credit by handle. Fallback if the feed goes thin: what assumptions were embedded in 'a captain that can fly'?"
+      "presenterNotes": "⏱ 25 min · facilitator, not expert · the feed IS the running order\n\n· Stage cards, read them out, credit by handle\n\n· Fallback if the feed goes thin: \"what assumptions were embedded in 'a captain that can fly'?\""
     },
     {
       "id": "steward",
@@ -382,24 +392,24 @@
             "Negotiator — works the table",
             "Not: user"
           ],
-          "note": "'I've been using the word cyborg to describe your practice for forty minutes. That word is the intervention — language is cyborg technology. It changes how you think while you are using it.' Steward maintains and oversees. Curator is a professional arranger of stuff and context. Negotiator works the table. These are roles to borrow. 'User' fuses the person and the tool — what is a user without something to use?"
+          "note": "→ \"I've been using the word cyborg to describe your practice for forty minutes. That word is the intervention — language is cyborg technology, it changes how you think while you're using it.\"\n\n→ \"Steward maintains and oversees. Curator is a professional arranger of stuff and context. Negotiator works the table.\"\n\n→ \"These are roles to borrow. 'User' fuses the person and the tool — what's a user without something to use?\""
         },
         {
           "kind": "prompt",
           "text": "One sentence: what will you rename?",
-          "note": "Harvest fast: one sentence each, three or four voices."
+          "note": "→ \"One sentence: what will you rename?\"\n\n⏱ Three or four voices, fast."
         },
         {
           "kind": "staged",
-          "note": "Stage the sharpest full screen."
+          "note": "· Stage the sharpest full screen."
         },
         {
           "kind": "statement",
           "text": "Go arrange it how you want.",
-          "note": "Close: 'Cyborg designer isn't prescriptive, it's diagnostic. It reveals the negotiation table you're already sitting at.' Last line before you sit down — you are all sailing some ship, some assemblage. That is what makes you cyborgs. Go arrange it how you want."
+          "note": "→ \"Cyborg designer isn't prescriptive. It's diagnostic — it reveals the negotiation table you're already sitting at.\"\n\n→ \"You're all sailing some ship, some assemblage. That's what makes you cyborgs.\"\n\n→ \"Go arrange it how you want.\""
         }
       ],
-      "presenterNotes": "The language hack, and the reveal of what you have been doing all night."
+      "presenterNotes": "⏱ 5 min · the language hack, and the reveal of what I've been doing all night"
     }
   ]
 }

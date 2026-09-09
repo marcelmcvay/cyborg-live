@@ -97,14 +97,32 @@ Use `\n\n` inside either field to break paragraphs.
 **Why per-slide:** a 300-word beat blob is unreadable at a lectern mid-sentence.
 Splitting by slide is what makes the notes usable while talking.
 
-**The presenter does NOT know which slide is live.** `/deck` steps slides
-locally and no slide index crosses the wire, so every block is shown at once and
-the operator matches by eye. Do not add a "current slide" highlight without
-first putting slide position on the wire — a wrong highlight is worse than none.
+**Notes drive the projector.** Slide position IS on the wire (`cue.slide`,
+`POST /api/slide`, SSE `slide`). Clicking a notes block cues that slide, the
+matching block is marked `is-live` / `ON SCREEN`, and Right/Left step slides.
+`/deck` is a pure listener and holds no admin key. Beats are Down/Up + `n`/`p`,
+so beats and slides never fight over a key.
 
 A slide with no `note` still renders as a thin numbered marker so the running
-order stays legible. Fact-discipline lines ("do NOT say X") belong in whichever
-field is on screen when the temptation arises — usually the slide, not the beat.
+order stays legible.
+
+### Notes are BULLETS THE SPEAKER SAYS
+
+Write notes as Marcel's own talking points, not as directions addressed to him.
+Not "you should mention the twelve-year pitch and don't get academic" — instead
+the line he actually says. Four prefixes carry stage direction compactly, and a
+legend for them is printed above the notes panel:
+
+| mark | meaning |
+|---|---|
+| `→` | a line to say, in quotes, in his voice |
+| `·` | supporting fact or context, not spoken verbatim |
+| `⚑` | do-not-say / fact discipline |
+| `⏱` | timing or a mechanical action |
+
+Fact-discipline (`⚑`) belongs on whichever block is on screen when the
+temptation arises — usually the slide, not the beat. Keep the beat field to
+`⏱` budget plus the `⚑` guards that span the whole beat.
 
 ## Design tokens
 Already defined in `public/shared.css`. Do not introduce new colors.

@@ -19,15 +19,15 @@
         {
           "kind": "statement",
           "text": "Designing Assemblages.",
-          "note": "Reference the pre-read if it went out: everyone was asked to identify one interface they use daily that demonstrates cyborg integration. Hold that example; you'll come back to it three times."
+          "note": "→ \"I'm a practicing designer, not an academic. That's the value I can offer you.\"\n\n· If the pre-read went out: everyone was asked to identify one interface they use daily that demonstrates cyborg integration. Have them hold that example — I come back to it three times."
         },
         {
           "kind": "prompt",
           "text": "Phones out. This lecture runs on you.",
-          "note": "Get the join URL up and the phones out before anything else."
+          "note": "→ \"Phones out. This lecture runs on you.\"\n\n⏱ Join URL up before anything else."
         }
       ],
-      "presenterNotes": "Introduce yourself as a practitioner, not an academic — that's the value here."
+      "presenterNotes": "⏱ 2 min · practitioner, not academic — that's the value here"
     },
     {
       "id": "assemble-open",
@@ -43,15 +43,15 @@
         {
           "kind": "statement",
           "text": "Pick the tech that is genuinely part of you.",
-          "note": "Constraint out loud: not what you own, what you would feel the loss of. Glasses, keyboard layout, your car, your language, your dialect."
+          "note": "→ \"Pick the tech that's genuinely part of you. Not what you own — what you'd feel the loss of.\"\n\n→ \"Glasses. Your keyboard layout. Your car. Your language. Your dialect.\""
         },
         {
           "kind": "radar",
           "title": "Seven axes, no endpoint",
-          "note": "Name the instrument before they use it — this is a radar over seven axes, NOT a 0-100 scale. Read the axes once: intimacy, dependence, agency, visibility, consent, mastery, surveillance.\n\nEach component you pick carries a score on all seven; your shape is the average, so picking more things does not make you 'more cyborg', it changes your silhouette. That is the whole argument sitting in the shape of the measurement — grad students will notice if the instrument disagrees with the thesis, so say it explicitly."
+          "note": "→ \"This is a radar over seven axes, not a zero-to-a-hundred scale.\"\n\n→ \"Intimacy, dependence, agency, visibility, consent, mastery, surveillance.\"\n\n→ \"Every component you pick carries a score on all seven. Your shape is the average — so picking more things doesn't make you more cyborg, it changes your silhouette.\"\n\n⚑ Say this explicitly. Grad students will notice if the instrument disagrees with the thesis, and the argument is sitting in the shape of the measurement."
         }
       ],
-      "presenterNotes": "No wrong answers, which is why this runs before any theory. ASSEMBLE stays open the full forty minutes and they should revise as the argument moves. Revision is data."
+      "presenterNotes": "⏱ 3 min · no wrong answers, which is why this runs before any theory\n\n· ASSEMBLE stays open the full forty minutes — tell them to revise as the argument moves. Revision is data."
     },
     {
       "id": "reveal",
@@ -67,15 +67,15 @@
         {
           "kind": "radar",
           "title": "This is the room",
-          "note": "Read the shape, don't interpret it yet — you'll return to this radar at the end and the silhouette will have changed. Name the two or three spokes with the most reach and the one with the least; the low spoke is usually MASTERY and that is the finding.\n\nGhost polygons sit behind it: Clynes & Kline's 1960 rat, the Mercury astronaut, Vader, the 1890 farmer. Use the farmer against Vader — total mastery and no surveillance versus the inverse — to show difference in kind rather than progress. Do NOT rank students and do NOT compare enclosed areas; area is a misleading artifact of the rendering, not something anyone authored."
+          "note": "→ \"Name the spokes with the most reach. And the one with the least.\"\n\n· The low spoke is usually MASTERY. That's the finding.\n\n→ \"The ghosts behind your shape: Clynes and Kline's 1960 rat, a Mercury astronaut, Vader, and a farmer in 1890.\"\n\n→ \"The farmer has near-total mastery and almost no surveillance. Vader is the inverse. That's a difference in kind, not progress.\""
         },
         {
           "kind": "statement",
           "text": "This room is already a cyborg.",
-          "note": "Land it and move — the theory beats do the rest of the work."
+          "note": "→ \"This room is already a cyborg.\"\n\n→ \"Questions, objections, challenges — SIGNAL is open and stays open. I'd rather have a challenge than a clarification, because a challenge means you're building with it.\""
         }
       ],
-      "presenterNotes": "SIGNAL opens here and never closes: questions, objections, challenges. Say explicitly that disagreement is welcome and you'd rather have a challenge than a clarification — challenge means they're building with it."
+      "presenterNotes": "⏱ 2 min · SIGNAL opens here and never closes\n\n⚑ Do NOT rank students. Do NOT compare enclosed areas — area is an artifact of the rendering, not something anyone authored."
     },
     {
       "id": "etymology",
@@ -92,20 +92,20 @@
           "kind": "quote",
           "text": "For the exogenously extended organizational complex functioning as an integrated homeostatic system unconsciously, we propose the term 'Cyborg.'",
           "attrib": "Manfred Clynes & Nathan Kline, \"Cyborgs and Space,\" 1960",
-          "note": "Coined in 1960 by Manfred Clynes and Nathan Kline in a paper titled 'Cyborgs and Space.' They were solving a concrete NASA problem: how to keep a human body alive in an environment that wants to destroy it. Their proposal was to modify the human biologically and technologically rather than build massive artificial Earth-born chambers — integrate the human directly into the mechanical loops of the vehicle.\n\nUnpack the definition word by word. 'Exogenously extended' — the extension is outside the skin. 'Homeostatic system' — self-regulating. 'Unconsciously' — that's the load-bearing word. The whole definition turns on the system running below attention. If you notice your prosthesis constantly, integration has failed."
+          "note": "→ \"Coined in 1960 by Manfred Clynes and Nathan Kline, in a paper called 'Cyborgs and Space.'\"\n\n→ \"They were solving a concrete NASA problem: how do you keep a human body alive in an environment that wants to destroy it.\"\n\n→ \"Their proposal wasn't to build a massive Earth-like chamber. It was to modify the human — biologically and technologically — and integrate them directly into the mechanical loops of the vehicle.\"\n\n→ \"Read it word by word. 'Exogenously extended' — the extension is outside the skin. 'Homeostatic system' — self-regulating. And 'unconsciously.'\"\n\n→ \"That last word is load-bearing. The whole definition turns on the system running below attention. If you notice your prosthesis constantly, integration has failed.\""
         },
         {
           "kind": "statement",
           "text": "They were describing space travel. I'm describing your phone.",
-          "note": "The pivot: 'They were describing space travel. I'm describing your smartphone.'"
+          "note": "→ \"They were describing space travel. I'm describing your smartphone.\""
         },
         {
           "kind": "statement",
           "text": "The word began as an engineering requirement.",
-          "note": "Say it plainly and let it sit. An engineering requirement, not a metaphor."
+          "note": "→ \"The word began as an engineering requirement.\"\n\n⏱ Let it sit, then move."
         }
       ],
-      "presenterNotes": "Six minutes. The word did not start as metaphor and it does not start as science fiction — it started as a spec. That is the whole beat."
+      "presenterNotes": "⏱ 6 min · the word started as a spec, not a metaphor and not science fiction"
     },
     {
       "id": "cybernetics",
@@ -122,7 +122,7 @@
           "kind": "quote",
           "text": "Feedback is the key. Feedback is the key to cybernetics, which is the key to the AI era.",
           "attrib": "John Maeda, Design in Tech Report 2026, SXSW",
-          "note": "Maeda's framing from SXSW 2026. Same underlying architecture across aircraft autopilot, car lane control, and coding-agent autoapprovals — the loop is the fundamental unit of agentic systems."
+          "note": "→ \"That's Maeda, at SXSW this year.\"\n\n→ \"Same underlying architecture across aircraft autopilot, car lane control, and coding-agent autoapprovals. The loop is the fundamental unit of an agentic system.\""
         },
         {
           "kind": "list",
@@ -132,15 +132,15 @@
             "Aircraft autopilot. Lane control.",
             "Agent autoapprovals"
           ],
-          "note": "Open loop means no feedback; closed loop means learning while you're getting along. Design implication: if everything is feedback loops, interface design becomes conversation architecture. You are not designing screens, you are designing the terms of negotiation."
+          "note": "→ \"Open loop means no feedback. Closed loop means learning while you're getting along.\"\n\n→ \"So if everything is feedback loops, interface design becomes conversation architecture. You're not designing screens — you're designing the terms of negotiation.\""
         },
         {
           "kind": "statement",
           "text": "Technology is anything we intentionally co-evolved.",
-          "note": "Now widen the definition: technology is broad — from supercomputers and laptops to books, language and dialect. But cybernetics is the inflection point, because that's when technology starts talking back and bidirectional influence becomes impossible to ignore. Cybernetics has always required this — it's the DNA of McLuhan's argument. What's new is that the negotiation surface is now linguistic, which makes it obvious."
+          "note": "→ \"Technology is broad. Supercomputers and laptops, but also books, language and dialect.\"\n\n→ \"Cybernetics is the inflection point, because that's when technology starts talking back — and bidirectional influence becomes impossible to ignore.\"\n\n→ \"This is the DNA of McLuhan's argument. What's new is that the negotiation surface is now linguistic, which makes it obvious.\""
         }
       ],
-      "presenterNotes": "The throughline: feedback → cybernetics → AI era. Student engagement, quick — map your own tools onto the timeline. Where does Figma sit? Where does a language model sit? Take two answers from the feed, no more."
+      "presenterNotes": "⏱ 5 min · feedback → cybernetics → AI era\n\n⏱ Student engagement, quick: \"map your own tools onto this. Where does Figma sit? Where does a language model sit?\" Take two answers from the feed, no more."
     },
     {
       "id": "recognition",
@@ -156,13 +156,13 @@
         {
           "kind": "statement",
           "text": "You don't need implants to be a cyborg.",
-          "note": "From 'The Cyborgs Aren't Coming': you don't need implants to be a cyborg. The normalcy of our daily interactions with technology makes incredibly immersive and technologically complex moments feel mundane. Self-checkout kiosks, autocorrect, noise-cancelling headphones, GPS. This is the apparatus we are dressed in, and it is growing."
+          "note": "→ \"You don't need implants to be a cyborg.\"\n\n→ \"The normalcy of our daily interaction with technology makes genuinely immersive, technically complex moments feel mundane.\"\n\n→ \"Self-checkout kiosks. Autocorrect. Noise-cancelling headphones. GPS.\"\n\n→ \"This is the apparatus we're dressed in, and it's growing.\""
         },
         {
           "kind": "quote",
           "text": "Did you invent the words you are using? Did you design the glyphs?",
           "attrib": "the authorship tension",
-          "note": "The authorship tension as the contemporary hook: 'that was written by AI' versus 'I wrote this by hand' is awkward and unbalanced. Did you invent the words? Did you design the glyphs? What constitutes authorship?"
+          "note": "→ \"'That was written by AI' versus 'I wrote this by hand' is an awkward, unbalanced sentence.\"\n\n→ \"Did you invent the words? Did you design the glyphs? What constitutes authorship?\""
         },
         {
           "kind": "list",
@@ -172,10 +172,10 @@
             "Pilot — trained reflex as instrument",
             "You — with a model open in the next tab"
           ],
-          "note": "Run the suit sequence as four DIFFERENT SHAPES. Vader's suit keeps him alive in a hostile environment: conspicuous, self-directed, high mastery. The astronaut's suit does the same life-support job but the astronaut is also managing the psychology of drinking recycled urine — the body as a system under constraint, and almost total consent gap. Life support as identity. The pilot is different again: the apparatus is trained reflex, high mastery, low surveillance. The daily designer is the inversion of Vader — invisible, dispatched, low mastery, high surveillance.\n\nSame argument, four silhouettes. Point back at the radar if it helps: none of these four is 'further along' than another.\n\nSuperpower note, briefly — imagine a world full of superheroes who don't realize they have this incredible power. There's simultaneous sadness and danger in a society of ultrapowerful beings not knowing their strength."
+          "note": "→ \"Vader's suit keeps him alive in a hostile environment. Conspicuous, self-directed, high mastery.\"\n\n→ \"The astronaut's suit does the same life-support job — but the astronaut is also managing the psychology of drinking recycled urine. The body as a system under constraint, and almost total consent gap. Life support as identity.\"\n\n→ \"The pilot is different again: the apparatus is trained reflex. High mastery, low surveillance.\"\n\n→ \"And the daily designer is the inversion of Vader. Invisible, dispatched, low mastery, high surveillance.\"\n\n→ \"Same argument, four silhouettes. None of them is further along than another.\"\n\n→ \"Imagine a world full of superheroes who don't realize they have the power. There's a simultaneous sadness and danger in a society of ultrapowerful beings not knowing their strength.\""
         }
       ],
-      "presenterNotes": "This is the beat where the old spectrum framing would sneak back in. Keep it explicitly about KIND, not degree — four different shapes, not four positions on a line."
+      "presenterNotes": "⏱ 5 min · four different SHAPES, not four positions on a line\n\n⚑ This is the beat where the old spectrum framing sneaks back in. Keep it about kind, not degree."
     },
     {
       "id": "authentication",
@@ -191,30 +191,30 @@
         {
           "kind": "statement",
           "text": "Language models destroyed the Turing test.",
-          "note": "Section 9's obsession with confirming identity in a world where identity can be forged, copied and transferred maps directly onto our moment: deepfakes, model impersonation, digital identity verification."
+          "note": "→ \"Section 9 is obsessed with confirming identity in a world where identity can be forged, copied and transferred.\"\n\n→ \"That maps directly onto our moment: deepfakes, model impersonation, digital identity verification.\""
         },
         {
           "kind": "quote",
           "text": "The veil between I, we and technology is thinner than ever.",
           "attrib": "Marcel McVay, cyborg talk notes",
-          "note": "If the Major questions the authenticity of her own memories, what does that say about models trained on human text — are those responses memories or fabricated experiences? The GITS frame suggests that's the wrong question entirely: when consciousness operates as technical process, the distinction between authentic and artificial memory collapses."
+          "note": "→ \"If the Major questions the authenticity of her own memories — what does that say about models trained on human text? Are those responses memories, or fabricated experiences?\"\n\n→ \"The GITS frame suggests that's the wrong question. When consciousness operates as technical process, the distinction between authentic and artificial memory collapses.\""
         },
         {
           "kind": "statement",
           "text": "Verification systems for fluid, distributed selves.",
-          "note": "The Major's uncertainty isn't psychological crisis, it's a design specification. Section 9's authentication protocols break down because they assume fixed identity; the design challenge is verification systems for fluid, constructable, distributed selves.\n\nSnow Crash as the cognitive limit case: we're edging toward the invisible terminal, where abstracted code can rewrite our wet operating systems in an instant — and Stephenson's parallel with the drug was no coincidence."
+          "note": "→ \"Her uncertainty isn't a psychological crisis. It's a design specification.\"\n\n→ \"Section 9's authentication protocols break down because they assume a fixed identity. The design challenge is verification for fluid, constructable, distributed selves.\"\n\n→ \"Snow Crash is the cognitive limit case — the invisible terminal, where abstracted code rewrites our wet operating systems in an instant. Stephenson's parallel with the drug was no coincidence.\""
         },
         {
           "kind": "prompt",
           "text": "How do you distinguish human from machine contribution in your own work? Should you?",
-          "note": "Hand it to them and wait: in your portfolio work, how do you distinguish human from machine contribution, and should you? Take submissions on the feed."
+          "note": "→ \"In your own portfolio work: how do you distinguish human from machine contribution? And should you?\"\n\n⏱ Take submissions on the feed."
         },
         {
           "kind": "staged",
-          "note": "Stage two. Read them out and respond to the harder one first."
+          "note": "· Stage two. Respond to the harder one first."
         }
       ],
-      "presenterNotes": "This is the beat where grad students will push back hardest — welcome it, model the uncertainty, don't defend the framework."
+      "presenterNotes": "⏱ 6 min · they'll push back hardest here — welcome it, model the uncertainty, don't defend the framework"
     },
     {
       "id": "responsibility",
@@ -236,7 +236,7 @@
             "\"That's not where I expect it to be.\"",
             "We weren't designing interface. We were translating fluency."
           ],
-          "note": "Regent as the applied case. A ground-effect craft skimming above the water, hovering below FAA classification. The target operator was defined as a mariner — one wheel, one throttle — a captain that can fly. But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem.\n\nThen a test pilot joined: ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — we called him Bob Dylan. He liked every concept. Every concept was wrong, not because they were messy but because they didn't match the logic his body had spent decades building. Pilots scan; they feel for what's off; they process feedback faster than conscious thought. His most common note was 'that's not where I expect it to be.'\n\nI spent hours in Microsoft Flight Simulator learning how altimeters behave and where attitude indicators live. Every cockpit had a language; I needed to be fluent enough to design in dialect. We ended with a recalibrated vocabulary, not a reinvented one — semantic colour held to aviation standard, teal for set values, magenta for actuals.\n\nTheoretical payload for this room: negotiated agency. The user isn't just an actor — they're being acted upon. Systems push back; by design they suggest, limit, surveil and even discipline. The experience is not a smoothly-paved one-way street, it's a negotiation table."
+          "note": "→ \"Regent builds a ground-effect craft that skims above the water, hovering below FAA classification.\"\n\n→ \"The target operator was defined as a mariner. One wheel, one throttle — a captain that can fly. But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem.\"\n\n→ \"Then a test pilot joined. Ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — we called him Bob Dylan.\"\n\n→ \"He liked every concept. Every concept was wrong — not because they were messy, but because they didn't match the logic his body had spent decades building.\"\n\n→ \"Pilots scan. They feel for what's off. They process feedback faster than conscious thought. His most common note was 'that's not where I expect it to be.'\"\n\n→ \"I spent hours in Microsoft Flight Simulator learning how altimeters behave and where attitude indicators live. Every cockpit has a language, and I needed to be fluent enough to design in dialect.\"\n\n→ \"We ended with a recalibrated vocabulary, not a reinvented one. Semantic colour held to aviation standard — teal for set values, magenta for actuals.\"\n\n→ \"Here's the theoretical payload: negotiated agency. The user isn't just an actor — they're being acted upon. Systems push back. By design they suggest, limit, surveil, and even discipline.\"\n\n→ \"The experience isn't a smoothly-paved one-way street. It's a negotiation table.\""
         },
         {
           "kind": "caseStudy",
@@ -247,20 +247,20 @@
             "Age verification. Municipal regulation. Produce indexing.",
             "And the machine — sensor-driven, impatient."
           ],
-          "note": "Self-checkout makes the table visible: the grocery chain protecting margins, the card companies extracting fees, age verification enforcing policy, municipal regulations, produce vendors dictating indexing, and the machine itself, ever-ready to flag 'unexpected item in the bagging area.'\n\nTo design responsibly in a cyborg world is to name these actors, question their power, and decide how — and whether — they belong at the table."
+          "note": "→ \"Self-checkout makes the table visible.\"\n\n→ \"The grocery chain protecting margins. The card companies extracting fees. Age verification enforcing policy. Municipal regulations. Produce vendors dictating indexing. And the machine itself, ever-ready to flag 'unexpected item in the bagging area.'\"\n\n→ \"To design responsibly in a cyborg world is to name these actors, question their power, and decide how — and whether — they belong at the table.\""
         },
         {
           "kind": "statement",
           "text": "Technological coevolution is not an even playing field.",
-          "note": "The political frame, stated plainly: technological coevolution is not an even playing field; it is always enacted on and mediated by a field of power."
+          "note": "→ \"Technological coevolution is not an even playing field. It is always enacted on, and mediated by, a field of power.\""
         },
         {
           "kind": "statement",
           "text": "For whose interests does the interface serve?",
-          "note": "Applied prompt: return to your pre-read interface. Whose interests does it serve? What negotiation table is it representing?"
+          "note": "→ \"Go back to your pre-read interface. Whose interests does it serve? What negotiation table is it representing?\""
         }
       ],
-      "presenterNotes": "Seven minutes — the applied case, then the political frame. This is the longest beat; watch the clock."
+      "presenterNotes": "⏱ 7 min · longest beat — watch the clock"
     },
     {
       "id": "steward",
@@ -276,7 +276,7 @@
         {
           "kind": "statement",
           "text": "Cyborg describes what we are, not how we should be.",
-          "note": "Diagnostic, not prescriptive. Say it before the role list so the roles read as options rather than instructions."
+          "note": "→ \"Cyborg describes what we are, not how we should be. Diagnostic, not prescriptive.\"\n\n⏱ Say this BEFORE the role list, so the roles read as options rather than instructions."
         },
         {
           "kind": "list",
@@ -286,24 +286,24 @@
             "Negotiator — works the table",
             "Not: user"
           ],
-          "note": "Role evolution. Steward maintains, oversees. A curator is a professional arranger of stuff and context. These aren't metaphors, they're job descriptions — roles to borrow from. 'User' fuses the person and the tool: what is a user without their apparatus, without something to use?\n\nThe theoretical distinction to leave them with: tool operation treats an external object manipulated by a separate person; assemblage integration treats a component of an extended identity system. If you can see yourself as a cyborg, you understand that your assemblage is part of you — which means you get to choose, like with clothing, how you build from and extend yourself. You should feel compelled to arrange it how you want, and frustrated when you can't control it. You probably already do."
+          "note": "→ \"Steward maintains, oversees. A curator is a professional arranger of stuff and context. Negotiator works the table.\"\n\n→ \"These aren't metaphors, they're job descriptions — roles to borrow from. 'User' fuses the person and the tool: what is a user without their apparatus?\"\n\n→ \"Here's the distinction to leave with. Tool operation treats an external object manipulated by a separate person. Assemblage integration treats a component of an extended identity system.\"\n\n→ \"If you can see yourself as a cyborg, you understand your assemblage is part of you — which means you get to choose, like with clothing, how you build from and extend yourself.\"\n\n→ \"You should feel compelled to arrange it how you want. And frustrated when you can't control it. You probably already do.\""
         },
         {
           "kind": "radar",
           "title": "The room, forty minutes later",
-          "note": "Bring the radar back up and compare it to minute seven. If it moved, that movement is the lecture's actual argument, made by them — say so out loud."
+          "note": "→ \"Compare this to where we were at minute seven.\"\n\n⏱ If it moved, that movement is the lecture's actual argument — made by them, not me. Say so."
         },
         {
           "kind": "prompt",
           "text": "Reframe your thesis as assemblage integration. What research question appears?",
-          "note": "Take one sentence each from three students on what changes in their thesis."
+          "note": "→ \"Reframe your thesis as assemblage integration. What research question appears?\"\n\n⏱ One sentence each from three students."
         },
         {
           "kind": "staged",
-          "note": "Stage the sharpest, then Q&A."
+          "note": "· Stage the sharpest, then Q&A."
         }
       ],
-      "presenterNotes": "Close with an invitation, not a prescription: the cyborg frame is generative, not directive. Using the word is the intervention — it's a linguistic hack."
+      "presenterNotes": "⏱ 4 min · close with an invitation, not a prescription\n\n· The cyborg frame is generative, not directive. Using the word is the intervention — a linguistic hack."
     }
   ]
 }

@@ -132,10 +132,16 @@
             <h2 id="notesBeat">—</h2>
           </div>
           <div class="notes-meta">
+            <span class="micro-label" id="notesSlide">SLIDE —/—</span>
             <span class="micro-label" id="notesIdx">—/—</span>
             <span class="micro-label" id="notesTime">00:00 / 00:00</span>
           </div>
         </div>
+
+        <p class="notes-legend micro-label" aria-label="Notes key">
+          <span><b>→</b> SAY</span><span><b>·</b> CONTEXT</span><span><b>⚑</b> DO NOT SAY</span><span><b>⏱</b> TIMING</span>
+          <span class="notes-legend__hint">CLICK A BLOCK TO CUE THAT SLIDE</span>
+        </p>
 
         <div class="notes-live__body" id="notes">
           <p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>
@@ -265,6 +271,7 @@
 
   <footer class="ftr" aria-hidden="true">
     <span class="micro-label"><kbd>TAB</kbd> SWITCH VIEW</span>
+    <span class="micro-label"><kbd>→</kbd>/<kbd>←</kbd> SLIDE</span>
     <span class="micro-label"><kbd>↓</kbd>/<kbd>N</kbd> NEXT BEAT</span>
     <span class="micro-label"><kbd>↑</kbd>/<kbd>P</kbd> PREV BEAT</span>
     <span class="micro-label"><kbd>R</kbd> ZERO BEAT</span>
