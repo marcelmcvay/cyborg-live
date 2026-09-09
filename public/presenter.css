@@ -361,7 +361,17 @@ kbd {
 .panel__head--tight { padding: 10px 14px 8px; }
 .panel__title { display: flex; flex-direction: column; gap: 2px; }
 .panel__title h2 { font-size: 20px; line-height: 1; }
-.panel__head--tight .panel__title h2 { font-size: 16px; }
+/* h2 is invalid inside a <button> (phrasing content only), so collapsible
+   module headers use a span with role=heading and inherit the same type. */
+.panel__h {
+  display: block;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 500;
+}
+.panel__head--tight .panel__title h2,
+.panel__head--tight .panel__title .panel__h { font-size: 16px; }
 
 /* ── Feed ─────────────────────────────────────────────────────────── */
 .feed {
@@ -539,12 +549,86 @@ kbd {
 .empty__hint { margin: 0; font-size: 12px; letter-spacing: .08em; }
 
 /* ── Telemetry column ─────────────────────────────────────────────── */
+/* Scrollable stack, not a rigid grid. The old `grid-template-rows: auto auto
+   1fr auto` forced four modules into the viewport height, so the radar and the
+   tally fought over the same pixels and both lost. Now the column scrolls and
+   each module can be collapsed to its header, so the operator chooses what is
+   on screen instead of the layout deciding. */
 .tele {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  display: flex;
+  flex-direction: column;
   gap: var(--gap);
   min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* room for the last panel's shadow/corners when scrolled to the bottom */
+  padding-right: 2px;
 }
+
+/* Collapsed modules shrink to their header; expanded ones size to content.
+   Nothing in this column flexes to fill — that is what caused the squeeze. */
+.tele > .fui-panel { flex: 0 0 auto; }
+
+/* SIGNIFIER: the whole header is the hit target, and it says which way it goes.
+   Norman - the caret is the signifier, aria-expanded is the state, and the
+   header row is the affordance. */
+.panel__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  min-height: 34px;
+}
+.panel__toggle:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+.panel__toggle .panel__title { flex: 1 1 auto; min-width: 0; }
+
+.panel__caret {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  color: var(--mid);
+  transition: transform var(--t-fast, 120ms) var(--ease, ease);
+}
+.panel__caret::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+.panel__toggle:hover .panel__caret { color: var(--fg); }
+/* collapsed points right, expanded points down */
+.fui-panel.is-collapsed .panel__caret { transform: rotate(-90deg); }
+
+/* The body is what collapses. Kept in the DOM so live updates keep landing and
+   the count badges stay truthful while hidden. */
+.panel__collapse { min-height: 0; }
+.fui-panel.is-collapsed .panel__collapse { display: none; }
+
+/* A hidden surface must leave a proxy on the visible one — when a module is
+   collapsed its header carries the number it would have shown. */
+.panel__proxy {
+  flex: 0 0 auto;
+  color: var(--mid);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.fui-panel:not(.is-collapsed) .panel__proxy { display: none; }
 .tele > .fui-panel { background: color-mix(in srgb, var(--bg) 70%, transparent); }
 
 /* counters */
@@ -1030,6 +1114,71 @@ kbd {
 .notes__body p:last-child { margin-bottom: 0; }
 .notes__empty { font-family: var(--font-mono); font-size: 11px; color: var(--mid); }
 
+/* ── Notes blocks: one per slide ───────────────────────────────────
+   A beat's script used to render as a single wall of prose, which is unreadable
+   at a lectern mid-sentence. Each slide now gets its own labelled block with
+   the projector's own words as the caption, so the operator matches script to
+   screen by eye. The presenter has no slide cue on the wire (the deck steps
+   slides locally), so all blocks show at once rather than guessing a current. */
+.nb {
+  border-top: 1px solid var(--rule);
+  padding: 12px 0;
+}
+.nb:first-child { border-top: 0; padding-top: 2px; }
+.nb:last-child { padding-bottom: 2px; }
+
+.nb__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.nb__n {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: var(--accent);
+}
+
+.nb__tag {
+  flex: 0 0 auto;
+  font-size: 9px;
+  color: var(--mid);
+  border: 1px solid var(--rule);
+  padding: 1px 5px;
+}
+
+/* the money line as it appears on the projector — quoted, dimmed, truncated */
+.nb__cap {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--mid);
+  font-style: italic;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.nb__body p {
+  margin: 0 0 10px;
+  font-size: 17px;
+  line-height: 1.5;
+}
+.nb__body p:last-child { margin-bottom: 0; }
+
+/* The beat throughline is the primary script — mark it and give it the accent
+   rail so it is findable when scrolled. */
+.nb--beat { border-left: 2px solid var(--accent); padding-left: 12px; }
+.nb--beat .nb__tag { color: var(--accent); border-color: var(--accent); }
+
+/* A slide with no authored note is just a positional marker: keep it thin so
+   it orients without eating vertical space. */
+.nb--slide.is-bare { padding: 7px 0; opacity: 0.62; }
+.nb--slide.is-bare .nb__head { margin-bottom: 0; }
+
 /* ── Feed card STAGE affordance ───────────────────────────────────── */
 .card__stage {
   grid-area: stage;
@@ -1081,6 +1230,8 @@ kbd {
   .clock-box__val { font-size: 20px; }
   .notes__body p { font-size: 15px; }
   .notes-live__body { font-size: 16px; }
+  .nb__body p { font-size: 15px; }
+  .nb__cap { font-size: 11px; }
   .hdr__title { font-size: 22px; }
   .hdr__url { font-size: 17px; }
   .counter__val { font-size: 42px; }

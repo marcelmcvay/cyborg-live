@@ -38,6 +38,7 @@
     axes: [],               // radar axis metadata
     axisOrder: [],          // FIXED spoke order — never sort by value
     ghosts: [],             // authored reference polygons (Vader, farmer, ...)
+    collapsed: new Set(),   // telemetry module keys collapsed by the operator
     filter: 'all',
     modVisible: true,
     link: 'offline',        // offline | linking | live
@@ -76,6 +77,9 @@
 
     roomRadar: $('#roomRadar'),
     roomRadarMeta: $('#roomRadarMeta'),
+    radarProxy: $('#radarProxy'),
+    tallyProxy: $('#tallyProxy'),
+    klassProxy: $('#klassProxy'),
 
     tally: $('#tally'),
     tallyEmpty: $('#tallyEmpty'),
@@ -318,6 +322,13 @@
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
       .slice(0, 8);
     el.tallyEmpty.hidden = entries.length > 0;
+    // proxy for the collapsed state: top component + its count, so a hidden
+    // tally still tells the operator what the room is converging on
+    if (el.tallyProxy) {
+      el.tallyProxy.textContent = entries.length
+        ? `${labelFor(entries[0][0]).slice(0, 14).toUpperCase()} ${pad(entries[0][1])}`
+        : '000';
+    }
     if (!entries.length) { el.tally.replaceChildren(); return; }
     const max = entries[0][1] || 1;
     el.tally.innerHTML = entries.map(([id, n], i) => `
@@ -347,6 +358,7 @@
       el.klassPicks.textContent = 'PICKS 00';
       el.klassSpectrum.textContent = 'SPEC 000';
       el.klassIdx.textContent = '— / —';
+      if (el.klassProxy) el.klassProxy.textContent = '—';
       return;
     }
     S.klassIdx = S.klassIdx % list.length;
@@ -357,6 +369,8 @@
     el.klassPicks.textContent = `PICKS ${pad(Array.isArray(a.picks) ? a.picks.length : 0, 2)}`;
     el.klassSpectrum.textContent = `SPEC ${pad(Math.round(+a.spectrum || 0))}`;
     el.klassIdx.textContent = `${pad(S.klassIdx + 1, 2)} / ${pad(list.length, 2)}`;
+    // collapsed proxy: the class name alone is the useful glance
+    if (el.klassProxy) el.klassProxy.textContent = (a.klass || 'UNCLASSED').toUpperCase().slice(0, 18);
     if (animate && !REDUCED_MOTION) {
       el.klassBody.classList.remove('is-rotating');
       void el.klassBody.offsetWidth;
@@ -719,15 +733,80 @@
     $('.pill__text', pill).textContent = `${label} ${open ? 'OPEN' : 'SHUT'}`;
   }
 
+  // Notes are rendered as one block PER SLIDE in the beat, so the operator can
+  // see which line goes with what is currently on the projector instead of
+  // parsing a wall of prose. Two sources, in priority order:
+  //
+  //   1. slide.note      — authored per slide (preferred; see DECK-SCHEMA.md)
+  //   2. presenterNotes  — beat-level prose, shown as a BEAT block
+  //
+  // The presenter deliberately does NOT track the projector's slide index: the
+  // deck owns slide stepping locally and there is no slide cue on the wire. So
+  // every slide's note is shown at once, labelled and numbered, and the
+  // operator matches by eye. Guessing a "current" slide here would be wrong
+  // more often than useful.
+  function slideCaption(slide) {
+    if (!slide || typeof slide !== 'object') return '';
+    // the words actually on the projector, so the operator can match at a glance
+    const raw = slide.text || slide.title
+      || (Array.isArray(slide.items) ? slide.items.join(' · ') : '')
+      || (Array.isArray(slide.beats) ? slide.beats.join(' · ') : '');
+    if (raw) return String(raw);
+    // live slides carry no authored text — name what they will show instead
+    if (slide.kind === 'histogram') return 'live dependence histogram';
+    if (slide.kind === 'radar') return 'live room radar';
+    if (slide.kind === 'staged') return 'staged audience card';
+    return '';
+  }
+
   function renderNotes(beat) {
     el.notesBeat.textContent = beat ? String(beat.label || beat.id).toUpperCase() : '—';
-    const text = beat && typeof beat.presenterNotes === 'string' ? beat.presenterNotes.trim() : '';
-    if (!text) {
-      el.notes.innerHTML = `<p class="notes__empty micro-label">${
-        beat ? 'NO NOTES FOR THIS BEAT' : 'NO BEAT CUED · PRESS NEXT BEAT'}</p>`;
+    if (!beat) {
+      el.notes.innerHTML = '<p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>';
       return;
     }
-    el.notes.innerHTML = text.split(/\n{2,}/).map((p) => `<p>${esc(p.trim())}</p>`).join('');
+
+    const slides = Array.isArray(beat.slides) ? beat.slides : [];
+    const beatText = typeof beat.presenterNotes === 'string' ? beat.presenterNotes.trim() : '';
+    const blocks = [];
+
+    // Beat-level prose first: this is the throughline for the whole beat.
+    if (beatText) {
+      blocks.push(`
+        <section class="nb nb--beat">
+          <header class="nb__head">
+            <span class="nb__tag micro-label">BEAT</span>
+            <span class="nb__cap">${esc(String(beat.label || beat.id).toUpperCase())}</span>
+          </header>
+          <div class="nb__body">${
+            beatText.split(/\n{2,}/).map((para) => `<p>${esc(para.trim())}</p>`).join('')
+          }</div>
+        </section>`);
+    }
+
+    // One block per slide, numbered to match the projector's step order.
+    slides.forEach((slide, i) => {
+      const note = typeof slide.note === 'string' ? slide.note.trim() : '';
+      const cap = slideCaption(slide);
+      blocks.push(`
+        <section class="nb nb--slide${note ? '' : ' is-bare'}">
+          <header class="nb__head">
+            <span class="nb__n readout">${pad(i + 1, 2)}</span>
+            <span class="nb__tag micro-label">${esc(String(slide.kind || '').toUpperCase())}</span>
+            ${cap ? `<span class="nb__cap">${esc(cap)}</span>` : ''}
+          </header>
+          ${note
+            ? `<div class="nb__body">${note.split(/\n{2,}/).map((para) => `<p>${esc(para.trim())}</p>`).join('')}</div>`
+            : ''}
+        </section>`);
+    });
+
+    if (!blocks.length) {
+      el.notes.innerHTML = '<p class="notes__empty micro-label">NO NOTES FOR THIS BEAT</p>';
+      return;
+    }
+
+    el.notes.innerHTML = blocks.join('');
     el.notes.scrollTop = 0;
   }
 
@@ -859,6 +938,53 @@
   function cycleTab(dir = 1) {
     const i = TAB_ORDER.indexOf(S.tab);
     setTab(TAB_ORDER[(i + dir + TAB_ORDER.length) % TAB_ORDER.length]);
+  }
+
+  // ── Collapsible telemetry modules ────────────────────────────────
+  // The right column scrolls, but on a 720p lectern screen four expanded
+  // modules still means scrolling to reach the radar. Collapsing is how the
+  // operator pins what matters for the current beat. State persists so a
+  // mid-talk reload comes back configured the way it was.
+  const COLLAPSE_LS = 'cyborg.collapsed';
+
+  function loadCollapsed() {
+    try {
+      const raw = localStorage.getItem(COLLAPSE_LS);
+      const arr = raw ? JSON.parse(raw) : [];
+      return new Set(Array.isArray(arr) ? arr.filter((x) => typeof x === 'string') : []);
+    } catch { return new Set(); }
+  }
+
+  function saveCollapsed() {
+    try { localStorage.setItem(COLLAPSE_LS, JSON.stringify([...S.collapsed])); } catch { /* */ }
+  }
+
+  function applyCollapsed() {
+    $$('[data-module]').forEach((panel) => {
+      const key = panel.dataset.module;
+      const btn = $('[data-collapse]', panel);
+      if (!btn) return; // counters have no toggle — always visible
+      const off = S.collapsed.has(key);
+      panel.classList.toggle('is-collapsed', off);
+      btn.setAttribute('aria-expanded', String(!off));
+    });
+  }
+
+  function toggleModule(key) {
+    if (S.collapsed.has(key)) S.collapsed.delete(key); else S.collapsed.add(key);
+    saveCollapsed();
+    applyCollapsed();
+    // a freshly-expanded radar has zero size until it is re-rendered
+    if (key === 'radar' && !S.collapsed.has('radar')) renderRoomRadar();
+    status(`${key.toUpperCase()} · ${S.collapsed.has(key) ? 'COLLAPSED' : 'EXPANDED'}`);
+  }
+
+  function initCollapse() {
+    S.collapsed = loadCollapsed();
+    $$('[data-collapse]').forEach((btn) => {
+      btn.addEventListener('click', () => toggleModule(btn.dataset.collapse));
+    });
+    applyCollapsed();
   }
 
   function initTabs() {
@@ -993,6 +1119,9 @@
         ? `N=${pad(vectors.length)} · MEAN`
         : 'N=000 · IDLE';
     }
+    // collapsed proxy: participant count, so a hidden radar still declares
+    // whether the room is actually feeding it
+    if (el.radarProxy) el.radarProxy.textContent = `N=${pad(vectors.length)}`;
   }
 
   // ── Data: SSE /api/feed with backoff ─────────────────────────────
@@ -1182,6 +1311,7 @@
     initEvents();
     initControlTrack();
     initTabs();
+    initCollapse();
     setLink('offline');
     renderCounts();
     renderSpectrum();

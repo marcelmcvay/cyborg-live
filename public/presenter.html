@@ -145,7 +145,7 @@
       <!-- ── RIGHT: TELEMETRY ─────────────────────────────────── -->
       <aside class="tele" aria-label="Assemble telemetry">
 
-        <section class="fui-panel counters">
+        <section class="fui-panel counters" data-module="counters">
         <span class="fui-corners" aria-hidden="true"></span>
           <div class="counter">
             <span class="micro-label">SIGNALS</span>
@@ -157,48 +157,66 @@
           </div>
         </section>
 
-        <section class="fui-panel spectrum">
+        <section class="fui-panel spectrum" data-module="radar">
         <span class="fui-corners" aria-hidden="true"></span>
           <div class="panel__head panel__head--tight">
-            <div class="panel__title">
-              <span class="micro-label">MODE B</span>
-              <h2>ROOM SHAPE</h2>
-            </div>
+            <button class="panel__toggle" type="button" data-collapse="radar" aria-expanded="true" aria-controls="radarBody">
+              <span class="panel__caret" aria-hidden="true"></span>
+              <span class="panel__title">
+                <span class="micro-label">MODE B</span>
+                <span class="panel__h" role="heading" aria-level="2">ROOM SHAPE</span>
+              </span>
+              <span class="panel__proxy readout" id="radarProxy">N=000</span>
+            </button>
             <span class="micro-label" id="roomRadarMeta">N=000 · IDLE</span>
           </div>
 
-          <!-- Room polygon: MEAN of participant vectors. Not a ranking, not a
-               scoreboard, and never ranked by enclosed area. Ghost references
-               (Vader, 1890 farmer) sit behind it as comparisons. -->
-          <div class="room-radar" id="roomRadar" role="img" aria-label="Room assemblage radar"></div>
-        </section>
-
-        <section class="fui-panel tally">
-        <span class="fui-corners" aria-hidden="true"></span>
-          <div class="panel__head panel__head--tight">
-            <div class="panel__title">
-              <span class="micro-label">COMPONENTS</span>
-              <h2>TOP 08</h2>
-            </div>
+          <div class="panel__collapse" id="radarBody">
+            <!-- Room polygon: MEAN of participant vectors. Not a ranking, not a
+                 scoreboard, and never ranked by enclosed area. Ghost references
+                 (Vader, 1890 farmer) sit behind it as comparisons. -->
+            <div class="room-radar" id="roomRadar" role="img" aria-label="Room assemblage radar"></div>
           </div>
-          <ol class="tally__list" id="tally"></ol>
-          <p class="tally__empty micro-label" id="tallyEmpty">NO ASSEMBLAGES · TALLY IDLE</p>
         </section>
 
-        <section class="fui-panel klass" id="klassCard" aria-live="polite">
+        <section class="fui-panel tally" data-module="tally">
         <span class="fui-corners" aria-hidden="true"></span>
           <div class="panel__head panel__head--tight">
-            <div class="panel__title">
-              <span class="micro-label">LATEST CLASS</span>
-            </div>
+            <button class="panel__toggle" type="button" data-collapse="tally" aria-expanded="true" aria-controls="tallyBody">
+              <span class="panel__caret" aria-hidden="true"></span>
+              <span class="panel__title">
+                <span class="micro-label">COMPONENTS</span>
+                <span class="panel__h" role="heading" aria-level="2">TOP 08</span>
+              </span>
+              <span class="panel__proxy readout" id="tallyProxy">000</span>
+            </button>
+          </div>
+          <div class="panel__collapse" id="tallyBody">
+            <ol class="tally__list" id="tally"></ol>
+            <p class="tally__empty micro-label" id="tallyEmpty">NO ASSEMBLAGES · TALLY IDLE</p>
+          </div>
+        </section>
+
+        <section class="fui-panel klass" id="klassCard" data-module="klass" aria-live="polite">
+        <span class="fui-corners" aria-hidden="true"></span>
+          <div class="panel__head panel__head--tight">
+            <button class="panel__toggle" type="button" data-collapse="klass" aria-expanded="true" aria-controls="klassCollapse">
+              <span class="panel__caret" aria-hidden="true"></span>
+              <span class="panel__title">
+                <span class="micro-label">LATEST CLASS</span>
+              </span>
+              <span class="panel__proxy readout" id="klassProxy">—</span>
+            </button>
             <span class="micro-label" id="klassIdx">— / —</span>
           </div>
-          <div class="klass__body" id="klassBody">
-            <div class="klass__name is-empty">STANDBY</div>
-            <div class="klass__meta">
-              <span class="readout" id="klassHandle">—</span>
-              <span class="klass__picks readout" id="klassPicks">PICKS 00</span>
-              <span class="readout" id="klassSpectrum">SPEC 000</span>
+          <div class="panel__collapse" id="klassCollapse">
+            <div class="klass__body" id="klassBody">
+              <div class="klass__name is-empty">STANDBY</div>
+              <div class="klass__meta">
+                <span class="readout" id="klassHandle">—</span>
+                <span class="klass__picks readout" id="klassPicks">PICKS 00</span>
+                <span class="readout" id="klassSpectrum">SPEC 000</span>
+              </div>
             </div>
           </div>
         </section>

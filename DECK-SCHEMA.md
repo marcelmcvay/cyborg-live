@@ -69,8 +69,9 @@ Ordered within the beat. `kind` is one of:
 |---|---|---|
 | `statement` | `text` | full-bleed sentence, Space Grotesk, the money line |
 | `quote` | `text`, `attrib` | pull quote with hairline rule + attribution |
-| `spectrum` | `labels[]` | the Vader→Daily Designer ruler with tick marks |
-| `histogram` | — | LIVE aggregate from `/api/state` (the reveal) |
+| `radar` | `title` | LIVE room polygon over 7 axes — mean of participant vectors |
+| `histogram` | — | LIVE **dependence** aggregate from `/api/state` |
+| `spectrum` | `labels[]` | DEPRECATED 1-D ruler. Superseded by `radar`; do not author new ones |
 | `list` | `items[]` | max 4 items, mono, tick-mark bullets |
 | `caseStudy` | `title`, `beats[]` | Regent / self-checkout narrative frames |
 | `staged` | — | LIVE full-screen audience submission via `/api/stage` |
@@ -79,9 +80,31 @@ Ordered within the beat. `kind` is one of:
 Keep it sparse. This is a talk, not a document — if a slide needs a paragraph,
 it belongs in `presenterNotes`.
 
-### `presenterNotes`
-Shown only on `/presenter`. Plain prose. This is where the vault outline's
-detail lives: the exact quote, the story beat, the facilitation move.
+### `presenterNotes` and per-slide `note`
+Both shown only on `/presenter`, which renders **one block per slide**.
+
+- `beat.presenterNotes` — the throughline for the whole beat. Keep it SHORT
+  (under ~75 words): the standing constraint, the clock warning, and any
+  do-not-say list that applies across the beat. It renders first, accent-railed,
+  tagged `BEAT`.
+- `slide.note` — what Marcel actually says while *that slide* is up. This is
+  where the exact quote, the story beat and the facilitation move live. Rendered
+  under a numbered header carrying the slide's own on-screen words, so the
+  operator matches script to projector by eye.
+
+Use `\n\n` inside either field to break paragraphs.
+
+**Why per-slide:** a 300-word beat blob is unreadable at a lectern mid-sentence.
+Splitting by slide is what makes the notes usable while talking.
+
+**The presenter does NOT know which slide is live.** `/deck` steps slides
+locally and no slide index crosses the wire, so every block is shown at once and
+the operator matches by eye. Do not add a "current slide" highlight without
+first putting slide position on the wire — a wrong highlight is worse than none.
+
+A slide with no `note` still renders as a thin numbered marker so the running
+order stays legible. Fact-discipline lines ("do NOT say X") belong in whichever
+field is on screen when the temptation arises — usually the slide, not the beat.
 
 ## Design tokens
 Already defined in `public/shared.css`. Do not introduce new colors.
