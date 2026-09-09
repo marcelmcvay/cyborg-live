@@ -269,54 +269,57 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .picks-readout { font-size: 28px; line-height: 1; margin-top: 2px; }
 
 /* ruler */
-.ruler { display: flex; flex-direction: column; gap: 6px; }
-.ruler-track { position: relative; height: 26px; }
-.ruler-track::before {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0;
-  height: 1px; background: var(--rule-strong);
+/* ---------- radar (supersedes the 1-D ruler) ----------
+   The retired ruler ran daily-designer -> Vader, which measured HOW MUCH and
+   reinstated a destination. The polygon measures SHAPE: identical area, wholly
+   different silhouette. Fill opacity carries pick density; radius never does. */
+.radar-host { display: block; width: 100%; max-width: 380px; margin: 4px auto 0; }
+.radar { display: block; width: 100%; height: auto; overflow: visible; }
+
+.radar__ring {
+  fill: none; stroke: var(--rule); stroke-width: 1;
 }
-.ruler-fill {
-  position: absolute; left: 0; bottom: 0; height: 1px; width: 0%;
-  background: var(--accent);
-  transition: width var(--t-med) var(--ease);
+.radar__ring--outer { stroke: var(--rule-strong); }
+.radar__spoke { stroke: var(--rule); stroke-width: 1; }
+
+/* Ghosts sit UNDER the live shape: a comparison, not an endpoint. */
+.radar__ghost {
+  fill: var(--fg); fill-opacity: 0.03;
+  stroke: var(--mid); stroke-width: 1;
+  stroke-dasharray: 2 3; stroke-opacity: 0.55;
 }
-.ruler-ticks { position: absolute; inset: 0; }
-.ruler-ticks i {
-  position: absolute; bottom: 0; width: 1px; background: var(--rule-strong);
-  height: 6px; transform: translateX(-50%);
+
+.radar__shape {
+  fill: var(--accent);
+  stroke: var(--accent); stroke-width: 2;
+  stroke-linejoin: round;
+  transition: all var(--t-med) var(--ease);
 }
-.ruler-ticks i.is-major { height: 12px; background: var(--fg); opacity: 0.6; }
-.ruler-ticks i.is-mid { height: 9px; }
-.ruler-marker {
-  position: absolute; bottom: -1px; left: 0%; width: 0; height: 100%;
-  transition: left var(--t-med) var(--ease);
+.radar__shape.is-empty { stroke: var(--mid); stroke-dasharray: 3 3; }
+
+.radar__dot { fill: var(--accent); }
+.radar__shape.is-empty ~ .radar__dots .radar__dot { fill: var(--mid); }
+
+.radar__label {
+  fill: var(--fg); font-size: 9px; letter-spacing: 0.06em;
+  text-transform: uppercase; font-family: var(--mono, monospace);
 }
-.ruler-marker-line {
-  position: absolute; bottom: 0; left: 0; transform: translateX(-50%);
-  width: 1px; height: 100%;
-  background: var(--accent);
+.radar__val {
+  fill: var(--accent); font-size: 9px;
+  font-family: var(--mono, monospace);
 }
-.ruler-marker-line::before {
-  content: ""; position: absolute; top: 0; left: 50%;
-  width: 7px; height: 7px; transform: translate(-50%, -50%) rotate(45deg);
-  border: 1px solid var(--accent); background: var(--bg);
+
+.radar-legend {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-top: 10px; align-items: flex-start;
 }
-.ruler-marker.is-idle .ruler-marker-line { background: var(--mid); }
-.ruler-marker.is-idle .ruler-marker-line::before { border-color: var(--mid); }
-.ruler-labels { position: relative; height: 24px; }
-.ruler-labels li {
-  position: absolute; top: 0; transform: translateX(-50%);
-  font-size: 8px; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.2;
-  color: var(--mid); text-align: center; white-space: nowrap;
-  transition: color var(--t-fast) var(--ease);
+.ghost-toggle {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer; min-height: 32px;
 }
-.ruler-labels li[data-at="0"] { left: 0; transform: none; text-align: left; }
-.ruler-labels li[data-at="25"] { left: 25%; }
-.ruler-labels li[data-at="50"] { left: 50%; }
-.ruler-labels li[data-at="75"] { left: 75%; }
-.ruler-labels li[data-at="100"] { left: 100%; transform: translateX(-100%); text-align: right; }
-.ruler-labels li.is-near { color: var(--fg); }
-@media (min-width: 480px) { .ruler-labels li { font-size: 9px; } }
+.ghost-toggle input { width: 16px; height: 16px; accent-color: var(--accent); }
+.radar-note { color: var(--mid); }
+@media (min-width: 480px) { .radar__label, .radar__val { font-size: 10px; } }
 
 /* ---------- slot groups ---------- */
 .slots { display: flex; flex-direction: column; gap: 10px; }
@@ -364,12 +367,11 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .comp-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .comp-label { font-family: var(--font-display); font-size: 14px; line-height: 1.2; }
 .comp-blurb { font-size: 11px; line-height: 1.4; color: var(--mid); }
-.comp-w { font-size: 10px; letter-spacing: 0.15em; color: var(--mid); margin-top: 3px; white-space: nowrap; }
-.comp-w b { font-weight: 400; color: var(--fg); }
+.comp-axis { font-size: 9px; color: var(--mid); margin-top: 3px; white-space: nowrap; text-align: right; }
 .comp[aria-pressed="true"] { border-color: var(--accent); background: rgba(0, 229, 204, 0.05); }
 .comp[aria-pressed="true"] .comp-box { border-color: var(--accent); }
 .comp[aria-pressed="true"] .comp-box::after { opacity: 1; transform: scale(1); }
-.comp[aria-pressed="true"] .comp-w b { color: var(--accent); }
+.comp[aria-pressed="true"] .comp-axis { color: var(--accent); }
 
 /* ---------- transmit ---------- */
 .transmit-panel { display: flex; flex-direction: column; gap: 12px; }

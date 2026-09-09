@@ -13,6 +13,7 @@
     cue: 'cyborg.cue',
     gates: 'cyborg.gates',
     card: 'cyborg.card',
+    ghosts: 'cyborg.ghosts',
   };
   const uuid = () => (crypto.randomUUID ? crypto.randomUUID()
     : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -483,56 +484,89 @@
   const spectrumNum = $('#spectrum-num');
   const klassOut = $('#klass-readout');
   const picksOut = $('#picks-count');
-  const rulerFill = $('#ruler-fill');
-  const rulerMarker = $('#ruler-marker');
-  const rulerLabels = [...document.querySelectorAll('#ruler-labels li')];
+  const radarHost = $('#radar-host');
+  const radarNote = $('#radar-note');
+  const ghostToggle = $('#ghost-toggle');
   const transmitBtn = $('#transmit-btn');
   const transmitLabel = $('.send-label', transmitBtn);
   const transmitHint = $('#transmit-hint');
   const asmErr = $('#assemble-error');
   const card = $('#class-card');
 
-  // ticks: every 5 minor, 10 mid, 25 major
-  const ticks = $('#ruler-ticks');
-  for (let v = 0; v <= 100; v += 5) {
-    const i = document.createElement('i');
-    i.style.left = v + '%';
-    if (v % 25 === 0) i.className = 'is-major'; else if (v % 10 === 0) i.className = 'is-mid';
-    ticks.append(i);
+  // Ghost reference polygons. Vader et al. are COMPARISONS drawn behind your
+  // shape, not endpoints on a scale. 'ghost.room' is the live room aggregate
+  // and is excluded here — the phone shows authored references only.
+  let showGhosts = lsGet(LS.ghosts, true);
+  function ghostSet() {
+    if (!showGhosts) return [];
+    return (catalog.ghosts || []).filter(g => g.id !== 'ghost.room');
   }
 
   const ARCHETYPES = [[0, 'DAILY DESIGNER'], [25, 'RACE CAR DRIVER'], [50, 'PILOT'], [75, 'ASTRONAUT'], [100, 'VADER']];
   const archetypeFor = s => ARCHETYPES.reduce((best, a) => Math.abs(a[0] - s) < Math.abs(best[0] - s) ? a : best)[1];
 
   // hybrid prefixes when a second group is nearly as dominant
-  const PREFIX = { BODY: 'Exo-', SENSES: 'Sensor ', COGNITION: 'Archival ', VOICE: 'Polyglot ', VEHICLE: 'Kinetic ', SOCIAL: 'Networked ', CRAFT: 'Artisan ' };
+  const PREFIX = { BODY: 'Exo-', SENSES: 'Sensor ', COGNITION: 'Archival ', VOICE: 'Polyglot ', VEHICLE: 'Kinetic ', SOCIAL: 'Networked ', CRAFT: 'Artisan ', LABOR: 'Contracted ', DOMESTIC: 'Hearth ' };
 
-  let catalog = { groups: [], components: [] };
+  let catalog = { groups: [], components: [], axes: [], ghosts: [] };
   let byId = new Map();
   let picks = new Set(lsGet(LS.picks, []));
   let openSlots = new Set(lsGet(LS.open, []));
-  const SUM_REF = 40; // Σweight that maps to the top of the coverage term
+
+  // AXIS_ORDER is read from the catalog and is FIXED. Radar silhouettes change
+  // dramatically with spoke order on identical data — never sort by value.
+  let AXIS_ORDER = [];
+  // The one derived scalar we keep from the retired 1-D spectrum. Polygons do
+  // not aggregate into a single glance as cleanly, so one axis carries that
+  // moment. DEPENDENCE is the honest choice: "what breaks if it stops."
+  const SCALAR_AXIS = 'DEPENDENCE';
 
   function compute() {
     const chosen = [...picks].map(id => byId.get(id)).filter(Boolean);
     const n = chosen.length;
-    if (!n) return { spectrum: 0, klass: null, n, groups: [] };
-    const sumW = chosen.reduce((a, c) => a + c.weight, 0);
-    const avgW = sumW / n;
-    // weighted normalised: 60% how much tech you've folded in, 40% how overtly cyborg it is
-    const spectrum = Math.round(clamp(100 * (0.6 * Math.min(1, sumW / SUM_REF) + 0.4 * (avgW / 5)), 0, 100));
-    const gw = {};
-    for (const c of chosen) gw[c.group] = (gw[c.group] || 0) + c.weight;
-    const groups = Object.entries(gw).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+    const zero = {};
+    for (const ax of AXIS_ORDER) zero[ax] = 0;
+    if (!n) return { spectrum: 0, klass: null, n, groups: [], vector: zero };
+    // MEAN across picks, never sum. Sum would make more picks = bigger polygon,
+    // rebuilding the scoreboard the 1-D spectrum was removed for. Mean makes
+    // shape = character; pick COUNT is surfaced as fill density instead.
+    const vector = (window.Radar
+      ? window.Radar.meanVector(chosen, AXIS_ORDER)
+      : zero);
+    // retained scalar for the one-glance readout — a real axis, not a ranking
+    const spectrum = Math.round(clamp(+vector[SCALAR_AXIS] || 0, 0, 100));
+    // group dominance by pick COUNT (v2 has no per-component weight)
+    const gc = {};
+    for (const c of chosen) gc[c.group] = (gc[c.group] || 0) + 1;
+    const groups = Object.entries(gc).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
     const [g1, w1] = groups[0];
     const base = (catalog.groups.find(g => g.id === g1) || {}).klass || 'Steward';
     let klass = base;
     if (groups[1] && groups[1][1] >= 0.8 * w1 && PREFIX[groups[1][0]]) {
       klass = PREFIX[groups[1][0]] + base;
     }
-    if (spectrum >= 90) klass = 'Dark ' + klass;
-    else if (spectrum <= 12 && n <= 2) klass = 'Latent ' + klass;
-    return { spectrum, klass, n, groups };
+    // qualitative modifiers read off the shape, not off a total score
+    if ((+vector.AGENCY || 0) >= 70) klass = 'Dispatched ' + klass;
+    else if ((+vector.MASTERY || 0) >= 70) klass = 'Adept ' + klass;
+    return { spectrum, klass, n, groups, vector };
+  }
+
+  // The single axis a component scores highest on — a compact, honest label for
+  // the catalog row. Ties break by the FIXED axis order, never alphabetically,
+  // so the readout is stable across renders.
+  function dominantAxis(c) {
+    const v = (c && c.vector) || {};
+    let bestAx = null; let bestVal = -1;
+    for (const ax of AXIS_ORDER) {
+      const n = +v[ax] || 0;
+      if (n > bestVal) { bestVal = n; bestAx = ax; }
+    }
+    if (!bestAx) return { short: '', title: '' };
+    const meta = (catalog.axes || []).find(a => a.id === bestAx) || {};
+    return {
+      short: `${meta.short || bestAx} ${Math.round(bestVal)}`,
+      title: `${meta.label || bestAx}: ${Math.round(bestVal)}/100 — ${meta.desc || ''}`.trim(),
+    };
   }
 
   function renderState() {
@@ -541,12 +575,25 @@
     picksOut.textContent = pad(s.n, 2);
     klassOut.textContent = s.klass || 'Unassembled';
     klassOut.classList.toggle('is-none', !s.klass);
-    rulerFill.style.width = s.spectrum + '%';
-    rulerMarker.style.left = s.spectrum + '%';
-    rulerMarker.classList.toggle('is-idle', !s.n);
+    // Draw the polygon. pickCount drives fill DENSITY only — never radius, or
+    // more picks would mean a bigger shape and we'd be back to a scoreboard.
+    if (radarHost && window.Radar && AXIS_ORDER.length) {
+      window.Radar.mount(radarHost, {
+        vector: s.vector,
+        axes: catalog.axes || [],
+        axisOrder: AXIS_ORDER,
+        ghosts: ghostSet(),
+        pickCount: s.n,
+        size: 320,
+        labels: true,
+      });
+    }
+    if (radarNote) {
+      radarNote.textContent = !s.n
+        ? 'PICK COMPONENTS TO DRAW YOUR SHAPE'
+        : `SHAPE FROM ${pad(s.n, 2)} PICKS · MEAN ACROSS ${AXIS_ORDER.length} AXES`;
+    }
     const arch = archetypeFor(s.spectrum);
-    const archAt = String(ARCHETYPES.find(a => a[1] === arch)[0]);
-    rulerLabels.forEach(li => li.classList.toggle('is-near', !!s.n && li.dataset.at === archAt));
     transmitBtn.disabled = !s.n || transmitting;
     if (!transmitting) {
       transmitLabel.textContent = sentCard
@@ -608,12 +655,16 @@
       const body = el('div', { class: 'slot-body', id: bodyId, role: 'group', 'aria-label': `${g.label} components` });
       for (const c of comps) {
         const on = picks.has(c.id);
+        // v2 has no scalar `weight`. The honest per-component readout is its
+        // DOMINANT AXIS — what this thing mostly does to you — not a 1-5 bar,
+        // which was just the retired spectrum leaking into the catalog list.
+        const dom = dominantAxis(c);
         const b = el('button', { class: 'comp', type: 'button', 'aria-pressed': String(on), 'data-id': c.id },
           el('span', { class: 'comp-box', 'aria-hidden': 'true' }),
           el('span', { class: 'comp-main' },
             el('span', { class: 'comp-label', text: c.label }),
             el('span', { class: 'comp-blurb', text: c.blurb })),
-          el('span', { class: 'comp-w', title: `weight ${c.weight}/5`, html: `<b>${'▮'.repeat(c.weight)}</b>${'▯'.repeat(5 - c.weight)}` }),
+          el('span', { class: 'comp-axis micro-label', title: dom.title, text: dom.short }),
         );
         b.addEventListener('click', () => togglePick(c.id, b));
         body.append(b);
@@ -630,9 +681,16 @@
 
   async function loadCatalog() {
     try {
-      const res = await fetch('components.json', { cache: 'no-cache' });
+      // components.v2.json — 7-axis vectors. v1 (components.json) was the
+      // retired 1-D weight/spectrum catalog; it has no vectors and cannot
+      // drive the radar. Do not fall back to it.
+      const res = await fetch('components.v2.json', { cache: 'no-cache' });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       catalog = await res.json();
+      // FIXED spoke order straight from the data file — never derived from
+      // Object.keys and never sorted by value.
+      AXIS_ORDER = (catalog.aggregation && catalog.aggregation.axisOrder)
+        || (catalog.axes || []).map(a => a.id);
       byId = new Map(catalog.components.map(c => [c.id, c]));
       picks = new Set([...picks].filter(id => byId.has(id)));
       buildSlots();
@@ -707,6 +765,17 @@
     if (scroll) card.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
   }
 
+  // Ghost polygons are a comparison layer, so let people turn them off — on a
+  // small screen four reference shapes behind yours can bury your own outline.
+  if (ghostToggle) {
+    ghostToggle.checked = !!showGhosts;
+    ghostToggle.addEventListener('change', () => {
+      showGhosts = !!ghostToggle.checked;
+      lsSet(LS.ghosts, showGhosts);
+      renderState();
+    });
+  }
+
   transmitBtn.addEventListener('click', async () => {
     if (transmitting) return;
     if (!isOpen('assemble')) { showErr(asmErr, 'Assemble is not open right now.'); return; }
@@ -718,7 +787,7 @@
     transmitBtn.classList.add('is-busy');
     transmitLabel.textContent = 'TRANSMITTING';
     try {
-      const r = await postJSON('api/assemblage', { sid, handle: handle || undefined, picks: [...picks], spectrum: s.spectrum, klass: s.klass });
+      const r = await postJSON('api/assemblage', { sid, handle: handle || undefined, picks: [...picks], spectrum: s.spectrum, klass: s.klass, vector: s.vector });
       transmitLabel.textContent = `RECEIVED · ${r.id}`;
       say(`ASSEMBLAGE LOGGED · ID ${r.id}`);
       renderCard(s, r);

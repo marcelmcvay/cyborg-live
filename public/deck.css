@@ -348,3 +348,32 @@
 }
 .deck__stage::before { top: 18px; left: 18px; border-width: 1px 0 0 1px; }
 .deck__stage::after  { top: 18px; right: 18px; border-width: 1px 1px 0 0; }
+
+/* ── radar / room shape ─────────────────────────────────────────────
+   Replaces the 1-D histogram + daily-designer→Vader ruler on this surface.
+   Fill opacity carries participant density; radius NEVER does. */
+.room-radar { display: block; width: 100%; padding: 6px var(--pad) var(--pad); }
+.deck-radar { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.deck-radar__host { width: min(62vh, 100%); }
+
+.radar { display: block; width: 100%; height: auto; overflow: visible; }
+.radar__ring { fill: none; stroke: var(--rule); stroke-width: 1; }
+.radar__ring--outer { stroke: var(--rule-strong, var(--rule)); }
+.radar__spoke { stroke: var(--rule); stroke-width: 1; }
+
+/* Ghosts sit UNDER the live shape: comparison, not destination. */
+.radar__ghost {
+  fill: var(--fg); fill-opacity: 0.03;
+  stroke: var(--mid); stroke-width: 1;
+  stroke-dasharray: 2 3; stroke-opacity: 0.5;
+}
+.radar__shape {
+  fill: var(--accent); stroke: var(--accent);
+  stroke-width: 2; stroke-linejoin: round;
+}
+.radar__shape.is-empty { stroke: var(--mid); stroke-dasharray: 3 3; }
+.radar__dot { fill: var(--accent); }
+.radar__label {
+  fill: var(--fg); font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.radar__val { fill: var(--accent); font-size: 15px; }

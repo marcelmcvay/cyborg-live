@@ -110,7 +110,7 @@
       <span class="fui-corners" aria-hidden="true"></span>
       <div class="spectrum-head">
         <div>
-          <span class="micro-label">SPECTRUM</span>
+          <span class="micro-label">DEPENDENCE</span>
           <div class="readout spectrum-value"><span id="spectrum-num">000</span><span class="unit">/100</span></div>
         </div>
         <div class="klass-block">
@@ -123,19 +123,18 @@
         </div>
       </div>
 
-      <div class="ruler" id="ruler" role="img" aria-label="Spectrum ruler from Daily Designer to Vader">
-        <div class="ruler-track">
-          <div class="ruler-fill" id="ruler-fill"></div>
-          <div class="ruler-ticks" id="ruler-ticks" aria-hidden="true"></div>
-          <div class="ruler-marker" id="ruler-marker"><span class="ruler-marker-line"></span></div>
-        </div>
-        <ol class="ruler-labels" id="ruler-labels">
-          <li data-at="0"><span>DAILY<br>DESIGNER</span></li>
-          <li data-at="25"><span>RACE CAR<br>DRIVER</span></li>
-          <li data-at="50"><span>PILOT</span></li>
-          <li data-at="75"><span>ASTRONAUT</span></li>
-          <li data-at="100"><span>VADER</span></li>
-        </ol>
+      <!-- RADAR. Supersedes the 1-D daily-designer→Vader ruler. A single axis
+           measures HOW MUCH and reinstates a destination; the polygon says two
+           people can enclose the same area and be completely different shapes.
+           Vader is now a ghost polygon behind yours, not an endpoint ahead. -->
+      <div class="radar-host" id="radar-host" role="img" aria-label="Your assemblage radar"></div>
+
+      <div class="radar-legend">
+        <label class="ghost-toggle">
+          <input type="checkbox" id="ghost-toggle" checked>
+          <span class="micro-label">SHOW REFERENCE SHAPES</span>
+        </label>
+        <p class="radar-note micro-label" id="radar-note">PICK COMPONENTS TO DRAW YOUR SHAPE</p>
       </div>
     </div>
 
@@ -199,6 +198,7 @@
   </div>
 </nav>
 
+<script src="radar.js" defer></script>
 <script src="app.js" defer></script>
 </body>
 </html>

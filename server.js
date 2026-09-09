@@ -21,6 +21,9 @@ const KINDS = new Set(['question', 'discussion', 'note']);
 // cue.mode drives what the phone offers. Order-agnostic: decks reference beats
 // by id, never by index, so reordering a deck is a pure JSON edit.
 const CUE_MODES = new Set(['intro', 'assemble', 'reveal', 'present', 'panel', 'steward', 'closed']);
+// Radar axes — must match components.v2.json aggregation.axisOrder. The server
+// only validates axis NAMES; the fixed spoke ORDER is a client/data concern.
+const AXIS_IDS = new Set(['INTIMACY', 'DEPENDENCE', 'AGENCY', 'VISIBILITY', 'CONSENT', 'MASTERY', 'SURVEILLANCE']);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -298,9 +301,24 @@ async function handleAssemblage(req, res) {
   if (!Number.isFinite(spectrum) || spectrum < 0 || spectrum > 100) return sendError(res, 400, 'spectrum must be a number 0..100');
   const klass = cleanText(body.klass, 48);
   if (!klass) return sendError(res, 400, 'klass required');
+  // vector: the 7-axis radar position, mean-aggregated client-side from the
+  // picks. Optional so an older client still posts successfully, but without it
+  // the participant cannot appear in the room polygon.
+  let vector = null;
+  if (body.vector && typeof body.vector === 'object' && !Array.isArray(body.vector)) {
+    vector = {};
+    for (const [k, v] of Object.entries(body.vector)) {
+      if (!AXIS_IDS.has(k)) continue; // ignore unknown axes rather than 400
+      const n = Number(v);
+      if (!Number.isFinite(n)) continue;
+      vector[k] = Math.round(Math.max(0, Math.min(100, n)) * 10) / 10;
+    }
+    if (!Object.keys(vector).length) vector = null;
+  }
   const asm = {
     id: newId(), ts: Date.now(), sid, handle: cleanHandle(body.handle),
     picks, spectrum: Math.round(spectrum * 10) / 10, klass,
+    ...(vector ? { vector } : {}),
   };
   state.assemblages.set(sid, asm);
   appendLog(ASSEMBLAGES_LOG, asm);

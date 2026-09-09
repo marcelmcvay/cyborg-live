@@ -36,10 +36,7 @@
   <!-- TAB NAVIGATION -->
   <nav class="tabs" role="tablist" aria-label="Presenter modes">
     <button class="tab is-active" data-tab="control" role="tab" aria-selected="true" id="tabControl">
-      CONTROL
-    </button>
-    <button class="tab" data-tab="notes" role="tab" aria-selected="false" id="tabNotes">
-      NOTES
+      SHOW <span class="tab__sub micro-label">CONTROL + NOTES</span>
     </button>
     <button class="tab" data-tab="signal" role="tab" aria-selected="false" id="tabSignal">
       SIGNAL <span class="tab__n readout" id="tabSignalN">000</span>
@@ -125,6 +122,26 @@
         </div>
       </section>
 
+      <!-- ── MIDDLE: PRESENTER NOTES (always visible alongside control) ── -->
+      <section class="fui-panel notes-live" aria-label="Presenter notes">
+        <span class="fui-corners" aria-hidden="true"></span>
+
+        <div class="panel__head panel__head--tight">
+          <div class="panel__title">
+            <span class="micro-label">PRESENTER NOTES</span>
+            <h2 id="notesBeat">—</h2>
+          </div>
+          <div class="notes-meta">
+            <span class="micro-label" id="notesIdx">—/—</span>
+            <span class="micro-label" id="notesTime">00:00 / 00:00</span>
+          </div>
+        </div>
+
+        <div class="notes-live__body" id="notes">
+          <p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>
+        </div>
+      </section>
+
       <!-- ── RIGHT: TELEMETRY ─────────────────────────────────── -->
       <aside class="tele" aria-label="Assemble telemetry">
 
@@ -145,25 +162,15 @@
           <div class="panel__head panel__head--tight">
             <div class="panel__title">
               <span class="micro-label">MODE B</span>
-              <h2>SPECTRUM</h2>
+              <h2>ROOM SHAPE</h2>
             </div>
-            <span class="micro-label" id="spectrumMeta">N=000 · μ=—</span>
+            <span class="micro-label" id="roomRadarMeta">N=000 · IDLE</span>
           </div>
 
-          <div class="hist" id="hist" role="img" aria-label="Spectrum histogram, 10 buckets">
-            <!-- 10 .hist__bar filled by JS -->
-          </div>
-
-          <div class="ruler" aria-hidden="true">
-            <div class="ruler__ticks" id="rulerTicks"></div>
-            <div class="ruler__labels">
-              <span style="--x:0">DAILY<br>DESIGNER</span>
-              <span style="--x:25">RACE CAR<br>DRIVER</span>
-              <span style="--x:50">PILOT</span>
-              <span style="--x:75">ASTRONAUT</span>
-              <span style="--x:100">VADER</span>
-            </div>
-          </div>
+          <!-- Room polygon: MEAN of participant vectors. Not a ranking, not a
+               scoreboard, and never ranked by enclosed area. Ghost references
+               (Vader, 1890 farmer) sit behind it as comparisons. -->
+          <div class="room-radar" id="roomRadar" role="img" aria-label="Room assemblage radar"></div>
         </section>
 
         <section class="fui-panel tally">
@@ -197,28 +204,6 @@
         </section>
 
       </aside>
-    </section>
-
-    <!-- TAB PANEL: NOTES -->
-    <section class="tab-panel" data-panel="notes" role="tabpanel" aria-labelledby="tabNotes">
-      <div class="fui-panel notes-expanded">
-        <span class="fui-corners" aria-hidden="true"></span>
-        
-        <div class="panel__head">
-          <div class="panel__title">
-            <span class="micro-label">PRESENTER NOTES</span>
-            <h2 id="notesBeat">—</h2>
-          </div>
-          <div class="notes-meta">
-            <span class="micro-label" id="notesIdx">—/—</span>
-            <span class="micro-label" id="notesTime">00:00 / 00:00</span>
-          </div>
-        </div>
-
-        <div class="notes-expanded__body" id="notes">
-          <p class="notes__empty micro-label">NO BEAT CUED · PRESS NEXT BEAT</p>
-        </div>
-      </div>
     </section>
 
     <!-- TAB PANEL: SIGNAL -->
@@ -273,6 +258,7 @@
     <span class="micro-label ftr__right" id="ftrStatus">BOOT</span>
   </footer>
 
+  <script src="radar.js"></script>
   <script src="presenter.js"></script>
 </body>
 </html>

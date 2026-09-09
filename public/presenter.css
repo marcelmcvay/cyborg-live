@@ -230,6 +230,15 @@ kbd {
 }
 .tab.is-active .tab__n { color: var(--accent); }
 
+/* Secondary label on the SHOW tab — signifies the tab holds two surfaces */
+.tab__sub {
+  font-size: 9px;
+  color: var(--dim, var(--mid));
+  margin-left: 6px;
+  opacity: 0.75;
+}
+.tab.is-active .tab__sub { opacity: 1; }
+
 .tabs__hint {
   margin-left: auto;
   align-self: center;
@@ -271,10 +280,12 @@ kbd {
   display: block;
 }
 
-/* CONTROL TAB LAYOUT */
+/* CONTROL TAB LAYOUT — control track | notes | telemetry.
+   Notes get the widest column: they are the script, read at a glance in a
+   dark room. Telemetry is glanceable and compresses without losing meaning. */
 .tab-panel[data-panel="control"] {
   display: grid;
-  grid-template-columns: minmax(320px, 26fr) minmax(0, 24fr);
+  grid-template-columns: minmax(300px, 22fr) minmax(0, 30fr) minmax(0, 20fr);
   gap: var(--gap);
 }
 
@@ -282,19 +293,29 @@ kbd {
   display: grid;
 }
 
-/* NOTES TAB LAYOUT */
-.notes-expanded {
+/* NOTES — permanent middle column of the control surface */
+.notes-live {
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  min-width: 0;
 }
 
-.notes-expanded .panel__head {
+.notes-live .panel__head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 12px;
+}
+
+.notes-live__body {
+  flex: 1 1 auto;
   padding: var(--pad);
-  border-bottom: 1px solid var(--rule);
+  overflow-y: auto;
+  font-size: 18px;
+  line-height: 1.5;
+  min-height: 0;
 }
 
 .notes-meta {
@@ -302,15 +323,8 @@ kbd {
   gap: 16px;
   flex-direction: column;
   align-items: flex-end;
-}
-
-.notes-expanded__body {
-  flex: 1;
-  padding: var(--pad);
-  overflow-y: auto;
-  font-size: 18px;
-  line-height: 1.5;
-  min-height: 0;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 /* SIGNAL TAB LAYOUT */
@@ -1062,11 +1076,11 @@ kbd {
 /* ── 1280x720 tune ────────────────────────────────────────────────── */
 @media (max-width: 1400px) {
   .presenter { --card-text: 22px; --hdr-h: 60px; --gap: 14px; --pad: 16px; }
-  .tab-panel[data-panel="control"] { grid-template-columns: minmax(280px, 30fr) minmax(0, 22fr); }
+  .tab-panel[data-panel="control"] { grid-template-columns: minmax(260px, 24fr) minmax(0, 34fr) minmax(0, 18fr); }
   .now__label { font-size: 24px; }
   .clock-box__val { font-size: 20px; }
   .notes__body p { font-size: 15px; }
-  .notes-expanded__body { font-size: 16px; }
+  .notes-live__body { font-size: 16px; }
   .hdr__title { font-size: 22px; }
   .hdr__url { font-size: 17px; }
   .counter__val { font-size: 42px; }
@@ -1083,3 +1097,32 @@ kbd {
     transition: none !important;
   }
 }
+
+/* ── radar / room shape ─────────────────────────────────────────────
+   Replaces the 1-D histogram + daily-designer→Vader ruler on this surface.
+   Fill opacity carries participant density; radius NEVER does. */
+.room-radar { display: block; width: 100%; padding: 6px var(--pad) var(--pad); }
+.deck-radar { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+.deck-radar__host { width: min(62vh, 100%); }
+
+.radar { display: block; width: 100%; height: auto; overflow: visible; }
+.radar__ring { fill: none; stroke: var(--rule); stroke-width: 1; }
+.radar__ring--outer { stroke: var(--rule-strong, var(--rule)); }
+.radar__spoke { stroke: var(--rule); stroke-width: 1; }
+
+/* Ghosts sit UNDER the live shape: comparison, not destination. */
+.radar__ghost {
+  fill: var(--fg); fill-opacity: 0.03;
+  stroke: var(--mid); stroke-width: 1;
+  stroke-dasharray: 2 3; stroke-opacity: 0.5;
+}
+.radar__shape {
+  fill: var(--accent); stroke: var(--accent);
+  stroke-width: 2; stroke-linejoin: round;
+}
+.radar__shape.is-empty { stroke: var(--mid); stroke-dasharray: 3 3; }
+.radar__dot { fill: var(--accent); }
+.radar__label {
+  fill: var(--fg); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.radar__val { fill: var(--accent); font-size: 10px; }

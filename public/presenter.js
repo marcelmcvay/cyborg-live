@@ -34,7 +34,10 @@
     counts: { question: 0, discussion: 0, note: 0, assemblages: 0 },
     spectrumHistogram: new Array(10).fill(0),
     componentTally: {},
-    componentLabels: {},    // id -> label (from components.json, best effort)
+    componentLabels: {},    // id -> label (from components.v2.json)
+    axes: [],               // radar axis metadata
+    axisOrder: [],          // FIXED spoke order — never sort by value
+    ghosts: [],             // authored reference polygons (Vader, farmer, ...)
     filter: 'all',
     modVisible: true,
     link: 'offline',        // offline | linking | live
@@ -70,9 +73,10 @@
     cSignals: $('#cSignals'),
     cAssemblages: $('#cAssemblages'),
     hist: $('#hist'),
-    spectrumMeta: $('#spectrumMeta'),
-    rulerTicks: $('#rulerTicks'),
-    rulerLabels: $$('.ruler__labels span'),
+
+    roomRadar: $('#roomRadar'),
+    roomRadarMeta: $('#roomRadarMeta'),
+
     tally: $('#tally'),
     tallyEmpty: $('#tallyEmpty'),
     klassBody: $('#klassBody'),
@@ -290,60 +294,17 @@
     if (el.tabSignalN) el.tabSignalN.textContent = pad(signals);
   }
 
-  // ── Spectrum histogram ───────────────────────────────────────────
+  // ── Room shape ───────────────────────────────────────────────────
+  // The 1-D histogram + daily-designer→Vader ruler are retired: a single axis
+  // measures HOW MUCH and reinstates a destination. renderRoomRadar() draws the
+  // MEAN polygon instead. These stubs stay because several callers (state
+  // reload, SSE assemblage events, boot) invoke them; they now just forward.
   function initRuler() {
-    // 20 minor ticks, major every 5 (0/25/50/75/100)
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < 20; i++) {
-      const t = document.createElement('i');
-      if (i % 5 === 0) t.className = 'major';
-      frag.appendChild(t);
-    }
-    el.rulerTicks.replaceChildren(frag);
-
-    // initial 10 empty bars
-    const bars = document.createDocumentFragment();
-    for (let i = 0; i < 10; i++) {
-      const b = document.createElement('div');
-      b.className = 'hist__bar';
-      b.dataset.n = '0';
-      b.style.setProperty('--h', '0%');
-      b.innerHTML = '<span class="hist__n readout">0</span>';
-      b.title = `${i * 10}–${i * 10 + 10}`;
-      bars.appendChild(b);
-    }
-    el.hist.replaceChildren(bars);
+    // nothing to pre-build — the radar renders itself from data
   }
 
   function renderSpectrum() {
-    const h = Array.isArray(S.spectrumHistogram) && S.spectrumHistogram.length === 10
-      ? S.spectrumHistogram.map((x) => x | 0)
-      : new Array(10).fill(0);
-    const max = Math.max(1, ...h);
-    const total = h.reduce((a, b) => a + b, 0);
-    const bars = $$('.hist__bar', el.hist);
-    let maxIdx = -1;
-    h.forEach((n, i) => {
-      const b = bars[i];
-      b.dataset.n = String(n);
-      b.style.setProperty('--h', `${(n / max) * 100}%`);
-      $('.hist__n', b).textContent = String(n);
-      b.classList.toggle('is-max', n > 0 && n === max);
-      if (n === max && n > 0 && maxIdx < 0) maxIdx = i;
-    });
-
-    // mean from assemblages if available, else bucket midpoints
-    let mean = null;
-    if (S.assemblages.length) {
-      mean = S.assemblages.reduce((a, x) => a + (+x.spectrum || 0), 0) / S.assemblages.length;
-    } else if (total) {
-      mean = h.reduce((a, n, i) => a + n * (i * 10 + 5), 0) / total;
-    }
-    el.spectrumMeta.textContent = `N=${pad(total)} · μ=${mean == null ? '—' : pad(Math.round(mean))}`;
-
-    // highlight the label nearest the modal bucket
-    const modeLabel = maxIdx < 0 ? -1 : Math.round(((maxIdx * 10 + 5) / 100) * 4);
-    el.rulerLabels.forEach((s, i) => s.classList.toggle('is-mode', i === modeLabel));
+    renderRoomRadar();
   }
 
   // ── Component tally ──────────────────────────────────────────────
@@ -876,7 +837,9 @@
 
   // ── Tabs ─────────────────────────────────────────────────────────
   const TAB_LS = 'cyborg.tab';
-  const TAB_ORDER = ['control', 'notes', 'signal'];
+  // NOTES is no longer a tab — it lives permanently in the control panel
+  // alongside the run of show. Only two surfaces cycle now.
+  const TAB_ORDER = ['control', 'signal'];
 
   function setTab(name) {
     if (!TAB_ORDER.includes(name)) return;
@@ -987,16 +950,49 @@
     else { renderBeats(); renderNow(); renderClocks(); }
   }
 
-  // best-effort: component labels for the tally (frontend agent authors this file)
+  // Component labels for the tally, plus the axes/ghosts the room radar needs.
+  // components.v2.json is the live catalog (7-axis vectors); v1 components.json
+  // is the retired 1-D weight catalog and must not be read.
   async function loadComponentLabels() {
     try {
-      const res = await fetch('components.json', { cache: 'no-store' });
+      const res = await fetch('components.v2.json', { cache: 'no-store' });
       if (!res.ok) return;
       const json = await res.json();
       const list = Array.isArray(json) ? json : (json.components || []);
       for (const c of list) if (c && c.id) S.componentLabels[c.id] = c.label || c.id;
+      S.axes = json.axes || [];
+      // FIXED spoke order from the data file — never sorted by value.
+      S.axisOrder = (json.aggregation && json.aggregation.axisOrder)
+        || S.axes.map(a => a.id);
+      // ghost.room is the live aggregate; the presenter draws that from real
+      // assemblages, so only authored references are used as ghosts.
+      S.ghosts = (json.ghosts || []).filter(g => g.id !== 'ghost.room');
       renderTally();
+      renderRoomRadar();
     } catch { /* optional */ }
+  }
+
+  // Room polygon = MEAN of the participant vectors. Mean, not sum: a fuller
+  // room must not inflate the shape, or the projector shows a scoreboard.
+  // Participant COUNT is reported as text, never as radius.
+  function renderRoomRadar() {
+    if (!el.roomRadar || !window.Radar || !(S.axisOrder || []).length) return;
+    const vectors = S.assemblages.map(a => a && a.vector).filter(Boolean);
+    const room = window.Radar.meanOfVectors(vectors, S.axisOrder);
+    window.Radar.mount(el.roomRadar, {
+      vector: room,
+      axes: S.axes || [],
+      axisOrder: S.axisOrder,
+      ghosts: S.ghosts || [],
+      pickCount: vectors.length,
+      size: 300,
+      labels: true,
+    });
+    if (el.roomRadarMeta) {
+      el.roomRadarMeta.textContent = vectors.length
+        ? `N=${pad(vectors.length)} · MEAN`
+        : 'N=000 · IDLE';
+    }
   }
 
   // ── Data: SSE /api/feed with backoff ─────────────────────────────

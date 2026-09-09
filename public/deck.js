@@ -19,12 +19,17 @@
   const DEFAULT_DECK = 'design-week-ri';
   const BACKOFF = { base: 1000, max: 30000 };
   const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // The histogram now plots DEPENDENCE — "what breaks if it stops" — which is
+  // the one derived scalar retained from the retired daily-designer→Vader
+  // spectrum. Those old labels implied a destination and a ranking; these
+  // describe a real axis end to end. Vader lives on as a ghost polygon on the
+  // radar, a comparison rather than an endpoint.
   const SPECTRUM_LABELS = [
-    { n: 0, t: 'DAILY DESIGNER' },
-    { n: 25, t: 'RACE CAR DRIVER' },
-    { n: 50, t: 'PILOT' },
-    { n: 75, t: 'ASTRONAUT' },
-    { n: 100, t: 'VADER' },
+    { n: 0, t: 'INCONVENIENCE' },
+    { n: 25, t: 'DISRUPTION' },
+    { n: 50, t: 'CANT WORK' },
+    { n: 75, t: 'CANT FUNCTION' },
+    { n: 100, t: 'DEATH' },
   ];
 
   // ── State ────────────────────────────────────────────────────────
@@ -41,6 +46,9 @@
     stagedSub: null,
     spectrumHistogram: new Array(10).fill(0),
     assemblages: [],
+    axes: [],               // radar axis metadata (components.v2.json)
+    axisOrder: [],           // FIXED spoke order — never sort by value
+    ghosts: [],              // authored reference polygons
     es: null,
     link: 'offline',
     backoff: BACKOFF.base,
@@ -225,6 +233,20 @@
               </div>`;
     },
 
+    // Room radar. The money shot for the reveal beat: the room's MEAN polygon
+    // with authored ghosts behind it. data-live marks it for repaint on every
+    // incoming assemblage.
+    radar(s) {
+      return `<div class="deck-radar" data-live="radar">
+                ${s.title ? `<h2 class="spectrum__title">${esc(s.title)}</h2>` : ''}
+                <div class="deck-radar__host" id="deckRadarHost"></div>
+                <div class="hist__meta">
+                  <span>N <b class="js-n">000</b></span>
+                  <span>AGGREGATION <b>MEAN</b></span>
+                </div>
+              </div>`;
+    },
+
     list(s) {
       const items = (Array.isArray(s.items) ? s.items : []).slice(0, 4);
       return `<ul class="list">
@@ -284,7 +306,7 @@
     S.slideIdx = Math.min(S.slideIdx, slides.length - 1);
     const slide = slides[S.slideIdx];
     const kind = RENDER[slide.kind] ? slide.kind : 'statement';
-    const live = kind === 'histogram' || kind === 'staged';
+    const live = kind === 'histogram' || kind === 'staged' || kind === 'radar';
 
     const sec = document.createElement('section');
     sec.className = `slide slide--${kind} is-current`;
@@ -299,6 +321,7 @@
     el.stage.replaceChildren(sec);
 
     if (kind === 'histogram') paintHistogram();
+    if (kind === 'radar') paintRadar();
     if (kind === 'staged') paintStaged();
     renderStrip();
   }
@@ -336,6 +359,27 @@
     [...root.querySelectorAll('.ruler__labels span')].forEach((s, i) => s.classList.toggle('is-mode', i === near));
   }
 
+  // Room polygon on the projector. MEAN of participant vectors — a fuller room
+  // must not grow the shape. N is reported as text; radius never encodes count.
+  function paintRadar() {
+    const root = $('[data-live="radar"]', el.stage);
+    if (!root) return;
+    const host = root.querySelector('.deck-radar__host');
+    const vectors = S.assemblages.map((a) => a && a.vector).filter(Boolean);
+    const n = root.querySelector('.js-n');
+    if (n) n.textContent = pad(vectors.length);
+    if (!host || !window.Radar || !(S.axisOrder || []).length) return;
+    window.Radar.mount(host, {
+      vector: window.Radar.meanOfVectors(vectors, S.axisOrder),
+      axes: S.axes || [],
+      axisOrder: S.axisOrder,
+      ghosts: S.ghosts || [],
+      pickCount: vectors.length,
+      size: 560,
+      labels: true,
+    });
+  }
+
   function paintStaged() {
     const root = $('[data-live="staged"] .js-staged-body', el.stage);
     if (!root) return;
@@ -359,6 +403,7 @@
     if (!el.stage.firstElementChild) return;
     const kind = el.stage.firstElementChild.dataset.kind;
     if (kind === 'histogram') paintHistogram();
+    if (kind === 'radar') paintRadar();
     if (kind === 'staged') paintStaged();
   }
 
@@ -544,6 +589,21 @@
   }
 
   // ── Boot ─────────────────────────────────────────────────────────
+  // Radar axes/ghosts for the room-shape slide. Non-fatal: if this fails the
+  // deck still runs, the radar slide just renders empty rather than throwing.
+  async function loadRadarCatalog() {
+    try {
+      const res = await fetch('components.v2.json', { cache: 'no-cache' });
+      if (!res.ok) return;
+      const json = await res.json();
+      S.axes = json.axes || [];
+      S.axisOrder = (json.aggregation && json.aggregation.axisOrder)
+        || S.axes.map((a) => a.id);
+      S.ghosts = (json.ghosts || []).filter((g) => g.id !== 'ghost.room');
+      repaintLive();
+    } catch { /* optional */ }
+  }
+
   async function start() {
     setLink('offline');
     initKeys();
@@ -552,6 +612,7 @@
       if (!document.hidden && !S.es) connectFeed();
     });
     await loadDeck();
+    await loadRadarCatalog();
     connectFeed();
     loadState();
   }
