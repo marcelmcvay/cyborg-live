@@ -166,6 +166,12 @@
           "kind": "statement",
           "text": "The gap between them is the condition of designing infrastructure at all.",
           "note": "→ \"On stage: triumph. In print: loss of control. Both Spiekermann. Both true.\"\\n\\n→ \"He shaped the city, and the institution shaped him right back. That gap is the beat — don't resolve it.\""
+        },
+        {
+          "kind": "image",
+          "src": "spiekermann-bus.png",
+          "alt": "Yellow Berlin bus on city street",
+          "note": "→ \"This is what 'they will never ever change that' looks like.\"\\n\\n→ \"Every yellow bus, every yellow tram — carrying forward one designer's choice from 1992.\""
         }
       ],
       "presenterNotes": "⏱ 6 min · the brief's \"public transit and cities\" beat, and my credential — I've met him and published on him\n\n⚑ Do NOT say he designed the U-Bahn map · no ridership/legibility numbers · no MetaDesign co-founder names · never repeat the Green Party claim"
@@ -190,7 +196,13 @@
             "Flat ramps erase the edge blind pedestrians navigate by.",
             "So they mapped 125 of them and drew the compromise themselves."
           ],
-          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.'\"\n\n→ \"The only building that could hold his 800-pound iron lung was the campus hospital. He took it — on condition it be treated as a dorm, not a medical facility.\"\n\n→ \"More disabled students arrive. They name themselves the Rolling Quads, and start using civil-rights language for something that had always been framed as charity.\"\n\n→ \"1969, after the People's Park riots, Berkeley renovates Telegraph Avenue and puts in wide flat curb ramps.\"\n\n→ \"The response is not gratitude. Flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars.\"\n\n→ \"And here's the best detail — the disabled community was split against itself. Wheelchair users and blind pedestrians wanted opposite things.\"\n\n→ \"So from 1970 to 1974 they map 125 curb-cut locations along Telegraph and Shattuck, and propose a steeper cut set outside the crossing. A compromise they negotiated among themselves.\""
+          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.'\"\\n\\n→ \"The only building that could hold his 800-pound iron lung was the campus hospital. He took it — on condition it be treated as a dorm, not a medical facility.\"\\n\\n→ \"More disabled students arrive. They name themselves the Rolling Quads, and start using civil-rights language for something that had always been framed as charity.\"\\n\\n→ \"1969, after the People's Park riots, Berkeley renovates Telegraph Avenue and puts in wide flat curb ramps.\"\\n\\n→ \"The response is not gratitude. Flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars.\"\\n\\n→ \"And here's the best detail — the disabled community was split against itself. Wheelchair users and blind pedestrians wanted opposite things.\"\\n\\n→ \"So from 1970 to 1974 they map 125 curb-cut locations along Telegraph and Shattuck, and propose a steeper cut set outside the crossing. A compromise they negotiated among themselves.\""
+        },
+        {
+          "kind": "image",
+          "src": "ed-roberts.jpg",
+          "alt": "Ed Roberts in iron lung at UC Berkeley",
+          "note": "→ \"Ed Roberts — 800-pound iron lung, campus hospital room, on condition it be treated as a dorm.\"\\n\\n→ \"The person who changed how we move through cities. And the machine that kept him alive while he did it.\""
         },
         {
           "kind": "statement",
