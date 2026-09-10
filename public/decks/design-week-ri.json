@@ -3,7 +3,7 @@
   "title": "Designed by Systems",
   "subtitle": "How the world we move through shapes what we make",
   "venue": "Design Week RI — OCTO panel",
-  "totalMins": 65,
+  "totalMins": 70,
   "format": "panel",
   "beats": [
     {
@@ -62,11 +62,11 @@
     },
     {
       "id": "intro",
-      "label": "INTRO",
+      "label": "OPENER",
       "mins": 3,
       "cue": {
         "mode": "intro",
-        "prompt": "Designed by systems — and designing them back.",
+        "prompt": "Did you invent the words you're using?",
         "signalOpen": true,
         "assembleOpen": true
       },
@@ -74,12 +74,13 @@
         {
           "kind": "statement",
           "text": "Designed by systems.",
-          "note": "→ \"You were promised an evening about how the systems we move through quietly shape behavior, decisions, and what gets built next.\"\n\n→ \"That's exactly what this is.\""
+          "note": "→ \"You were promised an evening about how the systems we move through quietly shape behavior, decisions, and what gets built next.\"\n\n→ \"That's exactly what this is — with one turn added: the loop runs both ways.\""
         },
         {
-          "kind": "statement",
-          "text": "The world we move through shapes what we make.",
-          "note": "→ \"I'm going to add one turn to it: the loop runs both ways.\"\n\n· This is the upgrade to the brief — an addition, not a correction."
+          "kind": "quote",
+          "text": "Did you invent the words you're using? Did you design the glyphs?",
+          "attrib": "the authorship tension",
+          "note": "→ \"Everyone's arguing about whether you can tell if AI wrote something — and how much worse it feels than writing it yourself.\"\n\n→ \"But — did you invent the words you're using? Did you design the glyphs? The grammar that strings them into sentences?\"\n\n→ \"Or did you just put existing pieces together in your own way?\"\n\n⚑ Plant it. Do NOT answer it. This returns at the very end — it's a callback, not a one-off."
         },
         {
           "kind": "prompt",
@@ -87,12 +88,12 @@
           "note": "→ \"Who's used AI for design work in the last month? Keep them up.\"\n\n→ \"Now — who's worried about saying 'I used AI' versus 'I made this'?\"\n\n· Let the hands hang. That tension is the talk.\n\n· Name, studio, and move."
         }
       ],
-      "presenterNotes": "⏱ 3 min · answer the brief in the first sixty seconds\n\n⚑ Don't explain the app — they've been using it for half an hour."
+      "presenterNotes": "⏱ 3 min · answer the brief in the first sixty seconds, then plant the authorship question and leave it open\n\n⚑ Don't explain the app — they've been using it for half an hour."
     },
     {
       "id": "reveal",
       "label": "REVEAL",
-      "mins": 4,
+      "mins": 5,
       "cue": {
         "mode": "reveal",
         "prompt": "You built this over drinks.",
@@ -108,41 +109,12 @@
         {
           "kind": "statement",
           "text": "This room is already a cyborg.",
-          "note": "→ \"Two people can enclose exactly the same area and be completely different shapes.\""
+          "note": "→ \"You don't need implants to be a cyborg. You built this shape over drinks, before I said a word.\"\n\n→ \"Cyborg describes what we are, not how we should be. It's diagnostic, not prescriptive.\"\n\n· From 'The Cyborgs Aren't Coming'. Plant 'diagnostic' — it pays off at the very end."
         },
         {
           "kind": "statement",
           "text": "Same area. Different shape.",
-          "note": "→ \"Vader is the shape behind yours — conspicuous, self-directed, obvious hardware. Ours is invisible and dispatched.\"\n\n→ \"The 1890 farmer is the other ghost: near-total mastery, almost no surveillance.\"\n\n→ \"That's a difference in kind. Not progress along a line.\""
-        },
-        {
-          "kind": "histogram",
-          "note": "→ \"This one's dependence only — what breaks if it stops.\"\n\n→ \"ASSEMBLE stays open. Change your picks as we go; the shape moving is the point.\"\n\n→ \"SIGNAL's been open since the lobby. Anything you send is material and I will read it out.\""
-        }
-      ],
-      "presenterNotes": "⏱ 4 min · the data is theirs and they built it over drinks\n\n⚑ Never say \"spectrum\", \"scale\", or \"where are you on the line.\" The instrument has no line."
-    },
-    {
-      "id": "recognition",
-      "label": "RECOGNITION",
-      "mins": 6,
-      "cue": {
-        "mode": "present",
-        "prompt": "Where does technology stop and you begin?",
-        "signalOpen": true,
-        "assembleOpen": true
-      },
-      "slides": [
-        {
-          "kind": "quote",
-          "text": "Did you invent the words you are using? Did you design the glyphs?",
-          "attrib": "the authorship tension",
-          "note": "→ \"'That was written by AI' versus 'I wrote this by hand' — that's an awkward, unbalanced sentence.\"\n\n→ \"Did you invent the words you're using? Did you design the glyphs?\"\n\n→ \"So what actually constitutes authorship?\""
-        },
-        {
-          "kind": "statement",
-          "text": "You don't need implants to be a cyborg.",
-          "note": "→ \"You don't need implants to be a cyborg.\"\n\n→ \"Cyborg describes what we are, not how we should be. It's diagnostic, not prescriptive.\"\n\n· From 'The Cyborgs Aren't Coming'."
+          "note": "→ \"Two people can enclose exactly the same area and be completely different shapes.\"\n\n→ \"Vader is one shape — conspicuous, self-directed, obvious hardware.\"\n\n→ \"The astronaut managing the psychology of drinking recycled urine is another — the body as a system under constraint, life-support as identity.\"\n\n→ \"Ours is a third: invisible and dispatched. That's a difference in kind, not a point on a line.\"\n\n⚑ Never say 'spectrum', 'scale', or 'where are you on the line'. The instrument has no line."
         },
         {
           "kind": "list",
@@ -152,10 +124,10 @@
             "Noise-cancelling headphones",
             "GPS-guided mapping"
           ],
-          "note": "→ \"The normalcy of this makes genuinely complex moments feel mundane.\"\n\n· Read two or three, not all four. The list does the visual work."
+          "note": "→ \"The normalcy of this makes genuinely complex moments feel mundane.\"\n\n· Read two or three, not all four. The list does the visual work.\n\n→ \"ASSEMBLE stays open — change your picks as we go, the shape moving is the point. SIGNAL's been open since the lobby; anything you send is material and I'll read it out.\""
         }
       ],
-      "presenterNotes": "⏱ 6 min · recognition before theory\n\n⚑ Don't get academic. The word \"cyborg\" is doing work I name explicitly at the end."
+      "presenterNotes": "⏱ 5 min · the data is theirs and they built it over drinks · recognition before theory\n\n⚑ Never say \"spectrum\", \"scale\", or \"where are you on the line.\" The instrument has no line."
     },
     {
       "id": "shaped",
@@ -172,40 +144,35 @@
           "kind": "caseStudy",
           "title": "BERLIN IS YELLOW",
           "beats": [
-            "1980: Spiekermann tells the BVG its city looks like a mess. They say no.",
-            "1987: he gets 50 minutes — and insults every department head inside 15.",
-            "1989: the Wall falls. Two systems, one city, nobody can navigate.",
-            "1992: one drawing, several metres long. Berlin becomes yellow."
+            "Berlin 1925: \"totally black and white.\" The weather, the people, everything.",
+            "Reunification 1990: five or six colors, \"most of them were beige.\"",
+            "\"Beige is you have a room of people that decide the color is beige. Which means it's no color.\"",
+            "\"So I made everything yellow. And they will never ever change that. Because they can't anymore.\""
           ],
-          "note": "→ \"This is a twelve-year cold pitch. That's the honest version of this story.\"\n\n→ \"1980, he tells the transit authority its city looks like a mess. They turn him down — 'unchangeable standards, a lack of responsibility and a lack of resources.'\"\n\n→ \"1987 he finally gets fifty minutes in a room, and insults every department head inside fifteen. It backfires — but they remember him.\"\n\n→ \"Then history does the work. 1989 the Wall comes down, and a city split since 1949 has one transit network that nobody can read.\"\n\n→ \"1992 he unrolls a drawing several metres long that holds the whole system in one view.\"\n\n⚑ He did NOT design the U-Bahn map. Dates above are verified — stick to them."
+          "note": "→ \"This is Spiekermann on stage, decades later, telling the triumph version.\"\\n\\n→ \"Beige is the villain here — it's the negotiation table rendered as a color. The absence of a choice, presented as a choice.\"\\n\\n→ \"One person, one decision, applied across the whole system: yellow buses, yellow trams, yellow U-Bahn.\"\\n\\n→ \"And then it escapes him — the choice becomes infrastructure that constrains every designer who comes after.\""
         },
         {
           "kind": "statement",
-          "text": "Everything becomes yellow.",
-          "note": "→ \"One decision: everything becomes yellow. Buses, trams, signage — all of it.\"\n\n→ \"That's not a brand refresh. It's a cognitive system a citizen can navigate at speed.\"\n\n→ \"The city gets an identity that doesn't require explanation. Yellow becomes shorthand for movement.\"\n\n· And the board buys it partly because it CUT COSTS — fewer buttons, fewer materials, fewer colours.\n\n· This is my own line from the DDX writeup: branding at this scale behaves like electrical current. Invisible when it works, impossible to ignore when it's misaligned."
+          "text": "Two versions. Both true.",
+          "note": "→ \"But there's another version of this story.\"\\n\\n→ \"Eye magazine, 1995, three years after handoff: 'almost no control over how the work has been used... asked whether it worked, nobody knows.'\""
         },
         {
           "kind": "quote",
-          "text": "Infrastructure works best when it disappears into use.",
-          "attrib": "Erik Spiekermann",
-          "note": "→ \"Typography as nervous system, not ornament.\"\n\n→ \"The Deutsche Bahn typeface is recognizable with the logo removed. A mug with 'Bahn' on it in that face is unmistakable.\"\n\n→ \"Type isn't decoration. It carries identity through repetition and trust.\"\n\n· I called it a neural signature — how a place senses itself. Proprioception for a city.\n\n· Optional, only if the room is warm: I told him I liked his attitude and he said \"What attitude? I'm German.\""
+          "text": "You won't perceive the effect.",
+          "attrib": "Erik Spiekermann (Deutsche Bahn project)",
+          "note": "→ \"His actual line, from a different project: 'One of the best things about designing type is that you know that they don't. You won't perceive the effect.'\"\\n\\n→ \"That lands directly on what Clynes & Kline will call 'unconsciously' — if you notice your prosthesis constantly, integration has failed.\"\\n\\n⚑ Do NOT use fabricated 'disappears into use' quote from earlier drafts. This is his real words."
         },
         {
           "kind": "statement",
-          "text": "Does it work? Nobody knows.",
-          "note": "→ \"Here's the turn, and it's the actual point.\"\n\n→ \"Eye magazine, 1995: his studio had almost no control over how the work got used. No pilot evaluation. He kept complaining that what the signs said and where they were placed were beyond his control.\"\n\n→ \"Asked whether the system worked, the answer was 'nobody knows.'\"\n\n→ \"So he shaped the city — and the institution shaped him right back.\"\n\n⚑ No ridership or legibility numbers. No MetaDesign co-founder names. Never repeat the Green Party claim."
-        },
-        {
-          "kind": "statement",
-          "text": "The constraint is the container.",
-          "note": "→ \"His closing point at DDX was deceptively deep: never put more than seven people on a project.\"\n\n→ \"Past that, human cognition reorganizes into subgroups. Communication fragments and the work slows.\"\n\n→ \"His metaphor: work is a gas. It expands. The constraint is the container.\"\n\n· Tie it back — the shape of the org shapes the artifact. Berlin got legible because a small team with a hard constraint made one decision.\n\n· This is the bridge to the next beat: the system shaped him, and he shaped it back."
+          "text": "The gap between them is the condition of designing infrastructure at all.",
+          "note": "→ \"On stage: triumph. In print: loss of control. Both Spiekermann. Both true.\"\\n\\n→ \"He shaped the city, and the institution shaped him right back. That gap is the beat — don't resolve it.\""
         }
       ],
-      "presenterNotes": "⏱ 6 min · this is the brief's \"public transit and cities\" beat, and my credential — I've met him and published on him\n\n⚑ Do NOT say he designed the U-Bahn map · no ridership/legibility numbers · no MetaDesign co-founder names · never repeat the Green Party claim"
+      "presenterNotes": "⏱ 6 min · the brief's \"public transit and cities\" beat, and my credential — I've met him and published on him\n\n⚑ Do NOT say he designed the U-Bahn map · no ridership/legibility numbers · no MetaDesign co-founder names · never repeat the Green Party claim"
     },
     {
-      "id": "resist",
-      "label": "RESIST",
+      "id": "reshaped",
+      "label": "RESHAPED BY",
       "mins": 6,
       "cue": {
         "mode": "present",
@@ -223,12 +190,24 @@
             "Flat ramps erase the edge blind pedestrians navigate by.",
             "So they mapped 125 of them and drew the compromise themselves."
           ],
-          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.'\"\n\n→ \"The only building that could hold his 800-pound iron lung was the campus hospital. He took it — on condition it be treated as a dorm, not a medical facility.\"\n\n→ \"More disabled students arrive. They name themselves the Rolling Quads, and they start using civil-rights language for something that had always been framed as charity.\"\n\n→ \"1969, after the People's Park riots, Berkeley renovates Telegraph Avenue and puts in wide flat curb ramps.\"\n\n→ \"The response is not gratitude. Flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars.\"\n\n→ \"And here's the best detail — the disabled community was split against itself. Wheelchair users and blind pedestrians wanted opposite things.\"\n\n→ \"So from 1970 to 1974 they map 125 curb-cut locations along Telegraph and Shattuck, and propose a steeper cut set outside the pedestrian crossing. A compromise they negotiated among themselves.\""
+          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean's recorded reaction was 'we've tried cripples before, and they just don't work out.'\"\n\n→ \"The only building that could hold his 800-pound iron lung was the campus hospital. He took it — on condition it be treated as a dorm, not a medical facility.\"\n\n→ \"More disabled students arrive. They name themselves the Rolling Quads, and start using civil-rights language for something that had always been framed as charity.\"\n\n→ \"1969, after the People's Park riots, Berkeley renovates Telegraph Avenue and puts in wide flat curb ramps.\"\n\n→ \"The response is not gratitude. Flat ramps erase the edge blind pedestrians navigate by, and the diagonal angle pushes wheelchairs toward turning cars.\"\n\n→ \"And here's the best detail — the disabled community was split against itself. Wheelchair users and blind pedestrians wanted opposite things.\"\n\n→ \"So from 1970 to 1974 they map 125 curb-cut locations along Telegraph and Shattuck, and propose a steeper cut set outside the crossing. A compromise they negotiated among themselves.\""
         },
         {
           "kind": "statement",
           "text": "Everyone with a stroller uses what they won.",
           "note": "→ \"First planned wheelchair-accessible route in the United States, designed by disabled people.\"\n\n→ \"Sixteen years later the ADA makes it federal law. Today every stroller, suitcase and hand truck rides it.\"\n\n→ \"That's the loop closing: the system defined them as unable to move, they moved anyway, they redrew the environment — and the redrawn environment redefined everyone else's mobility.\""
+        },
+        {
+          "kind": "quote",
+          "text": "The geometry was fought over. The texture was a gift.",
+          "attrib": "same object, two politics",
+          "note": "→ \"One more detail, because it's the whole talk in miniature.\"\n\n→ \"The ramp's geometry — that was fought over in public, in Berkeley, by a community split against itself.\"\n\n→ \"But the bumpy yellow texture on it has the opposite origin. Truncated domes — tenji paving — invented in 1965 by one Japanese engineer, Seiichi Miyake, for one friend who was losing his sight. First laid in Okayama in 1967, and it spread across the world from there.\"\n\n→ \"Two completely different politics — one collective and contested, one singular and quiet — and you're standing on both at once.\"\n\n· Miyake is the SETUP for the language bridge next. Don't rush off it."
+        },
+        {
+          "kind": "image",
+          "src": "curb-cut-tenji.jpg",
+          "alt": "Fresh curb cut with yellow tactile warning surface - raised yellow domes embedded in concrete ramp",
+          "note": "→ \"This is what they're both standing on. Fresh concrete, yellow tenji, compromise geometry.\"\n\n→ \"Berkeley politics made the ramp. Miyake's gift made the surface. Same infrastructure, two completely different origins.\""
         },
         {
           "kind": "list",
@@ -241,12 +220,36 @@
           "note": "→ \"Adapt, resist, reshape — and then it inherits.\"\n\n· Read as a sequence, not options. Berkeley ran all four."
         }
       ],
-      "presenterNotes": "⏱ 6 min · this is the brief's \"adapt, resist, reshape\" promise\n\n⚑ Roberts did NOT found the Center for Independent Living — say he led it or guided its growth · Berkeley did NOT invent the curb cut (Kalamazoo, 1940s, disabled veterans) · the defensible claim is first PLANNED accessible route, designed by disabled people\n\n· Source: Bess Williamson, \"The People's Sidewalks,\" Boom, Spring 2012"
+      "presenterNotes": "⏱ 6 min · the brief's \"adapt, resist, reshape\" promise · Miyake sets up the language bridge, don't drop it\n\n⚑ Roberts did NOT found the Center for Independent Living — say he led it or guided its growth · Berkeley did NOT invent the curb cut (Kalamazoo, 1940s, disabled veterans) · defensible claim is first PLANNED accessible route, designed by disabled people · Miyake: 1965 invented, 1967 first installed Okayama\n\n· Sources: Williamson, \"The People's Sidewalks,\" Boom Spring 2012 · Miyake: adatile.com, V&A, Reliance Foundry"
+    },
+    {
+      "id": "bridge",
+      "label": "THE BRIDGE",
+      "mins": 2,
+      "cue": {
+        "mode": "present",
+        "prompt": "Every word in your mouth was built by someone else.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "statement",
+          "text": "You didn't design either one. You move through both.",
+          "note": "→ \"The curb you cross was fought over by people you'll never meet.\"\n\n→ \"The pad you cross it on was invented across the world, for one person, decades ago.\"\n\n→ \"You didn't design either — you didn't even fight over them — and you move through both without a thought.\""
+        },
+        {
+          "kind": "statement",
+          "text": "Every word in your mouth was built by someone else.",
+          "note": "→ \"Now scale that up. Every word in your mouth was built by someone else too.\"\n\n→ \"Some of it fought over, some of it a quiet gift from one person to another. None of it yours alone.\"\n\n→ \"Which answers the question I planted at the start: did you invent the words? No. And it was never really about AI — it's been true all along.\"\n\n· Language is the oldest prosthesis. This is the keystone — the whole back half rests here."
+        }
+      ],
+      "presenterNotes": "⏱ 2 min · the pivot from infrastructure to language · curb = collective/contested authorship, pad = inherited/singular authorship — both feed the resolution\n\n⚑ This is the callback to the opener. Say 'did you invent the words' out loud so the loop is audible."
     },
     {
       "id": "responsibility",
       "label": "RESPONSIBILITY",
-      "mins": 8,
+      "mins": 7,
       "cue": {
         "mode": "present",
         "prompt": "For whose interests does the interface serve?",
@@ -274,44 +277,115 @@
             "Age verification. Municipal regulation. Produce indexing.",
             "And the machine — sensor-driven, impatient."
           ],
-          "note": "→ \"Self-checkout is the everyday version of the same table.\"\n\n→ \"The grocery chain protecting margins. The card companies extracting fees. Age verification. Municipal regulation. Produce vendors. And the machine itself, ever-ready to flag an unexpected item in the bagging area.\"\n\n→ \"What looks frictionless is a dense web of actors with motives, limits and influence.\""
+          "note": "→ \"Self-checkout is the everyday version of the same table.\"\n\n→ \"The grocery chain protecting margins. The card companies extracting fees. Age verification. Municipal regulation. Produce vendors. And the machine itself, ever-ready to flag an unexpected item in the bagging area.\"\n\n→ \"What looks frictionless is a dense web of actors with motives, limits and influence.\"\n\n⏱ OPTIONAL — cut first if the clock is tight. Regent carries this beat alone."
         },
         {
           "kind": "statement",
           "text": "For whose interests does the interface serve?",
-          "note": "→ \"To design responsibly is to name those actors, question their power, and decide how — and whether — they belong at the table.\"\n\n→ \"It's one thing to design a beautiful interface in your tool of choice. It's another to negotiate with stakeholders. Both are valid, and both land in the interface — the place where the negotiation gets painted.\"\n\n→ \"Send me your answer on SIGNAL now. We're using them next.\""
+          "note": "→ \"To design responsibly is to name those actors, question their power, and decide how — and whether — they belong at the table.\"\n\n→ \"It's one thing to design a beautiful interface in your tool of choice. It's another to negotiate with stakeholders. Both are valid, and both land in the interface — the place where the negotiation gets painted.\"\n\n→ \"Send me your answer on SIGNAL now. We're using them in the panel.\""
         }
       ],
-      "presenterNotes": "⏱ 8 min · two case studies, then the question stays up"
+      "presenterNotes": "⏱ 7 min · Regent is the table where the REAL user shows up and reorders everyone — this is the accountability the resolution cashes out · self-checkout is optional padding, drop it if tight"
     },
     {
-      "id": "handoff",
-      "label": "HANDOFF",
-      "mins": 2,
+      "id": "cybernetics",
+      "label": "CYBERNETICS",
+      "mins": 4,
       "cue": {
         "mode": "present",
-        "prompt": "Cyborg describes what we are, not how we should be.",
+        "prompt": "The loop runs both ways. That's the whole thesis.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "THE WORD THAT LEFT EARTH",
+          "beats": [
+            "1960: Clynes & Kline coin \"cyborg\" in Astronautics.",
+            "Cybernetic + organism. Not metaphor — a NASA engineering answer.",
+            "Don't rebuild Earth in space. Modify the body to fit the vehicle.",
+            "Keep a human alive somewhere it was never built to survive."
+          ],
+          "note": "→ \"The word itself is younger than you'd think. Manfred Clynes and Nathan Kline coined 'cyborg' in 1960 — a paper called 'Cyborgs and Space' in Astronautics.\"\n\n→ \"Cybernetic plus organism. And it wasn't a metaphor — it was an engineering answer.\"\n\n→ \"The problem was keeping a human body alive somewhere it was never built to survive. Their answer wasn't to rebuild Earth-like chambers in space — it was to modify the human to integrate into the vehicle's own loops.\"\n\n· My Signal+Static piece on this is 'Cyborg — the word that left Earth.'"
+        },
+        {
+          "kind": "quote",
+          "text": "…functioning as an integrated homeostatic system unconsciously.",
+          "attrib": "Clynes & Kline, 1960",
+          "note": "→ \"Here's their actual definition — and I want one word from it.\"\n\n→ \"'For the exogenously extended organizational complex functioning as an integrated homeostatic system unconsciously, we propose the term cyborg.'\"\n\n→ \"Unconsciously. If you keep noticing your prosthesis, integration has failed.\"\n\n→ \"That's Spiekermann's 'disappears into use.' That's the curb cut going invisible. Same idea, thirty years apart.\""
+        },
+        {
+          "kind": "statement",
+          "text": "The world shapes what you make. What you make becomes the world.",
+          "note": "→ \"Here's the title, and it's the definition of cybernetics: feedback, both directions.\"\n\n→ \"Spiekermann shaped the city, and the institution shaped him back. Berkeley was reshaped, and it reshaped everyone's mobility. The pilot's body reshaped a cockpit that gets inherited by whatever flies next.\"\n\n→ \"The world we move through shapes what we make — and what we make becomes the world someone else moves through.\"\n\n→ \"That two-way arrow is the whole talk.\"\n\n· Optional, if the room is with me — Maeda at SXSW: 'Feedback is the key to cybernetics, which is the key to the AI era.' Autopilot, lane-assist, agent autoapprovals — same architecture."
+        }
+      ],
+      "presenterNotes": "⏱ 4 min · this is where the thesis stops being illustrated and gets STATED · name the title out loud on the third slide\n\n⚑ 'Cyborgs and Space,' Astronautics, September 1960 — verified · quote the definition exactly, the word is 'unconsciously'"
+    },
+    {
+      "id": "turing",
+      "label": "TURING",
+      "mins": 3,
+      "cue": {
+        "mode": "present",
+        "prompt": "The test wasn't crossed. It dissolved.",
         "signalOpen": true,
         "assembleOpen": true
       },
       "slides": [
         {
           "kind": "statement",
-          "text": "Cyborg describes what we are, not how we should be.",
-          "note": "→ \"Cyborg describes what we are, not how we should be.\""
+          "text": "For seventy years, this was the finish line.",
+          "note": "→ \"1950, Alan Turing. If you can't tell — through text-only conversation — whether you're talking to a human or a machine, the machine can reasonably be said to think.\"\n\n→ \"For about seventy years, that faceless conversation was treated as the finish line for machine intelligence.\"\n\n⚑ Cite 'Computing Machinery and Intelligence,' 1950 — say the title if anyone's taking notes."
         },
         {
           "kind": "statement",
-          "text": "Designed by systems. Designing them back.",
-          "note": "→ \"The world you move through shaped what you make. And what you make becomes the world someone else moves through.\"\n\n→ \"Berlin shaped how a city reads itself. Berkeley shaped every curb in America. The seaglider cockpit gets inherited by whatever flies next.\"\n\n→ \"You're always designing for shared technological progress — later interfaces inherit from yours, and yours inherited from someone else's.\""
-        },
-        {
-          "kind": "prompt",
-          "text": "Who else is at your negotiation table?",
-          "note": "→ \"The brief said you'd become part of this conversation. That starts now — and the running order is whatever's on your phones.\"\n\n⏱ Leave the question up. Go to the panel."
+          "text": "Nobody runs the test anymore.",
+          "note": "→ \"Here's the turn: the veil wasn't crossed. It dissolved.\"\n\n→ \"Nobody runs a formal Turing test anymore. Ambiguity about human-versus-machine is now the default condition of any text you read.\"\n\n→ \"The frame that defined computation for decades just quietly disappeared.\"\n\n→ \"That's the title again, at the level of computation itself: the world — the Turing frame — shaped what got built, and then that world was gone.\""
         }
       ],
-      "presenterNotes": "⏱ 2 min · then I stop talking for the rest of the night"
+      "presenterNotes": "⏱ 3 min · setup then dissolution · this restates the title at the level of computation, it is NOT a tangent\n\n⚑ Turing 1950, 'Computing Machinery and Intelligence' — cite properly"
+    },
+    {
+      "id": "resolution",
+      "label": "RESOLUTION",
+      "mins": 4,
+      "cue": {
+        "mode": "steward",
+        "prompt": "The question isn't can-you-tell. It's who's accountable.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "statement",
+          "text": "Not \"can you tell.\" Who's accountable.",
+          "note": "→ \"Once you can't tell anymore, 'can you tell' stops being the interesting question.\"\n\n→ \"The interesting question becomes: who's accountable? Who's responsible for what gets said, decided, or made, when authorship itself can't be resolved?\"\n\n· This is why Regent mattered — that was the table. This is where we cash it."
+        },
+        {
+          "kind": "quote",
+          "text": "Language was never pure individual authorship.",
+          "attrib": "closing the opener",
+          "note": "→ \"Did you invent the words, did you design the glyphs — no, you never did. And that was always fine.\"\n\n→ \"Because language was never pure individual authorship. It was legible collaboration across a system built by thousands of hands before you arrived.\"\n\n→ \"AI didn't break that. It just made it impossible to keep pretending otherwise.\""
+        },
+        {
+          "kind": "list",
+          "items": [
+            "Steward — maintains, oversees",
+            "Curator — arranges stuff and context",
+            "Negotiator — works the table",
+            "Not: user"
+          ],
+          "note": "→ \"I've used the word cyborg to describe your practice for forty minutes. That word is the intervention — language is cyborg technology, it changes how you think while you're using it.\"\n\n→ \"Steward maintains and oversees. Curator arranges stuff and context. Negotiator works the table.\"\n\n→ \"These are roles to borrow. 'User' fuses the person and the tool — what's a user without something to use?\""
+        },
+        {
+          "kind": "statement",
+          "text": "Cyborg describes what we are, not how we should be.",
+          "note": "→ \"Cyborg describes what we are, not how we should be. It isn't prescriptive — it's diagnostic. It reveals the negotiation table you're already sitting at.\"\n\n→ \"You're all sailing some ship, some assemblage. That's what makes you cyborgs.\"\n\n→ \"So — what's the negotiation table you're sitting at, in your own work? That's where the panel starts.\"\n\n⏱ Leave the question up. Hand to the panel."
+        }
+      ],
+      "presenterNotes": "⏱ 4 min · close the opener's loop, name the language hack, hand to the panel\n\n⚑ 'diagnostic not prescriptive' was planted at REVEAL — this is the payoff, land it"
     },
     {
       "id": "panel",
@@ -320,15 +394,15 @@
       "panelOnly": true,
       "cue": {
         "mode": "panel",
-        "prompt": "Who else is at your negotiation table?",
+        "prompt": "What's the negotiation table you're sitting at?",
         "signalOpen": true,
         "assembleOpen": true
       },
       "slides": [
         {
           "kind": "prompt",
-          "text": "Who else is at your negotiation table?",
-          "note": "→ \"Who else is at your negotiation table?\"\n\n· Stage two or three and let the panel react to each. Don't lecture."
+          "text": "What's the negotiation table you're sitting at?",
+          "note": "→ \"What's the negotiation table you're sitting at, in your own work?\"\n\n· Stage two or three and let the panel react to each. Don't lecture."
         },
         {
           "kind": "staged",
@@ -341,7 +415,7 @@
         {
           "kind": "prompt",
           "text": "In-house, agency, solo — whose interests are you suspended between?",
-          "note": "→ \"In-house designers sit between business interest and the interests of the person using the thing. Agency designers sit in that, plus agency profitability.\"\n\n⏱ Hand this one to my boss deliberately. Peer dynamic, not hierarchy."
+          "note": "→ \"In-house designers sit between business interest and the interests of the person using the thing. Agency designers sit in that, plus agency profitability.\"\n\n⏱ Hand this one to Justin deliberately. Peer dynamic, not hierarchy."
         },
         {
           "kind": "staged",
@@ -363,53 +437,15 @@
         },
         {
           "kind": "prompt",
-          "text": "What system have you worked around this week?",
-          "note": "→ \"Turn to someone you haven't talked to. Name one stakeholder your current project pretends isn't there.\"\n\n⏱ Ninety seconds. This is the brief's explicit promise."
+          "text": "One sentence: what will you rename?",
+          "note": "→ \"Last one. One sentence — what word in your own practice will you rename?\"\n\n⏱ Three or four voices, fast. This is the language hack made personal."
         },
         {
           "kind": "staged",
-          "note": "· Stage the sharpest card from that exchange. Credit by name."
+          "note": "· Stage the sharpest rename. Credit by name. Then let it land — don't add to it."
         }
       ],
       "presenterNotes": "⏱ 25 min · facilitator, not expert · the feed IS the running order\n\n· Stage cards, read them out, credit by handle\n\n· Fallback if the feed goes thin: \"what assumptions were embedded in 'a captain that can fly'?\""
-    },
-    {
-      "id": "steward",
-      "label": "STEWARD",
-      "mins": 5,
-      "cue": {
-        "mode": "steward",
-        "prompt": "One sentence: what will you rename?",
-        "signalOpen": true,
-        "assembleOpen": true
-      },
-      "slides": [
-        {
-          "kind": "list",
-          "items": [
-            "Steward — maintains, oversees",
-            "Curator — arranges stuff and context",
-            "Negotiator — works the table",
-            "Not: user"
-          ],
-          "note": "→ \"I've been using the word cyborg to describe your practice for forty minutes. That word is the intervention — language is cyborg technology, it changes how you think while you're using it.\"\n\n→ \"Steward maintains and oversees. Curator is a professional arranger of stuff and context. Negotiator works the table.\"\n\n→ \"These are roles to borrow. 'User' fuses the person and the tool — what's a user without something to use?\""
-        },
-        {
-          "kind": "prompt",
-          "text": "One sentence: what will you rename?",
-          "note": "→ \"One sentence: what will you rename?\"\n\n⏱ Three or four voices, fast."
-        },
-        {
-          "kind": "staged",
-          "note": "· Stage the sharpest full screen."
-        },
-        {
-          "kind": "statement",
-          "text": "Go arrange it how you want.",
-          "note": "→ \"Cyborg designer isn't prescriptive. It's diagnostic — it reveals the negotiation table you're already sitting at.\"\n\n→ \"You're all sailing some ship, some assemblage. That's what makes you cyborgs.\"\n\n→ \"Go arrange it how you want.\""
-        }
-      ],
-      "presenterNotes": "⏱ 5 min · the language hack, and the reveal of what I've been doing all night"
     }
   ]
 }
