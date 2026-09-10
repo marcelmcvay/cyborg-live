@@ -21,7 +21,13 @@
         {
           "kind": "prompt",
           "text": "Designed by Systems. Join the room —",
-          "note": "→ \"Open the link on your phone — the talk runs on it.\"\n\n· Join URL has to read from across the room."
+          "note": "→ \"Open the link on your phone — the talk runs on it.\"\\n\\n· Join URL has to read from across the room."
+        },
+        {
+          "kind": "image",
+          "src": "qr-code.png",
+          "alt": "QR code to join cyborg-live.marcelmcvay.com:8787",
+          "note": "QR code for easy phone access during cocktail hour"
         },
         {
           "kind": "statement",
@@ -36,6 +42,36 @@
         {
           "kind": "histogram",
           "note": "⏱ Glance check: under 15 by the time I'm on? Spend minute one driving signups instead of the diagnostic."
+        },
+        {
+          "kind": "image",
+          "src": "essay-1.webp",
+          "alt": "Space shuttle and astronaut imagery from Signal+Static essay",
+          "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
+        },
+        {
+          "kind": "image", 
+          "src": "essay-2.webp",
+          "alt": "Cybernetic systems and space technology",
+          "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
+        },
+        {
+          "kind": "image",
+          "src": "essay-3.webp", 
+          "alt": "Cyborg evolution and technology integration",
+          "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
+        },
+        {
+          "kind": "image",
+          "src": "essay-4.webp",
+          "alt": "Human-machine interface visualization", 
+          "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
+        },
+        {
+          "kind": "image",
+          "src": "essay-5.webp",
+          "alt": "Future cyborg systems and space exploration",
+          "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
         },
         {
           "kind": "prompt",

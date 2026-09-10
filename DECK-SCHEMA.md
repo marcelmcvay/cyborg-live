@@ -73,7 +73,8 @@ Ordered within the beat. `kind` is one of:
 | `histogram` | — | LIVE **dependence** aggregate from `/api/state` |
 | `spectrum` | `labels[]` | DEPRECATED 1-D ruler. Superseded by `radar`; do not author new ones |
 | `list` | `items[]` | max 4 items, mono, tick-mark bullets |
-| `caseStudy` | `title`, `beats[]` | Regent / self-checkout narrative frames |
+| `caseStudy` | `title`, `beats[]` | Regent / self-checkout narrative frames. `beats` can be strings OR `{text, image}` objects for side-by-side layout |
+| `image` | `src`, `alt` | full-screen image from `public/images/` directory |
 | `staged` | — | LIVE full-screen audience submission via `/api/stage` |
 | `prompt` | `text` | big question + the join URL, for discussion blocks |
 

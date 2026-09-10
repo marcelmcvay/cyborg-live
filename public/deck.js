@@ -53,7 +53,10 @@
     link: 'offline',
     backoff: BACKOFF.base,
     reconnectTimer: null,
+    lobbyTimer: null,         // auto-advance interval, active only during lobby beats
   };
+
+  const LOBBY_ADVANCE_MS = 8000; // dwell time per slide during cocktail hour
 
   // ── DOM ──────────────────────────────────────────────────────────
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -158,6 +161,7 @@
     if (!force && beat.id === S.beatId) {
       if (Number.isInteger(cue.slide)) setSlide(cue.slide, false);
       renderStrip();
+      manageLobbyTimer(beat);
       return;
     }
     S.beatId = beat.id;
@@ -166,6 +170,37 @@
     // otherwise slide 0 (a genuinely new beat cue always carries slide: 0).
     S.slideIdx = Number.isInteger(cue.slide) ? Math.max(0, cue.slide) : 0;
     renderBeat(true);
+    manageLobbyTimer(beat);
+  }
+
+  // ── Lobby auto-advance ───────────────────────────────────────────
+  // The lobby/cocktail-hour beat has nobody at the clicker — it should cycle
+  // its own slides on a dwell timer. Any other beat (a real presenter cue)
+  // must kill the timer immediately; this is a pure LISTENER screen, so the
+  // timer driving `step()` locally must never fight a presenter-driven cue.
+  function manageLobbyTimer(beat) {
+    const isLobby = !!(beat && beat.lobby);
+    if (!isLobby) {
+      stopLobbyTimer();
+      return;
+    }
+    if (S.lobbyTimer) return; // already cycling this lobby beat
+    S.lobbyTimer = setInterval(() => {
+      const b = findBeat(S.beatId);
+      if (!b || !b.lobby) { stopLobbyTimer(); return; }
+      const n = slidesOf(b).length;
+      if (n <= 1) return;
+      const next = (S.slideIdx + 1) % n; // wrap — lobby loops, never stalls at the end
+      S.slideIdx = next;
+      renderBeat(true);
+    }, LOBBY_ADVANCE_MS);
+  }
+
+  function stopLobbyTimer() {
+    if (S.lobbyTimer) {
+      clearInterval(S.lobbyTimer);
+      S.lobbyTimer = null;
+    }
   }
 
   // ── Slide navigation ─────────────────────────────────────────────
@@ -292,13 +327,45 @@
 
     caseStudy(s) {
       const beats = Array.isArray(s.beats) ? s.beats : [];
-      return `<div class="case">
-                <h2 class="case__title">${esc(s.title || '')}</h2>
-                <div class="case__beats">
-                  ${beats.map((b, i) => `
-                    <p class="case__beat"><span class="n">${pad(i + 1, 2)}</span><span>${esc(b)}</span></p>
-                  `).join('')}
-                </div>
+      const hasImages = beats.some(b => typeof b === 'object' && b.image);
+      
+      if (hasImages) {
+        return `<div class="case case--with-images">
+                  <div class="case__content">
+                    <h2 class="case__title">${esc(s.title || '')}</h2>
+                    <div class="case__beats">
+                      ${beats.map((b, i) => {
+                        const text = typeof b === 'string' ? b : (b.text || '');
+                        return `<p class="case__beat"><span class="n">${pad(i + 1, 2)}</span><span>${esc(text)}</span></p>`;
+                      }).join('')}
+                    </div>
+                  </div>
+                  <div class="case__images">
+                    ${beats.map((b, i) => {
+                      if (typeof b === 'object' && b.image) {
+                        return `<img class="case__image" src="images/${esc(b.image)}" alt="${esc(b.text || '')}" loading="lazy">`;
+                      }
+                      return '';
+                    }).filter(Boolean).join('')}
+                  </div>
+                </div>`;
+      } else {
+        // Original text-only layout
+        return `<div class="case">
+                  <h2 class="case__title">${esc(s.title || '')}</h2>
+                  <div class="case__beats">
+                    ${beats.map((b, i) => {
+                      const text = typeof b === 'string' ? b : (b.text || '');
+                      return `<p class="case__beat"><span class="n">${pad(i + 1, 2)}</span><span>${esc(text)}</span></p>`;
+                    }).join('')}
+                  </div>
+                </div>`;
+      }
+    },
+
+    image(s) {
+      return `<div class="image-slide">
+                <img class="image-slide__img" src="images/${esc(s.src || '')}" alt="${esc(s.alt || '')}" loading="lazy">
               </div>`;
     },
 
