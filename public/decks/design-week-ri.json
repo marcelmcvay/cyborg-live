@@ -281,6 +281,12 @@
           "note": "→ \"Regent builds a ground-effect craft that skims above the water.\"\n\n→ \"The client defined the operator as a mariner. One wheel, one throttle — a captain that can fly.\"\n\n→ \"But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem.\"\n\n→ \"Then a test pilot joins. Ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name — we called him Bob Dylan.\"\n\n→ \"He liked every concept. Every concept was wrong.\"\n\n→ \"Not messy, not unpolished — they didn't match the logic his body had spent decades building. He'd tell me what he couldn't see, not because it was missing from the UI but because it wasn't where his body expected it.\"\n\n→ \"The real user changed, and the entire prompt changed with it.\"\n\n· Name the table: me, business development, product management, the CTO, program directors — all genuinely good people. Then the pilot arrived and reordered everything."
         },
         {
+          "kind": "image",
+          "src": "regent-seaglider.jpg",
+          "alt": "Regent seaglider flying above water surface",
+          "note": "→ \"A ground-effect craft that skims above the water. Not quite ship, not quite plane.\"\\n\\n→ \"The gap between maritime and aviation — that's where the design problem lived. And where Bob Dylan's body knew things the interface didn't.\""
+        },
+        {
           "kind": "caseStudy",
           "title": "SELF-CHECKOUT",
           "beats": [
