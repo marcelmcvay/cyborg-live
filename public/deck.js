@@ -377,6 +377,15 @@
               </div>`;
     },
 
+    assemblages(s) {
+      return `<div class="assemblages" data-live="assemblages">
+                ${s.title ? `<h2 class="spectrum__title">${esc(s.title)}</h2>` : ''}
+                <div class="js-assemblages-body">
+                  <p class="assemblages__empty">NO ASSEMBLAGES YET</p>
+                </div>
+              </div>`;
+    },
+
     prompt(s) {
       const url = joinUrl();
       return `<div class="prompt">
@@ -404,7 +413,7 @@
     S.slideIdx = Math.min(S.slideIdx, slides.length - 1);
     const slide = slides[S.slideIdx];
     const kind = RENDER[slide.kind] ? slide.kind : 'statement';
-    const live = kind === 'histogram' || kind === 'staged' || kind === 'radar';
+    const live = kind === 'histogram' || kind === 'staged' || kind === 'radar' || kind === 'assemblages';
 
     const sec = document.createElement('section');
     sec.className = `slide slide--${kind} is-current`;
@@ -421,6 +430,7 @@
     if (kind === 'histogram') paintHistogram();
     if (kind === 'radar') paintRadar();
     if (kind === 'staged') paintStaged();
+    if (kind === 'assemblages') paintAssemblages();
     renderStrip();
   }
 
@@ -497,12 +507,49 @@
       </div>`;
   }
 
+  function paintAssemblages() {
+    const root = $('.js-assemblages-body', el.stage);
+    if (!root) return;
+    
+    const assemblages = Array.isArray(S.assemblages) ? S.assemblages.slice() : [];
+    if (assemblages.length === 0) {
+      root.innerHTML = `<p class="assemblages__empty">NO ASSEMBLAGES YET</p>`;
+      return;
+    }
+    
+    // Show random 2 assemblages
+    const shuffled = assemblages.sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, 2);
+    
+    root.innerHTML = selected.map(asm => {
+      const picks = Array.isArray(asm.picks) ? asm.picks : [];
+      const handle = esc((asm.handle || '').trim() || 'ANON');
+      const klass = esc(asm.klass || '');
+      const spectrum = Math.round(asm.spectrum || 0);
+      
+      return `
+        <div class="assemblage-card">
+          <div class="assemblage-card__header">
+            <span class="assemblage-card__handle">${handle}</span>
+            <span class="assemblage-card__klass">${klass}</span>
+          </div>
+          <div class="assemblage-card__picks">
+            ${picks.slice(0, 3).map(pick => `<span class="assemblage-pick">${esc(pick)}</span>`).join('')}
+          </div>
+          <div class="assemblage-card__spectrum">
+            <span class="spectrum-value">${spectrum}</span>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
   function repaintLive() {
     if (!el.stage.firstElementChild) return;
     const kind = el.stage.firstElementChild.dataset.kind;
     if (kind === 'histogram') paintHistogram();
     if (kind === 'radar') paintRadar();
     if (kind === 'staged') paintStaged();
+    if (kind === 'assemblages') paintAssemblages();
   }
 
   // ── Status strip ─────────────────────────────────────────────────

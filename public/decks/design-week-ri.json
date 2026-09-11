@@ -144,8 +144,8 @@
         },
         {
           "kind": "statement",
-          "text": "This room is already a cyborg.",
-          "note": "→ \"You don't need implants to be a cyborg. You built this shape over drinks, before I said a word.\"\n\n→ \"Cyborg describes what we are, not how we should be. It's diagnostic, not prescriptive.\"\n\n· From 'The Cyborgs Aren't Coming'. Plant 'diagnostic' — it pays off at the very end."
+          "text": "This room is full of cyborgs.",
+          "note": "→ \"You don't need implants to be a cyborg. You built this, albeit with a set of options of what technology extends you.\"\\n\\n→ \"Cyborg describes what we are, not how we should be. It's diagnostic, not prescriptive.\"\\n\\n· From 'The Cyborgs Aren't Coming'. Plant 'diagnostic' — it pays off at the very end."
         },
         {
           "kind": "statement",
@@ -153,14 +153,9 @@
           "note": "→ \"Two people can enclose exactly the same area and be completely different shapes.\"\n\n→ \"Vader is one shape — conspicuous, self-directed, obvious hardware.\"\n\n→ \"The astronaut managing the psychology of drinking recycled urine is another — the body as a system under constraint, life-support as identity.\"\n\n→ \"Ours is a third: invisible and dispatched. That's a difference in kind, not a point on a line.\"\n\n⚑ Never say 'spectrum', 'scale', or 'where are you on the line'. The instrument has no line."
         },
         {
-          "kind": "list",
-          "items": [
-            "Self-checkout kiosks",
-            "Autocorrect",
-            "Noise-cancelling headphones",
-            "GPS-guided mapping"
-          ],
-          "note": "→ \"The normalcy of this makes genuinely complex moments feel mundane.\"\n\n· Read two or three, not all four. The list does the visual work.\n\n→ \"ASSEMBLE stays open — change your picks as we go, the shape moving is the point. SIGNAL's been open since the lobby; anything you send is material and I'll read it out.\""
+          "kind": "assemblages",
+          "title": "Two participants, so far",
+          "note": "→ \"The normalcy of this makes genuinely complex moments feel mundane.\"\\n\\n· Random two assemblages from the room.\\n\\n→ \"ASSEMBLE stays open — change your picks as we go, the shape moving is the point. SIGNAL's been open since the lobby; anything you send is material and I'll read it out.\""
         }
       ],
       "presenterNotes": "⏱ 5 min · the data is theirs and they built it over drinks · recognition before theory\n\n⚑ Never say \"spectrum\", \"scale\", or \"where are you on the line.\" The instrument has no line."
@@ -181,11 +176,20 @@
           "title": "BERLIN IS YELLOW",
           "beats": [
             "Berlin 1925: \"totally black and white.\" The weather, the people, everything.",
-            "Reunification 1990: five or six colors, \"most of them were beige.\"",
-            "\"Beige is you have a room of people that decide the color is beige. Which means it's no color.\"",
-            "\"So I made everything yellow. And they will never ever change that. Because they can't anymore.\""
+            "1961: The Wall divides the city. Two transit systems, two visual languages.",
+            "1989: The Wall falls. Now what do you do with two different cities?",
+            { "text": "Reunification 1990: five or six colors, \"most of them were beige.\"", "image": "spiekermann-manual.jpg" },
+            "\"Beige is you have a room of people that decide the color is beige. Which means it's no color.\""
           ],
-          "note": "→ \"This is Spiekermann on stage, decades later, telling the triumph version.\"\\n\\n→ \"Beige is the villain here — it's the negotiation table rendered as a color. The absence of a choice, presented as a choice.\"\\n\\n→ \"One person, one decision, applied across the whole system: yellow buses, yellow trams, yellow U-Bahn.\"\\n\\n→ \"And then it escapes him — the choice becomes infrastructure that constrains every designer who comes after.\""
+          "note": "→ \"This is Spiekermann on stage, decades later, telling the triumph version.\"\\n\\n→ \"The Wall created the design problem: you inherit two transit systems that need to become one.\"\\n\\n→ \"Beige is the villain here — it's the negotiation table rendered as a color. The absence of a choice, presented as a choice.\""
+        },
+        {
+          "kind": "caseStudy",
+          "title": "BERLIN IS YELLOW",
+          "beats": [
+            { "text": "\"So I made everything yellow. And they will never ever change that. Because they can't anymore.\"", "image": "spiekermann-bus.png" }
+          ],
+          "note": "→ \"One person, one decision, applied across the whole system: yellow buses, yellow trams, yellow U-Bahn.\"\\n\\n→ \"And then it escapes him — the choice becomes infrastructure that constrains every designer who comes after.\""
         },
         {
           "kind": "statement",
@@ -339,7 +343,7 @@
           "note": "→ \"To design responsibly is to name those actors, question their power, and decide how — and whether — they belong at the table.\"\n\n→ \"It's one thing to design a beautiful interface in your tool of choice. It's another to negotiate with stakeholders. Both are valid, and both land in the interface — the place where the negotiation gets painted.\"\n\n→ \"Send me your answer on SIGNAL now. We're using them in the panel.\""
         }
       ],
-      "presenterNotes": "⏱ 7 min · Regent is the table where the REAL user shows up and reorders everyone — this is the accountability the resolution cashes out · self-checkout is optional padding, drop it if tight"
+      "presenterNotes": "⏱ 7 min\\n\\n· Regent is the table where the REAL user shows up and reorders everyone — this is the accountability the resolution cashes out\\n\\n· Self-checkout is optional padding, drop it if tight"
     },
     {
       "id": "cybernetics",

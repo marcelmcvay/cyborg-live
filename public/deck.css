@@ -224,7 +224,30 @@
   margin-bottom: calc(var(--u) * 1.6);
   max-width: 22ch;
 }
-.case__beats { display: flex; flex-direction: column; gap: calc(var(--u) * 0.9); max-width: 62ch; }
+.case__beats { 
+  display: flex; 
+  flex-direction: column; 
+  gap: calc(var(--u) * 0.9); 
+  max-width: 62ch; 
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: calc(var(--u) * 0.5);
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.case__beats::-webkit-scrollbar {
+  width: 6px;
+}
+
+.case__beats::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.case__beats::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
 .case__beat {
   display: flex;
   gap: calc(var(--u) * 1.1);
@@ -322,6 +345,76 @@
   letter-spacing: 0.08em;
   color: var(--mid);
   text-transform: uppercase;
+}
+
+/* ── assemblages ─────────────────────────────────────────────────── */
+.assemblages { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+.js-assemblages-body { display: flex; gap: calc(var(--u) * 2); justify-content: center; }
+
+.assemblage-card {
+  background: rgba(var(--accent-rgb), 0.1);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: calc(var(--u) * 1.5);
+  min-width: 280px;
+  max-width: 320px;
+}
+
+.assemblage-card__header {
+  display: flex; 
+  justify-content: space-between;
+  margin-bottom: calc(var(--u) * 1);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: calc(var(--u) * 0.5);
+}
+
+.assemblage-card__handle { 
+  font-family: var(--font-mono);
+  font-weight: 600; 
+  color: var(--fg);
+}
+
+.assemblage-card__klass { 
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--accent); 
+}
+
+.assemblage-card__picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 0.5);
+  margin-bottom: calc(var(--u) * 1);
+}
+
+.assemblage-pick {
+  background: var(--accent);
+  color: var(--bg);
+  padding: calc(var(--u) * 0.25) calc(var(--u) * 0.5);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  font-weight: 500;
+}
+
+.assemblage-card__spectrum {
+  text-align: right;
+}
+
+.spectrum-value {
+  font-family: var(--font-mono);
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.assemblages__empty {
+  font-family: var(--font-mono);
+  font-size: calc(var(--u) * 1);
+  letter-spacing: 0.08em;
+  color: var(--mid);
+  text-transform: uppercase;
+  text-align: center;
 }
 
 /* ── prompt ──────────────────────────────────────────────────────── */
