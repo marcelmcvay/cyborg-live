@@ -3,7 +3,7 @@
   "title": "Designed by Systems",
   "subtitle": "How the world we move through shapes what we make",
   "venue": "Design Week RI — OCTO panel",
-  "totalMins": 76,
+  "totalMins": 77,
   "format": "panel",
   "beats": [
     {
@@ -195,15 +195,20 @@
     {
       "id": "reveal",
       "label": "REVEAL",
-      "mins": 3,
+      "mins": 4,
       "cue": {
         "mode": "reveal",
         "prompt": "You built this over drinks.",
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 3 min. The payoff for 30 minutes of lobby.\n\n⚑ Never say \"spectrum,\" \"scale,\" or \"where are you on the line.\" It is a shape, not a ranking.",
+      "presenterNotes": "⏱ 4 min. The payoff for 30 minutes of lobby. Legend first, then the room.\n\n⚑ Never say \"spectrum,\" \"scale,\" or \"where are you on the line.\" It is a shape, not a ranking.",
       "slides": [
+        {
+          "kind": "axes",
+          "title": "Seven ways to be coupled",
+          "note": "→ \"Before I show you the room, here’s what the seven spokes are. This is the whole instrument.\"\n\n→ \"Not how much technology you have. Seven different ways a coupling can work on you.\"\n\n→ \"Read the right-hand side — metabolized, death, it dispatches you, born into it. That’s the high end of each one.\"\n\n⏱ ~20 seconds. Do not read all seven aloud — let them scan it. Point at DEPENDENCE and SURVEILLANCE."
+        },
         {
           "kind": "radar",
           "title": "The shape of this room",

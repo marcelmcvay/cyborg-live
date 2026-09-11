@@ -125,6 +125,16 @@
            Vader is now a ghost polygon behind yours, not an endpoint ahead. -->
       <div class="radar-host" id="radar-host" role="img" aria-label="Your assemblage radar"></div>
 
+      <!-- Axis key. The seven spokes are otherwise only ever shown as
+           abbreviations; the desc/lo/hi strings are authored in
+           components.v2.json and were never rendered anywhere. -->
+      <details class="axis-key" id="axis-key">
+        <summary class="axis-key__summary">
+          <span class="micro-label">WHAT THE SEVEN SPOKES MEAN</span>
+        </summary>
+        <ul class="axis-key__list" id="axis-key-list"></ul>
+      </details>
+
       <div class="radar-legend" hidden>
         <label class="ghost-toggle">
           <input type="checkbox" id="ghost-toggle" checked>

@@ -313,6 +313,16 @@
               </div>`;
     },
 
+    // Legend for the radar. Reads S.axes (components.v2.json) rather than
+    // hardcoding the seven spokes, so the slide can never disagree with the
+    // instrument. data-live so it repaints if the catalog lands after render.
+    axes(s) {
+      return `<div class="axes-slide" data-live="axes">
+                ${s.title ? `<h2 class="axes-slide__title">${esc(s.title)}</h2>` : ''}
+                <ol class="axes-list js-axes-list"></ol>
+              </div>`;
+    },
+
     list(s) {
       const items = (Array.isArray(s.items) ? s.items : []).slice(0, 4);
       return `<ul class="list">
@@ -438,6 +448,7 @@
 
     if (kind === 'histogram') paintHistogram();
     if (kind === 'radar') paintRadar();
+    if (kind === 'axes') paintAxes();
     if (kind === 'staged') paintStaged();
     if (kind === 'assemblages') paintAssemblages();
     renderStrip();
@@ -495,6 +506,32 @@
       size: 560,
       labels: true,
     });
+  }
+
+  function paintAxes() {
+    const root = $('[data-live="axes"]', el.stage);
+    if (!root) return;
+    const list = root.querySelector('.js-axes-list');
+    if (!list) return;
+    const order = (S.axisOrder || []).length ? S.axisOrder : (S.axes || []).map(a => a.id);
+    const byId = new Map((S.axes || []).map(a => [a.id, a]));
+    if (!order.length) {
+      list.innerHTML = `<li class="axes-empty">CATALOG NOT LOADED</li>`;
+      return;
+    }
+    list.innerHTML = order.map((id, i) => {
+      const a = byId.get(id) || {};
+      return `
+        <li class="axes-row">
+          <span class="axes-row__idx">${pad(i + 1, 2)}</span>
+          <span class="axes-row__name">${esc(a.label || id)}</span>
+          <span class="axes-row__scale">
+            <span class="axes-row__lo">${esc(a.lo || '')}</span>
+            <span class="axes-row__arrow" aria-hidden="true">\u2192</span>
+            <span class="axes-row__hi">${esc(a.hi || '')}</span>
+          </span>
+        </li>`;
+    }).join('');
   }
 
   function paintStaged() {
@@ -568,6 +605,7 @@
     const kind = el.stage.firstElementChild.dataset.kind;
     if (kind === 'histogram') paintHistogram();
     if (kind === 'radar') paintRadar();
+    if (kind === 'axes') paintAxes();
     if (kind === 'staged') paintStaged();
     if (kind === 'assemblages') paintAssemblages();
   }

@@ -574,6 +574,23 @@
     };
   }
 
+  // The axis desc/lo/hi strings ship in components.v2.json and had no reader.
+  // Without them the radar is seven abbreviations nobody in the room can decode.
+  function renderAxisKey() {
+    const list = document.getElementById('axis-key-list');
+    if (!list) return;
+    const byId = new Map((catalog.axes || []).map(a => [a.id, a]));
+    list.innerHTML = AXIS_ORDER.map((id) => {
+      const a = byId.get(id) || {};
+      return `
+        <li class="axis-key__row">
+          <span class="axis-key__name">${a.label || id}</span>
+          <span class="axis-key__desc">${a.desc || ''}</span>
+          <span class="axis-key__scale">${a.lo || ''} \u2192 ${a.hi || ''}</span>
+        </li>`;
+    }).join('');
+  }
+
   function renderState() {
     const s = compute();
     // Cold-arrival fix: an empty radar + three zero readouts pushed the first
@@ -701,6 +718,7 @@
       // Object.keys and never sorted by value.
       AXIS_ORDER = (catalog.aggregation && catalog.aggregation.axisOrder)
         || (catalog.axes || []).map(a => a.id);
+      renderAxisKey();
       byId = new Map(catalog.components.map(c => [c.id, c]));
       picks = new Set([...picks].filter(id => byId.has(id)));
       buildSlots();

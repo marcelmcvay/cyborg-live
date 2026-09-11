@@ -553,3 +553,72 @@
   font-weight: 600;
 }
 .radar__val { fill: var(--accent); font-size: 24px; font-weight: 600; }
+
+
+/* ── axes legend slide ───────────────────────────────────────────────
+   The seven radar spokes written out. Rendered from components.v2.json so
+   it can never disagree with the instrument. Must read from the back of
+   a dark room: seven rows is the ceiling, no prose. */
+.axes-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: calc(var(--u) * 1.6);
+}
+
+.axes-slide__title {
+  margin: 0;
+  font-size: calc(var(--u) * 2.2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.axes-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 0.7);
+}
+
+.axes-row {
+  display: grid;
+  grid-template-columns: auto minmax(9ch, 22%) 1fr;
+  align-items: baseline;
+  gap: calc(var(--u) * 1.4);
+  font-family: var(--font-mono);
+  font-size: clamp(1.2rem, 1.75vw, 2.05rem);
+  line-height: 1.25;
+  padding-bottom: calc(var(--u) * 0.55);
+  border-bottom: 1px solid var(--rule);
+}
+.axes-row:last-child { border-bottom: none; }
+
+.axes-row__idx {
+  color: var(--dim);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72em;
+  letter-spacing: 0.08em;
+}
+
+.axes-row__name {
+  color: var(--fg);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.axes-row__scale {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 0.8);
+  color: var(--dim);
+}
+.axes-row__arrow { color: var(--accent); }
+.axes-row__hi { color: var(--fg); }
+
+.axes-empty { color: var(--dim); font-family: var(--font-mono); }

@@ -535,3 +535,64 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 /* System indexing nobody speaks out loud */
 .slot-idx { display: none; }
+
+/* ── axis key ────────────────────────────────────────────────────────
+   Collapsed by default: it's reference, not a step in the flow. But the
+   summary carries real scent so people know decoding is available. */
+.axis-key {
+  border-top: 1px solid var(--rule);
+  margin-top: 10px;
+  padding-top: 8px;
+}
+.axis-key__summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  color: var(--mid);
+}
+.axis-key__summary::-webkit-details-marker { display: none; }
+.axis-key__summary::before {
+  content: '+';
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-size: 13px;
+}
+.axis-key[open] .axis-key__summary::before { content: '\2212'; }
+.axis-key[open] .axis-key__summary { color: var(--fg); }
+
+.axis-key__list {
+  list-style: none;
+  margin: 6px 0 4px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.axis-key__row {
+  display: grid;
+  gap: 1px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.axis-key__row:last-child { border-bottom: none; }
+.axis-key__name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.axis-key__desc {
+  font-size: 12px;
+  line-height: 1.35;
+  color: rgba(240, 239, 233, 0.62);
+}
+.axis-key__scale {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+}
