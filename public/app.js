@@ -378,6 +378,8 @@
 
   function updateCounter() {
     const n = [...ta.value].length; // code points, closer to what the user perceives
+    // `000/280` at rest reads as a broken readout; only surface it near the cap
+    counter.hidden = n < 200;
     counter.innerHTML = `${pad(n)}<span class="counter-sep">/</span>${MAX}`;
     counter.classList.toggle('is-warn', n >= 240 && n < MAX);
     counter.classList.toggle('is-danger', n >= MAX);
@@ -498,7 +500,10 @@
   // and is excluded here — the phone shows authored references only.
   let showGhosts = lsGet(LS.ghosts, true);
   function ghostSet() {
-    if (!showGhosts) return [];
+    // Ghosts are a comparison, so they only mean anything once the user has a
+    // shape of their own. The manual toggle was a preference control shown
+    // before there was any content to apply it to; it is now automatic.
+    if (!showGhosts || !(typeof picks !== 'undefined' && picks.size)) return [];
     return (catalog.ghosts || []).filter(g => g.id !== 'ghost.room');
   }
 
@@ -571,6 +576,11 @@
 
   function renderState() {
     const s = compute();
+    // Cold-arrival fix: an empty radar + three zero readouts pushed the first
+    // tappable component ~750px below the fold. Hide the whole readout block
+    // until the user owns some content.
+    const sp = document.getElementById('spectrum-panel');
+    if (sp) sp.dataset.picks = String(s.n);
     spectrumNum.textContent = pad(s.spectrum);
     picksOut.textContent = pad(s.n, 2);
     klassOut.textContent = s.klass || 'Unassembled';
@@ -741,7 +751,8 @@
     $('#gate-assemble').hidden = open;
     $('#gate-signal').hidden = isOpen('signal');
     $('.signal-form').hidden = !isOpen('signal');
-    $('#mode-signal .log').hidden = !isOpen('signal') && !log.length;
+    // hide the empty-state box entirely until they've actually sent something
+    $('#mode-signal .log').hidden = !log.length;
   }
 
   function renderCard(s, r, { scroll = true } = {}) {
@@ -816,7 +827,8 @@
     setMode('assemble', { scroll: false });
     const firstSlot = $('.slot', slotsRoot);
     if (firstSlot && !firstSlot.classList.contains('is-open')) $('.slot-head', firstSlot).click();
-    $('#spectrum-panel').scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    // (was: pre-POST scroll to the radar. Two scroll jumps in ~1s on a
+    // one-handed phone read as a glitch — renderCard() does the one that matters.)
     say('EDIT YOUR PICKS — RE-TRANSMIT WHEN DONE');
   });
 

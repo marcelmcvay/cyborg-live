@@ -126,10 +126,10 @@
 .ruler__labels span {
   flex: 1 1 0;
   font-family: var(--font-mono);
-  font-size: calc(var(--u) * 0.7);
+  font-size: calc(var(--u) * 1.0);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--mid);
+  color: var(--dim);
   text-align: center;
 }
 .ruler__labels span:first-child { text-align: left; }
@@ -228,26 +228,11 @@
   display: flex; 
   flex-direction: column; 
   gap: calc(var(--u) * 0.9); 
-  max-width: 62ch; 
-  max-height: 70vh;
-  overflow-y: auto;
-  padding-right: calc(var(--u) * 0.5);
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
+  max-width: 62ch;
+  /* NO overflow:auto here. Nobody can scroll a projector; content must fit.
+     If a caseStudy overflows, cut a beat or split the slide. */
 }
 
-.case__beats::-webkit-scrollbar {
-  width: 6px;
-}
-
-.case__beats::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.case__beats::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 3px;
-}
 .case__beat {
   display: flex;
   gap: calc(var(--u) * 1.1);
@@ -291,6 +276,8 @@
 
 .case__image {
   width: 100%;
+  max-height: 45vh;
+  object-fit: contain;
   height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -302,16 +289,16 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: calc(var(--u) * 2);
+  padding: 0;
 }
 
+/* No radius/shadow: invisible against black, and they just shave the photo. */
 .image-slide__img {
   max-width: 100%;
   max-height: 100%;
   width: auto;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  object-fit: contain;
 }
 
 /* ── qr slide ────────────────────────────────────────────────────── */
@@ -338,12 +325,25 @@
 }
 
 .qr-slide__img {
-  max-width: 60%;
-  max-height: 60%;
+  max-width: 46vh;
+  max-height: 46vh;
   width: auto;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  /* keep module edges hard when upscaled, or phone cameras struggle to decode */
+  image-rendering: pixelated;
+  background: #fff;
+  padding: calc(var(--u) * 0.8);
+  border-radius: 4px;
+}
+
+/* plain-language scent line under the house-style title */
+.qr-slide__sub {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: calc(var(--u) * 1.15);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  max-width: 70%;
 }
 
 /* ── staged (LIVE audience submission) ───────────────────────────── */
@@ -387,9 +387,8 @@
   background: rgba(var(--accent-rgb), 0.1);
   border: 1px solid var(--accent);
   border-radius: 8px;
-  padding: calc(var(--u) * 1.5);
-  min-width: 280px;
-  max-width: 320px;
+  padding: calc(var(--u) * 1.8);
+  width: clamp(26vw, 30vw, 34vw);
 }
 
 .assemblage-card__header {
@@ -547,7 +546,10 @@
 }
 .radar__shape.is-empty { stroke: var(--mid); stroke-dasharray: 3 3; }
 .radar__dot { fill: var(--accent); }
+/* SVG user units inside the 560 viewBox. 15 rendered ~18px on a 1080p
+   projector -- the smallest type in the deck, on the money slide. */
 .radar__label {
-  fill: var(--fg); font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase;
+  fill: var(--fg); font-size: 26px; letter-spacing: 0.06em; text-transform: uppercase;
+  font-weight: 600;
 }
-.radar__val { fill: var(--accent); font-size: 15px; }
+.radar__val { fill: var(--accent); font-size: 24px; font-weight: 600; }

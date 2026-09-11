@@ -370,9 +370,11 @@
     },
 
     qr(s) {
+      // eager, not lazy: the lobby loop auto-advances and a lazy QR can paint blank
       return `<div class="qr-slide">
                 ${s.title ? `<h2 class="qr-slide__title">${esc(s.title)}</h2>` : ''}
-                <img class="qr-slide__img" src="images/${esc(s.src || '')}" alt="${esc(s.alt || '')}" loading="lazy">
+                <img class="qr-slide__img" src="images/${esc(s.src || '')}" alt="${esc(s.alt || '')}">
+                ${s.sub ? `<p class="qr-slide__sub">${esc(s.sub)}</p>` : ''}
               </div>`;
     },
 
@@ -524,9 +526,20 @@
       return;
     }
     
-    // Show random 2 assemblages
-    const shuffled = assemblages.sort(() => Math.random() - 0.5);
-    const selected = shuffled.slice(0, 2);
+    // Pick two and HOLD them. repaintLive() fires on every incoming assemblage
+    // SSE event, so re-shuffling here swapped the cards out mid-sentence while
+    // the presenter was reading them aloud. Re-roll only when the slide changes.
+    const key = `${S.beatId}:${S.slideIdx}`;
+    if (paintAssemblages._key !== key || !paintAssemblages._ids) {
+      paintAssemblages._key = key;
+      paintAssemblages._ids = assemblages
+        .slice().sort(() => Math.random() - 0.5).slice(0, 2)
+        .map(a => a.id);
+    }
+    const held = paintAssemblages._ids
+      .map(id => assemblages.find(a => a.id === id))
+      .filter(Boolean);
+    const selected = held.length ? held : assemblages.slice(0, 2);
     
     root.innerHTML = selected.map(asm => {
       const picks = Array.isArray(asm.picks) ? asm.picks : [];

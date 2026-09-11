@@ -481,3 +481,57 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   pointer-events: none; z-index: 40;
 }
 .sysline.is-show { opacity: 1; transform: translate(-50%, 0); }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   FORAGING PASS — plain-language scent under the house-style labels,
+   and a first screen that shows prey instead of empty readouts.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Tabs: house style stays as the aesthetic layer, scent line says what you get */
+.seg-btn { flex-direction: column; gap: 2px; justify-content: center; }
+.seg-name { font-size: 12px; letter-spacing: 0.1em; }
+.seg-scent {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--mid);
+  line-height: 1;
+}
+.seg-btn.is-on .seg-scent { color: var(--fg); }
+
+/* Conversion buttons: name the payoff, not the mechanism */
+.send-btn, .transmit-btn { flex-direction: column; gap: 2px; min-height: 56px; }
+.btn-scent {
+  font-size: 9px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 0.78;
+  font-family: var(--font-mono);
+}
+
+/* Cold arrival: no empty radar / zero readouts above the fold.
+   Collapses the whole block until the first pick exists. */
+#spectrum-panel[data-picks="0"] { display: none; }
+
+/* TRANSMIT must stay reachable through a ~60-row scroll, or people who
+   picked six things in the middle of the list have no visible exit. */
+.transmit-panel {
+  position: sticky;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  z-index: 12;
+  background: rgba(15, 15, 13, 0.96);
+  backdrop-filter: blur(8px);
+}
+
+/* Blurbs are the reason people keep scrolling; #666 on #0F0F0D is ~2.6:1
+   and effectively invisible in a dark cocktail room. */
+.comp-blurb { color: rgba(240, 239, 233, 0.62); }
+
+/* 7-axis jargon on every row is analyst data, not tap-decision data */
+.comp-axis { display: none; }
+@media (min-width: 700px) { .comp-axis { display: block; } }
+
+/* System indexing nobody speaks out loud */
+.slot-idx { display: none; }

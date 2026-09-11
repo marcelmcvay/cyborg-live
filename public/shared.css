@@ -5,7 +5,11 @@
   --bg: #0F0F0D;
   --fg: #F0EFE9;
   --mid: #666666;
+  /* projector-safe secondary text. --mid (#666 on #0F0F0D, ~3.2:1) turns to mud
+     under ambient room light; use --dim for anything projected. */
+  --dim: #9A9A94;
   --accent: #00E5CC;
+  --accent-rgb: 0, 229, 204;
   --rule: rgba(240, 239, 233, 0.12);
   --rule-strong: rgba(240, 239, 233, 0.28);
   --warn: #FFB020;

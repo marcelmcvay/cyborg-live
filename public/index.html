@@ -33,9 +33,7 @@
   <!-- ================= MODE A: SIGNAL ================= -->
   <section class="mode" id="mode-signal" data-mode="signal" aria-labelledby="tab-signal" hidden>
     <div class="mode-head">
-      <span class="micro-label">MODE A</span>
-      <h2>Signal</h2>
-      <p class="mode-sub">Send a question, a discussion-starter, or a note to the room. Lands on the presenter screen live.</p>
+      <p class="mode-sub">Ask Marcel anything. It appears on the big screen.</p>
     </div>
 
     <form class="fui-panel signal-form" id="signal-form" novalidate>
@@ -65,7 +63,7 @@
           <span class="readout counter" id="char-counter" aria-live="polite">000<span class="counter-sep">/</span>280</span>
         </div>
         <textarea id="signal-text" name="text" class="textarea" rows="4" maxlength="280"
-          placeholder="Type it. 280 chars. Plain text." autocomplete="off" spellcheck="true"></textarea>
+          placeholder="What do you want to ask?" autocomplete="off" spellcheck="true"></textarea>
       </div>
 
       <div class="field">
@@ -80,7 +78,7 @@
       <div class="form-foot">
         <p class="inline-error" id="signal-error" role="alert" hidden></p>
         <button class="btn is-primary send-btn" id="send-btn" type="submit" disabled>
-          <span class="send-label">SEND SIGNAL</span>
+          <span class="send-label">SEND SIGNAL</span><span class="btn-scent">goes on the big screen</span>
           <span class="send-arrow" aria-hidden="true">→</span>
         </button>
       </div>
@@ -100,9 +98,7 @@
   <!-- ================= MODE B: ASSEMBLE ================= -->
   <section class="mode" id="mode-assemble" data-mode="assemble" aria-labelledby="tab-assemble">
     <div class="mode-head">
-      <span class="micro-label">MODE B</span>
-      <h2>Assemble</h2>
-      <p class="mode-sub">Tap the tech that is part of your extended self. Your position on the spectrum updates live.</p>
+      <p class="mode-sub">Tap the tech you couldn’t live without. It draws your shape.</p>
     </div>
 
     <!-- sticky-ish live readout -->
@@ -129,7 +125,7 @@
            Vader is now a ghost polygon behind yours, not an endpoint ahead. -->
       <div class="radar-host" id="radar-host" role="img" aria-label="Your assemblage radar"></div>
 
-      <div class="radar-legend">
+      <div class="radar-legend" hidden>
         <label class="ghost-toggle">
           <input type="checkbox" id="ghost-toggle" checked>
           <span class="micro-label">SHOW REFERENCE SHAPES</span>
@@ -153,10 +149,10 @@
       </div>
       <p class="inline-error" id="assemble-error" role="alert" hidden></p>
       <button class="btn is-filled transmit-btn" id="transmit-btn" type="button" disabled>
-        <span class="send-label">TRANSMIT ASSEMBLAGE</span>
+        <span class="send-label">TRANSMIT</span><span class="btn-scent">put my shape on the big screen</span>
         <span class="send-arrow" aria-hidden="true">↑</span>
       </button>
-      <p class="micro-label transmit-hint" id="transmit-hint">PICK AT LEAST ONE COMPONENT</p>
+      <p class="micro-label transmit-hint" id="transmit-hint">TAP ANYTHING BELOW TO START</p>
     </div>
 
     <!-- class card (shown after transmit) -->
@@ -189,10 +185,10 @@
 <nav class="modebar" aria-label="Mode">
   <div class="seg" role="tablist">
     <button class="seg-btn" id="tab-signal" role="tab" aria-selected="false" aria-controls="mode-signal" data-mode="signal" type="button">
-      <span class="seg-key">A</span><span class="seg-name">SIGNAL</span>
+      <span class="seg-name">SIGNAL</span><span class="seg-scent">ask a question</span>
     </button>
     <button class="seg-btn is-on" id="tab-assemble" role="tab" aria-selected="true" aria-controls="mode-assemble" data-mode="assemble" type="button">
-      <span class="seg-key">B</span><span class="seg-name">ASSEMBLE</span>
+      <span class="seg-name">ASSEMBLE</span><span class="seg-scent">build your cyborg</span>
     </button>
     <span class="seg-indicator" aria-hidden="true"></span>
   </div>
