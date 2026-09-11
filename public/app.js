@@ -782,6 +782,10 @@
     const s = compute();
     if (!s.n) { showErr(asmErr, 'Pick at least one component first.'); return; }
     hideErr(asmErr);
+    
+    // Scroll to the radar first to show the assemblage visualization
+    radarHost.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
+    
     transmitting = true;
     transmitBtn.disabled = true;
     transmitBtn.classList.add('is-busy');

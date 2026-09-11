@@ -156,6 +156,8 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .btn:active { transform: scale(0.985); border-color: var(--accent); }
 .btn.is-primary { border-color: var(--fg); }
 .btn.is-primary:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+.btn.is-filled { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.btn.is-filled:not(:disabled):hover { background: var(--fg); border-color: var(--fg); }
 .btn:disabled { color: var(--mid); border-color: var(--rule); cursor: not-allowed; transform: none; }
 
 /* ---------- motion ---------- */
