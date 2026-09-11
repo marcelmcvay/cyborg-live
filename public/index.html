@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="shared.css">
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="shared.css?v=20260911d">
+  <link rel="stylesheet" href="app.css?v=20260911d">
 </head>
 <body>
 
@@ -66,13 +66,11 @@
           placeholder="What do you want to ask?" autocomplete="off" spellcheck="true"></textarea>
       </div>
 
-      <div class="field">
-        <div class="field-row">
-          <label class="micro-label" for="handle">HANDLE <span class="opt">(optional)</span></label>
-          <span class="readout counter is-dim" id="handle-counter">00/24</span>
-        </div>
+      <div class="field is-bare">
+        <label class="sr-only" for="handle">Handle (optional)</label>
+        <span class="readout counter is-dim sr-only" id="handle-counter">00/24</span>
         <input id="handle" name="handle" class="input" type="text" maxlength="24"
-          placeholder="anon" autocomplete="nickname" autocapitalize="off">
+          placeholder="name or initials (optional)" autocomplete="nickname" autocapitalize="off">
       </div>
 
       <div class="form-foot">
@@ -151,11 +149,12 @@
 
     <div class="fui-panel transmit-panel" id="transmit-panel">
       <span class="fui-corners" aria-hidden="true"></span>
-      <div class="field">
-        <div class="field-row">
-          <label class="micro-label" for="handle-2">HANDLE <span class="opt">(optional, shared with Signal)</span></label>
-        </div>
-        <input id="handle-2" class="input" type="text" maxlength="24" placeholder="anon" autocomplete="nickname" autocapitalize="off">
+      <!-- Label lives in the placeholder: this panel floats over the component
+           list, so every fixed row it carries is a row of catalog the user
+           cannot see. Visually-hidden label kept for screen readers. -->
+      <div class="field is-bare">
+        <label class="sr-only" for="handle-2">Handle (optional, shared with Signal)</label>
+        <input id="handle-2" class="input" type="text" maxlength="24" placeholder="name or initials (optional)" autocomplete="nickname" autocapitalize="off">
       </div>
       <p class="inline-error" id="assemble-error" role="alert" hidden></p>
       <button class="btn is-filled transmit-btn" id="transmit-btn" type="button" disabled>
@@ -204,7 +203,7 @@
   </div>
 </nav>
 
-<script src="radar.js" defer></script>
-<script src="app.js" defer></script>
+<script src="radar.js?v=20260911d" defer></script>
+<script src="app.js?v=20260911d" defer></script>
 </body>
 </html>

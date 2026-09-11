@@ -617,3 +617,61 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 /* stale = picks changed since the last send; pull attention back */
 .transmit-panel.is-stale .transmit-btn { background: var(--accent); color: var(--bg); }
+
+/* screen-reader-only: keeps the label for AT after the visual one is dropped */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── floating transmit: minimum viable rows ──────────────────────────
+   This panel is sticky, so every row it carries permanently covers part
+   of the component list underneath. Keep it to input + button. */
+.transmit-panel {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.transmit-panel .field.is-bare { margin: 0; }
+.transmit-panel .input {
+  min-height: 40px;
+  font-size: 13px;
+}
+.transmit-panel .transmit-btn { min-height: 48px; }
+.transmit-panel .transmit-hint {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.2;
+}
+/* the corner ticks are decoration on a panel that now needs every pixel */
+.transmit-panel .fui-corners { display: none; }
+
+/* Collapsed (clean send): drop to a single compact receipt row. */
+.transmit-panel.is-collapsed {
+  padding-top: 6px;
+  padding-bottom: 6px;
+  gap: 0;
+}
+.transmit-panel.is-collapsed .field,
+.transmit-panel.is-collapsed .btn-scent,
+.transmit-panel.is-collapsed .send-arrow,
+.transmit-panel.is-collapsed .transmit-hint { display: none; }
+.transmit-panel.is-collapsed .transmit-btn {
+  min-height: 34px;
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--rule-strong);
+  flex-direction: row;
+  gap: 8px;
+}
+.transmit-panel.is-collapsed .send-label { font-size: 11px; letter-spacing: 0.12em; }
+
+/* stale = picks changed since the last send; pull attention back */
+.transmit-panel.is-stale .transmit-btn { background: var(--accent); color: var(--bg); }
