@@ -157,7 +157,7 @@
     const next = tabs[seg.dataset.on === 'assemble' ? 0 : 1]; // two tabs: either arrow toggles
     setMode(next.dataset.mode); next.focus();
   });
-  setMode(location.hash === '#assemble' ? 'assemble' : lsGet(LS.mode, 'signal'), { scroll: false });
+  setMode(location.hash === '#signal' ? 'signal' : lsGet(LS.mode, 'assemble'), { scroll: false });
 
   // ================================================================ CONTROL TRACK (cue)
   // The presenter advances beats; state.cue tells forty phones what they may do.

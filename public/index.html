@@ -31,7 +31,7 @@
 <main class="main" id="main">
 
   <!-- ================= MODE A: SIGNAL ================= -->
-  <section class="mode" id="mode-signal" data-mode="signal" aria-labelledby="tab-signal">
+  <section class="mode" id="mode-signal" data-mode="signal" aria-labelledby="tab-signal" hidden>
     <div class="mode-head">
       <span class="micro-label">MODE A</span>
       <h2>Signal</h2>
@@ -98,7 +98,7 @@
   </section>
 
   <!-- ================= MODE B: ASSEMBLE ================= -->
-  <section class="mode" id="mode-assemble" data-mode="assemble" aria-labelledby="tab-assemble" hidden>
+  <section class="mode" id="mode-assemble" data-mode="assemble" aria-labelledby="tab-assemble">
     <div class="mode-head">
       <span class="micro-label">MODE B</span>
       <h2>Assemble</h2>
@@ -188,10 +188,10 @@
 <!-- ================= MODE SWITCH ================= -->
 <nav class="modebar" aria-label="Mode">
   <div class="seg" role="tablist">
-    <button class="seg-btn is-on" id="tab-signal" role="tab" aria-selected="true" aria-controls="mode-signal" data-mode="signal" type="button">
+    <button class="seg-btn" id="tab-signal" role="tab" aria-selected="false" aria-controls="mode-signal" data-mode="signal" type="button">
       <span class="seg-key">A</span><span class="seg-name">SIGNAL</span>
     </button>
-    <button class="seg-btn" id="tab-assemble" role="tab" aria-selected="false" aria-controls="mode-assemble" data-mode="assemble" type="button">
+    <button class="seg-btn is-on" id="tab-assemble" role="tab" aria-selected="true" aria-controls="mode-assemble" data-mode="assemble" type="button">
       <span class="seg-key">B</span><span class="seg-name">ASSEMBLE</span>
     </button>
     <span class="seg-indicator" aria-hidden="true"></span>
