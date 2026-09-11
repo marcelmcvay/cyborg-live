@@ -596,3 +596,24 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
   letter-spacing: 0.03em;
   color: var(--accent);
 }
+
+/* ── collapsed transmit ──────────────────────────────────────────────
+   After a clean send the panel is a receipt, not a CTA. Drop the handle
+   field, the scent line and the hint; keep a compact SENT button so a
+   re-transmit is still one tap away. Re-expands the moment picks change. */
+.transmit-panel.is-collapsed { padding-top: 8px; padding-bottom: 8px; }
+.transmit-panel.is-collapsed .field,
+.transmit-panel.is-collapsed .btn-scent,
+.transmit-panel.is-collapsed .transmit-hint { display: none; }
+.transmit-panel.is-collapsed .transmit-btn {
+  min-height: 38px;
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--rule-strong);
+  flex-direction: row;
+  gap: 8px;
+}
+.transmit-panel.is-collapsed .send-label { font-size: 11px; letter-spacing: 0.12em; }
+
+/* stale = picks changed since the last send; pull attention back */
+.transmit-panel.is-stale .transmit-btn { background: var(--accent); color: var(--bg); }

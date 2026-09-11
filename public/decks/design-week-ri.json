@@ -40,9 +40,9 @@
           "note": "⏱ Auto-advancing.\n\n· This is the SIGNAL ask. These questions run the panel — you need volume before you start."
         },
         {
-          "kind": "radar",
-          "title": "The shape of this room, so far",
-          "note": "· Live. Fills as people transmit. Best possible advertisement for the QR."
+          "kind": "axes",
+          "title": "What you’re being scored on",
+          "note": "· Lobby legend. People build assemblages for 30 minutes without knowing what the seven spokes mean — this is the decoder.\n\n⏱ Auto-advancing. No action asked."
         },
         {
           "kind": "qr",
@@ -53,9 +53,9 @@
           "note": "⏱ Auto-advancing. Every other slide is the QR.\n\n· This is the ASSEMBLE ask. Their picks draw the radar you reveal in beat 4."
         },
         {
-          "kind": "statement",
-          "text": "What shapes the technologies of tomorrow?",
-          "note": "· Atmosphere slide."
+          "kind": "radar",
+          "title": "The shape of this room, so far",
+          "note": "· Live. Fills as people transmit. Best possible advertisement for the QR."
         },
         {
           "kind": "qr",
@@ -64,6 +64,19 @@
           "title": "ASK A QUESTION",
           "sub": "Same code · tap SIGNAL · it lands on the big screen",
           "note": "⏱ Auto-advancing.\n\n· This is the SIGNAL ask. These questions run the panel — you need volume before you start."
+        },
+        {
+          "kind": "statement",
+          "text": "What shapes the technologies of tomorrow?",
+          "note": "· Atmosphere slide."
+        },
+        {
+          "kind": "qr",
+          "src": "qr-code.png",
+          "alt": "QR code to join live.marcelmcvay.com",
+          "title": "BUILD YOUR CYBORG",
+          "sub": "Scan · live.marcelmcvay.com · tap the tech you could not live without",
+          "note": "⏱ Auto-advancing. Every other slide is the QR.\n\n· This is the ASSEMBLE ask. Their picks draw the radar you reveal in beat 4."
         },
         {
           "kind": "image",
@@ -75,9 +88,9 @@
           "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "title": "BUILD YOUR CYBORG",
-          "sub": "Scan · live.marcelmcvay.com · tap the tech you could not live without",
-          "note": "⏱ Auto-advancing. Every other slide is the QR.\n\n· This is the ASSEMBLE ask. Their picks draw the radar you reveal in beat 4."
+          "title": "ASK A QUESTION",
+          "sub": "Same code · tap SIGNAL · it lands on the big screen",
+          "note": "⏱ Auto-advancing.\n\n· This is the SIGNAL ask. These questions run the panel — you need volume before you start."
         },
         {
           "kind": "statement",
@@ -88,9 +101,9 @@
           "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "title": "ASK A QUESTION",
-          "sub": "Same code · tap SIGNAL · it lands on the big screen",
-          "note": "⏱ Auto-advancing.\n\n· This is the SIGNAL ask. These questions run the panel — you need volume before you start."
+          "title": "BUILD YOUR CYBORG",
+          "sub": "Scan · live.marcelmcvay.com · tap the tech you could not live without",
+          "note": "⏱ Auto-advancing. Every other slide is the QR.\n\n· This is the ASSEMBLE ask. Their picks draw the radar you reveal in beat 4."
         },
         {
           "kind": "assemblages",
@@ -101,9 +114,9 @@
           "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "title": "BUILD YOUR CYBORG",
-          "sub": "Scan · live.marcelmcvay.com · tap the tech you could not live without",
-          "note": "⏱ Auto-advancing. Every other slide is the QR.\n\n· This is the ASSEMBLE ask. Their picks draw the radar you reveal in beat 4."
+          "title": "ASK A QUESTION",
+          "sub": "Same code · tap SIGNAL · it lands on the big screen",
+          "note": "⏱ Auto-advancing.\n\n· This is the SIGNAL ask. These questions run the panel — you need volume before you start."
         }
       ],
       "presenterNotes": "⏱ 30 min cocktail hour, unattended, auto-advancing.\n\n· Every other slide is the QR, alternating the two asks: BUILD (assemble) and ASK (signal).\n\n· Check the radar is filling before you go on. If it is thin, work the room and point at the screen."

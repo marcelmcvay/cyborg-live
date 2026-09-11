@@ -195,13 +195,18 @@
       el('span', { class: 'pill-state', text: 'LOCKED' })),
   };
   cueGates.append(gatePills.signal, gatePills.assemble);
+  // cueMeta (beat name + SIGNAL/ASSEMBLE gate pills) is deliberately NOT
+  // appended. Every beat in the running deck opens both gates, so the pills
+  // read "OPEN / OPEN" for the entire talk, and the beat name is presenter
+  // vocabulary the audience cannot act on. The nodes stay alive so
+  // renderGates() can keep writing to them without null checks.
   cueMeta.append(cueBeat, cueGates);
   const cuePrompt = el('p', { class: 'cuebar-prompt display', id: 'cue-prompt' });
   const cueChange = el('div', { class: 'cuebar-change', id: 'cue-change', role: 'status', hidden: true });
   const cueChangeText = el('span', { class: 'cuebar-change-text' });
   const cueChangeBtn = el('button', { class: 'cuebar-change-go', type: 'button', hidden: true });
   cueChange.append(el('span', { class: 'cuebar-change-mark', 'aria-hidden': 'true', text: '▸' }), cueChangeText, cueChangeBtn);
-  cueBar.append(cueMeta, cuePrompt, cueChange);
+  cueBar.append(cuePrompt, cueChange);
   const mainEl = $('#main');
   document.body.insertBefore(cueBar, mainEl);
 
@@ -489,6 +494,7 @@
   const radarHost = $('#radar-host');
   const radarNote = $('#radar-note');
   const ghostToggle = $('#ghost-toggle');
+  const transmitPanel = $('#transmit-panel');
   const transmitBtn = $('#transmit-btn');
   const transmitLabel = $('.send-label', transmitBtn);
   const transmitHint = $('#transmit-hint');
@@ -586,7 +592,7 @@
         <li class="axis-key__row">
           <span class="axis-key__name">${a.label || id}</span>
           <span class="axis-key__desc">${a.desc || ''}</span>
-          <span class="axis-key__scale">${a.lo || ''} \u2192 ${a.hi || ''}</span>
+          <span class="axis-key__scale">${a.lo || ''} → ${a.hi || ''}</span>
         </li>`;
     }).join('');
   }
@@ -624,10 +630,17 @@
     transmitBtn.disabled = !s.n || transmitting;
     if (!transmitting) {
       transmitLabel.textContent = sentCard
-        ? (cardStale ? 'RE-TRANSMIT — UPDATE MY ASSEMBLAGE' : 'RE-TRANSMIT ASSEMBLAGE')
-        : 'TRANSMIT ASSEMBLAGE';
+        ? (cardStale ? 'RE-TRANSMIT' : 'SENT')
+        : 'TRANSMIT';
     }
-    transmitHint.textContent = !s.n ? 'PICK AT LEAST ONE COMPONENT'
+    // Collapse the transmit block once it has done its job. After a clean send
+    // it is a receipt, not a call to action, so it drops to a compact state and
+    // only re-expands when the picks actually change and there is something new
+    // to send. Keeps the vertical budget for the component list.
+    const sentClean = !!sentCard && !cardStale && !transmitting;
+    transmitPanel.classList.toggle('is-collapsed', sentClean);
+    transmitPanel.classList.toggle('is-stale', !!sentCard && !!cardStale);
+    transmitHint.textContent = !s.n ? 'TAP ANYTHING BELOW TO START'
       : cardStale ? `UNSENT CHANGES · ${arch} · ${s.klass}`
       : `${arch} · ${s.klass}`;
     transmitHint.classList.toggle('is-stale', !!cardStale && !!s.n);
