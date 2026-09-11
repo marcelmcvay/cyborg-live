@@ -369,6 +369,13 @@
               </div>`;
     },
 
+    qr(s) {
+      return `<div class="qr-slide">
+                ${s.title ? `<h2 class="qr-slide__title">${esc(s.title)}</h2>` : ''}
+                <img class="qr-slide__img" src="images/${esc(s.src || '')}" alt="${esc(s.alt || '')}" loading="lazy">
+              </div>`;
+    },
+
     staged() {
       return `<div class="staged" data-live="staged">
                 <div class="js-staged-body">

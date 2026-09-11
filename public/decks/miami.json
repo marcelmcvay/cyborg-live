@@ -23,10 +23,11 @@
           "note": "\u2192 \"Open the link on your phone \u2014 the lecture runs on it.\"\n\n\u00b7 Join URL has to read from across the room."
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code for easy phone access before lecture starts"
+          "title": "Build your cyborg assemblage",
+          "note": "QR code - build your cyborg assemblage"
         },
         {
           "kind": "statement",
@@ -34,10 +35,11 @@
           "note": "\u00b7 Rhetorical. Seeds the concept before the formal start."
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code repeated for accessibility"
+          "title": "Submit questions or discussion points",
+          "note": "QR code - submit questions or discussion points"
         },
         {
           "kind": "prompt",
@@ -45,10 +47,11 @@
           "note": "\u2192 \"Pick the tech that's genuinely part of you \u2014 not what you own, what you'd feel the loss of.\""
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code - every other slide pattern"
+          "title": "Build your cyborg assemblage",
+          "note": "QR code - build your cyborg assemblage"
         },
         {
           "kind": "image",
@@ -57,10 +60,11 @@
           "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code - every other slide pattern"
+          "title": "Submit questions or discussion points",
+          "note": "QR code - submit questions or discussion points"
         },
         {
           "kind": "image",
@@ -69,10 +73,11 @@
           "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code - every other slide pattern"
+          "title": "Build your cyborg assemblage",
+          "note": "QR code - build your cyborg assemblage"
         },
         {
           "kind": "image",
@@ -81,10 +86,11 @@
           "note": "Visual atmosphere from 'Cyborg - the word that left earth' essay"
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code - every other slide pattern"
+          "title": "Submit questions or discussion points",
+          "note": "QR code - submit questions or discussion points"
         },
         {
           "kind": "statement",
@@ -92,10 +98,11 @@
           "note": "\u00b7 The thesis, planted and unexplained. Recognition beat will land it."
         },
         {
-          "kind": "image",
+          "kind": "qr",
           "src": "qr-code.png",
           "alt": "QR code to join live.marcelmcvay.com",
-          "note": "QR code - every other slide pattern"
+          "title": "Build your cyborg assemblage",
+          "note": "QR code - build your cyborg assemblage"
         },
         {
           "kind": "radar",
