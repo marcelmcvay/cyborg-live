@@ -302,11 +302,11 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 .radar__label {
   fill: var(--fg); font-size: 9px; letter-spacing: 0.06em;
-  text-transform: uppercase; font-family: var(--mono, monospace);
+  text-transform: uppercase; font-family: var(--font-mono);
 }
 .radar__val {
   fill: var(--accent); font-size: 9px;
-  font-family: var(--mono, monospace);
+  font-family: var(--font-mono);
 }
 
 .radar-legend {

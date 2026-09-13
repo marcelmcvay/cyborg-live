@@ -45,6 +45,10 @@ body {
 }
 h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 500; margin: 0; letter-spacing: -0.01em; }
 p { margin: 0; }
+/* blockquote carries a UA default margin-inline: 40px, which pushed every
+   quote slide 40px right of the 96px pad the rest of the deck aligns to.
+   Measured: quote slides sat at left=136 vs 96 everywhere else. */
+blockquote, figure { margin: 0; }
 button, input, textarea, select {
   font: inherit;
   color: inherit;
