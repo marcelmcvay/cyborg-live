@@ -124,84 +124,122 @@
     {
       "id": "intro",
       "label": "OPENER",
-      "mins": 2,
+      "mins": 3,
       "cue": {
         "mode": "intro",
-        "prompt": "Did you invent the words you’re using?",
+        "prompt": "Scan the code. Build your cyborg.",
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 2 min. Fast. No throat-clearing, no bio, no app instructions — they have been on it for half an hour.\n\n⚑ Do not answer the authorship question here. It returns in the last three minutes.",
+      "presenterNotes": "⏱ 3 min. Housekeeping + frame. Warm, not grand.\n\n· Room has been drinking for 30 min. Some have used the app, many have not.\n\n⚑ Do not answer the authorship question. It returns in the last three minutes.",
       "slides": [
+        {
+          "kind": "qr",
+          "src": "qr-code.png",
+          "alt": "QR code to join live.marcelmcvay.com",
+          "title": "DESIGNED BY SYSTEMS",
+          "sub": "Scan · live.marcelmcvay.com · build your cyborg before we start",
+          "note": "→ \"Good evening. I'm Marcel — I lead design at OCTO, on the AI task force.\"\n\n⏱ Format, fast: \"Here's how tonight works. I'm going to talk for about twenty minutes, and then we've got a panel and your questions for the rest of it.\"\n\n→ \"If you haven't already — scan that. It takes about thirty seconds. You're going to build something, and I'm going to put the result on this screen in about fifteen minutes.\"\n\n⏱ Hold here. Give the stragglers a real beat to actually scan — count to five silently.\n\n· QR stays up while you talk. Don't rush off it."
+        },
         {
           "kind": "statement",
           "text": "Designed by systems.",
-          "note": "→ \"You were promised an evening about how the systems we move through shape behavior, decisions, and what gets built next.\"\n\n→ \"That’s exactly what this is — with one turn added: the loop runs both ways.\"\n\n⏱ 20 seconds."
+          "note": "→ \"Tonight is about the systems we move through — how they shape our behavior, our decisions, and what gets built next.\"\n\n→ \"With one turn added: the loop runs both ways. We're shaped by these systems, and we turn around and reshape them.\"\n\n→ \"That two-way loop has a name, and we'll get to it in a minute.\"\n\n⏱ ~25 seconds. Then straight into AI."
         },
         {
           "kind": "quote",
-          "text": "Did you invent the words you’re using? Did you design the glyphs?",
+          "text": "Did you invent the words you're using? Did you design the glyphs?",
           "attrib": "the authorship tension",
-          "note": "→ \"Everyone’s arguing about whether you can tell if AI wrote something.\"\n\n→ \"But — did you invent the words you’re using? Did you design the glyphs? The grammar that strings them into sentences?\"\n\n→ \"Or did you just put existing pieces together in your own way?\"\n\n⚑ Plant it. Do NOT answer it."
+          "note": "→ \"The most rapidly developing, most polarizing system any of us live inside right now is AI — or more precisely, large language models.\"\n\n→ \"And the argument everyone's having about it is authorship. Did a person write this, or did a machine? Can you tell?\"\n\n→ \"So let me ask it back. Did you invent the words you're using? Did you design the glyphs? The grammar that strings them into sentences?\"\n\n→ \"Or did you put existing pieces together in your own way?\"\n\n⚑ Plant it. Do NOT answer it. It comes back in the closer."
         }
       ]
     },
     {
       "id": "cybernetics",
       "label": "CYBERNETICS",
-      "mins": 3,
+      "mins": 4,
       "cue": {
         "mode": "present",
         "prompt": "The loop runs both ways. That’s the whole thesis.",
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 3 min. This is now the opening argument, not a mid-talk aside.\n\n⚑ Astronautics, September 1960 — verified. Do not name Berlin or the pilot here; they have not happened yet.",
+      "presenterNotes": "⏱ 4 min. This is the opening argument, not a mid-talk aside.\n\n⚑ Astronautics 5(9), September 1960, pp. 26–27 & 74–76 — verified. Paper first presented as \"Drugs, Space and Cybernetics,\" AF School of Aviation Medicine symposium, San Antonio, May 1960.\n\n⚑ Do not name Berlin or the pilot here; they have not happened yet.",
       "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "1960: WHERE THINGS STOOD",
+          "beats": [
+            "57 years after Kitty Hawk. Orville outlived the sound barrier.",
+            "Autopilot was 46 years old — Sperry flew hands-off in 1914.",
+            "Aug 1960: two dogs orbit and come back alive. No human had gone."
+          ],
+          "note": "→ \"To understand why this word gets invented, you have to know where we were in 1960.\"\n\n· Kitty Hawk, Dec 17 1903 — first flight twelve seconds, 120 feet. Shorter than a 747's wingspan. Best flight that day: 59 seconds, 852 feet.\n\n→ \"Fifty-seven years. That's it. One lifetime — Orville Wright lived until 1948, which means the man who flew 120 feet lived to see Chuck Yeager break the sound barrier.\"\n\n· Autopilot is older than people expect. Lawrence Sperry, Paris, June 18 1914 — flies past the judges with his hands in the air, then his mechanic climbs out onto the wing. Won 50,000 francs.\n\n· 1947: a C-54 crossed the Atlantic automatically — takeoff to landing, following radio beams. NYT headline: \"No Hand on Controls.\"\n\n→ \"So by 1960 we had forty-six years of practice automating the aircraft. Nobody had automated the passenger.\"\n\n⚑ August 19 1960 — Belka and Strelka, first living creatures recovered alive from orbit. Gagarin is still seven months away. When this paper publishes, no human has ever been to space."
+        },
+        {
+          "kind": "caseStudy",
+          "title": "THE PARADIGM THEY INVERTED",
+          "beats": [
+            "Everyone else: seal a man inside a piece of Earth and carry it up.",
+            "Mercury capsule — 60 cubic feet, 100% oxygen at 5 psi.",
+            "Clynes & Kline: don't rebuild Earth. Modify the human to fit the vehicle."
+          ],
+          "note": "→ \"Everyone thinking about manned spaceflight was asking the same question: what kind of life-support vessel do we put a person inside?\"\n\n· Mercury capsule, designed under Max Faget — about 60 cubic feet of habitable volume. A phone booth. Atmosphere was 100% oxygen at 5 psi — not even real air. [NASA technical reports]\n\n· The pressure suit was a modified Navy Mark IV by B.F. Goodrich, designed by Russell Colley — the same man who sewed Wiley Post into a rubber suit in 1934. Twenty-six years, one idea: wrap the man in a piece of the Earth.\n\n⚑ Best detail — August 16 1960, three days before the dogs: Joseph Kittinger rides an open gondola to 102,800 feet and jumps. The seal in his right glove fails on the way up. His hand swells and he loses the use of it. He doesn't tell ground control, because they'd abort.\n\n→ \"That's the state of the art in the summer of 1960. Seal the man in a bag — and when the bag fails, he lies about it so the mission continues.\"\n\n→ \"Weeks later, two researchers publish a paper saying the entire approach is backwards.\""
+        },
         {
           "kind": "caseStudy",
           "title": "THE WORD THAT LEFT EARTH",
           "beats": [
-            "1960: Clynes & Kline coin \"cyborg\" in Astronautics.",
-            "Cybernetic + organism. Not metaphor — a NASA engineering answer.",
-            "Don’t rebuild Earth in space. Modify the body to fit the vehicle."
+            "Sept 1960: Clynes & Kline coin \"cyborg\" in Astronautics.",
+            "Cybernetic + organism. Not metaphor — a space-medicine engineering answer.",
+            "\"The bubble all too easily bursts.\""
           ],
-          "note": "→ \"The word is younger than you’d think. Clynes and Kline, 1960, a paper called ‘Cyborgs and Space.’\"\n\n→ \"It wasn’t a metaphor. It was an engineering answer to keeping a body alive somewhere it was never built to survive.\"\n\n→ \"Their answer wasn’t rebuild Earth in space. It was: modify the human to fit the vehicle’s loops.\""
+          "note": "→ \"Manfred Clynes and Nathan Kline, September 1960, a paper called 'Cyborgs and Space.'\"\n\n→ \"Their argument — and this is the printed subtitle of the article: 'Altering man's bodily functions to meet the requirements of extraterrestrial environments would be more logical than providing an earthly environment for him in space.'\"\n\n→ \"On the sealed capsule, they wrote that it's only temporizing — and dangerous temporizing — because we put ourselves in the position of a fish carrying a little water along to live on land. 'The bubble all too easily bursts.'\"\n\n⏱ Land that against Kittinger's glove. Same summer.\n\n· Their fix was pharmacological: an osmotic pump under the skin dosing the body automatically. The illustration in the paper is a rat. Caption: \"One of the first Cyborgs, this 220-gm rat has under its skin the Rose osmotic pump.\"\n\n⚑ Say \"one of the first cyborgs\" — the paper's own wording. Do not say \"the first cyborg,\" and do not say the rat was white; the photo is black and white."
         },
         {
           "kind": "image",
           "src": "clynes-kline-option2.jpg",
           "alt": "1964 Miami News cyborg diagram showing mechanical human modifications",
-          "note": "→ \"…functioning as an integrated homeostatic system unconsciously. That’s their definition.\"\n\n→ \"Unconsciously. If you keep noticing your prosthesis, integration has failed.\"\n\n→ \"Hold that word. In fifteen minutes you’ll be standing on it.\"\n\n⚑ Quote exactly. Do NOT pair with any Spiekermann line — that beat is cut."
+          "note": "→ \"Here's the definition, and it's a mouthful, but every word is load-bearing:\"\n\n→ \"'For the exogenously extended organizational complex functioning as an integrated homeostatic system unconsciously, we propose the term Cyborg.'\"\n\n→ \"And the next sentence: 'The Cyborg deliberately incorporates exogenous components extending the self-regulatory control function of the organism in order to adapt it to new environments.'\"\n\n⚑ Quote both exactly. Verified against the Astronautics scan.\n\n→ \"Unconsciously. That's the word to hold onto. If you keep noticing your prosthesis, the integration has failed.\"\n\n· Why they wanted it — and this part is humane: 'If man in space, in addition to flying his vehicle, must continuously be checking on things and making adjustments merely in order to keep himself alive, he becomes a slave to the machine.' The point was to leave man 'free to explore, to create, to think, and to feel.'"
         },
         {
           "kind": "statement",
           "text": "The world shapes what you make. What you make becomes the world.",
-          "note": "→ \"That’s the title, and it’s the definition of cybernetics: feedback, both directions.\"\n\n→ \"That’s the claim. Everything after this is me showing you the receipts.\"\n\n⚑ Rewritten for the new order — this is a promise, not a summary."
+          "note": "→ \"Systems shape us, and we shape them back. That's the loop — and that loop is the definition of cybernetics. The 'cyb' in cyborg.\"\n\n→ \"Here's what we're going to do with it. Most people use 'cyborg' to mean an end-state — the finished machine-person. I want to use cybernetics as a frame for looking at how systems get formed in the first place.\"\n\n→ \"We'll pass through plenty of self-contained cybernetic systems along the way. But the thing I'm actually after is one level up: a kind of meta-cybernetics around the formation of systems.\"\n\n⏱ This is the heady bit. Say it once, plainly, don't over-explain — it gets cashed out in the closer. If the room glazes, move.\n\n· Everything after this is a worked example."
         }
       ]
     },
     {
       "id": "turing",
       "label": "TURING",
-      "mins": 2,
+      "mins": 3,
       "cue": {
         "mode": "present",
         "prompt": "The test wasn’t crossed. It dissolved.",
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 2 min. Then walk straight into the radar with no gap.\n\n⚑ \"Nobody runs the test\" is rhetorical — the Loebner Prize ran to 2019. If challenged, concede \"no one treats it as the finish line\" and move.",
+      "presenterNotes": "⏱ 3 min. Then walk straight into the radar with no gap.\n\n⚑ \"Nobody runs the test\" is rhetorical — the Loebner Prize ran to 2019. If challenged, concede \"no one treats it as the finish line\" and move.",
       "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "THE IMITATION GAME",
+          "beats": [
+            "Turing, \"Computing Machinery and Intelligence,\" Mind, October 1950.",
+            "He replaced \"can machines think?\" with a game you could actually run.",
+            "A judge types to two hidden players and guesses which is the machine."
+          ],
+          "note": "→ \"1950. Alan Turing publishes a paper in the philosophy journal Mind — 'Computing Machinery and Intelligence.'\"\n\n⚑ Mind, New Series, Vol. LIX, No. 236, October 1950, pp. 433–460. Verified.\n\n→ \"He opens by saying the question 'can machines think?' is useless — too vague to answer. So he throws it out and replaces it with a game.\"\n\n→ \"You sit at a keyboard. You hold typed conversations with two hidden players — one human, one machine — and you try to work out which is which. If the machine fools you as often as a person could, Turing says we've run out of grounds for saying it doesn't think.\"\n\n⚑ He never called it the Turing test. He called it the imitation game. That name came later, from other people.\n\n· Worth knowing if challenged: Turing's original setup is stranger than the version we inherited — a man and a woman, with the man trying to fool the judge about which is which, and then he asks what happens when a machine takes the man's part. The human-vs-machine framing is a later standardization.\n\n→ \"Notice what the test measures. Not truth. Persuasion.\""
+        },
         {
           "kind": "statement",
           "text": "For seventy years, this was the finish line.",
-          "note": "→ \"1950, Alan Turing. If you can’t tell — through text alone — whether you’re talking to a human or a machine, the machine can reasonably be said to think.\"\n\n→ \"For seventy years that faceless conversation was the finish line for machine intelligence.\"\n\n⚑ Say the paper title: Computing Machinery and Intelligence."
+          "note": "→ \"For seventy years, that faceless typed conversation was the finish line for machine intelligence. It was THE benchmark.\"\n\n⏱ Short. One beat, then turn."
         },
         {
           "kind": "statement",
           "text": "Nobody runs the test anymore.",
-          "note": "→ \"The veil wasn’t crossed. It dissolved.\"\n\n→ \"Ambiguity about human-versus-machine is now the default condition of any text you read.\"\n\n→ \"The frame that defined computation for decades just quietly went away.\"\n\n⏱ Hold one beat. Walk into the radar."
+          "note": "→ \"And nobody runs it anymore. The veil wasn't crossed. It dissolved.\"\n\n→ \"Here's what I want you to sit with: we are all running a version of this test, constantly. Every time you read a post, look at an image, get an email, listen to a track — some part of you is asking 'is this human?'\"\n\n→ \"And the mutual understanding of what human-made looks like versus machine-made is now in constant flux. It moves weekly. What gave it away three months ago doesn't anymore.\"\n\n→ \"The frame that defined computation for seventy years just quietly went away, and we replaced it with a low-grade suspicion we're all running in the background, all the time.\"\n\n⏱ Hold one beat. Walk into the radar."
         }
       ]
     },
@@ -215,68 +253,77 @@
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 4 min. The payoff for 30 minutes of lobby. Legend first, then the room.\n\n⚑ Never say \"spectrum,\" \"scale,\" or \"where are you on the line.\" It is a shape, not a ranking.",
+      "presenterNotes": "⏱ 4 min. The payoff for 30 minutes of lobby. Legend first, then the room.\n\n⚑ Never say \"spectrum,\" \"scale,\" or \"where are you on the line.\" It is a shape, not a ranking.\n\n⚑ RADAR GEOMETRY (confirmed in code): every axis runs 0 at the CENTER to 100 at the OUTER RING. The lo word is the center, the hi word is the rim. Room shape is the MEAN of everyone's picks, never the sum — more picks does not make a bigger polygon.\n\n⚑ THE SEVEN AXES — full reference if anyone asks:\n· INTIMACY — How close to the body the coupling sits. Center = ambient. Outer ring = metabolized.\n· DEPENDENCE — What breaks if it stops. Center = inconvenience. Outer ring = death.\n· AGENCY LOSS — Who dispatches whom. High means it dispatches you. Center = you command. Outer ring = it dispatches you.\n· VISIBILITY — Whether others can see the coupling. Center = invisible. Outer ring = conspicuous.\n· CONSENT GAP — How little choice you had. High means none. Center = freely chosen. Outer ring = born into it.\n· MASTERY — Whether you can operate, fix, modify, own it. Center = sealed black box. Outer ring = expert / moddable.\n· SURVEILLANCE — Whether the coupling reports upstream. Center = reports nowhere. Outer ring = state / employer legible.",
       "slides": [
         {
           "kind": "axes",
           "title": "Seven ways to be coupled",
-          "note": "→ \"Before I show you the room, here’s what the seven spokes are. This is the whole instrument.\"\n\n→ \"Not how much technology you have. Seven different ways a coupling can work on you.\"\n\n→ \"Read the right-hand side — metabolized, death, it dispatches you, born into it. That’s the high end of each one.\"\n\n⏱ ~20 seconds. Do not read all seven aloud — let them scan it. Point at DEPENDENCE and SURVEILLANCE."
+          "note": "→ \"Hopefully most of you built your assemblage over drinks. I've got a representative average of us as a collective — but before I show you that, here's what it's measuring.\"\n\n→ \"Seven spokes. Not how much technology you have — seven different ways a coupling can work on you.\"\n\n→ \"Each one runs from the center out. The word on the left is the middle of the chart; the word on the right is the outer edge. So on intimacy: ambient is the center, metabolized is the rim.\"\n\n· A note on the word instrument. Jimmy Doolittle, September 1929, Mitchel Field on Long Island — he flew with the cockpit hooded, took off, flew a course and landed seeing nothing but his gauges. A Sperry artificial horizon, a directional gyro, a Kollsman altimeter. First complete blind flight.\n\n→ \"For fifteen minutes those instruments weren't an aid to his senses. They WERE his senses.\"\n\n⚑ DO NOT say Doolittle coined the word \"instrument\" or that it comes from musical instruments — checked, and it's false. \"Instrument\" meant a musical instrument in the 1200s and a measuring device by the 1300s. The musical sense is the older one. Tell the blind-flight story instead; it's better and it's true.\n\n⏱ ~30 seconds. Do not read all seven aloud — let them scan. Point at DEPENDENCE and SURVEILLANCE."
         },
         {
           "kind": "radar",
           "title": "The shape of this room",
-          "note": "→ \"So if you can’t tell anymore — the only question left is who’s holding the bag. Park that. Look at this first.\"\n\n→ \"This is a radar, not a scale. There’s no far end, and nobody here is more cyborg than anyone else.\"\n\n⏱ Point at actual spokes. Read the room’s real highs and lows off the screen."
+          "note": "→ \"This is us. Tonight. Built over drinks.\"\n\n→ \"It's a radar, not a scale. There's no far end, and nobody in here is more cyborg than anyone else.\"\n\n⏱ Point at actual spokes. Read the room's real highs and lows off the screen — do not pre-script this, it changes every night.\n\n· If asked how it's built: each thing you picked carries a vector across the seven axes, and the room's shape is the average. Averaging matters — if we added them up, whoever tapped the most boxes would win, and that's the scoreboard this whole instrument exists to avoid."
         },
         {
           "kind": "statement",
           "text": "This room is full of cyborgs.",
-          "note": "→ \"You don’t need implants to be a cyborg. You built this over drinks.\"\n\n→ \"Cyborg describes what we are, not how we should be. Diagnostic, not prescriptive.\"\n\n· Plant \"diagnostic.\" It pays off in the closer."
-        },
-        {
-          "kind": "statement",
-          "text": "Same area. Different shape.",
-          "note": "→ \"Two people can enclose exactly the same area and be completely different shapes.\"\n\n→ \"Vader is one shape — conspicuous, self-directed, obvious hardware. Ours is another: invisible and dispatched.\"\n\n→ \"Difference in kind, not a point on a line.\""
+          "note": "→ \"You don't need implants to be a cyborg. You built this over drinks, in about thirty seconds, on a phone — which is sort of the point. Look how casually it happens.\"\n\n→ \"And we've barely scratched the surface. This frame has let me actually dig into the systems I'm tangled up in, and I hope it does that for you.\"\n\n→ \"Though I'll be honest — I have a hard time with the 'so what.' What do you DO with this, beyond awareness?\"\n\n→ \"And building this thing is what gave me the answer: it's diagnostic, not prescriptive. It doesn't tell you what to build. It tells you what you're already inside.\"\n\n· Plant \"diagnostic.\" It pays off in the closer.\n\n⏱ Then straight into Berkeley — people who ran exactly this diagnosis on their own street."
         }
       ]
     },
     {
       "id": "reshaped",
       "label": "THE PEOPLE’S SIDEWALKS",
-      "mins": 4,
+      "mins": 5,
       "cue": {
         "mode": "present",
         "prompt": "Then people redesigned it themselves.",
         "signalOpen": true,
         "assembleOpen": true
       },
-      "presenterNotes": "⏱ 4 min. The brief’s \"resist and reshape\" beat.\n\n⚑ NOT \"invented the curb cut\" (Kalamazoo, 1940s). Say: first PLANNED wheelchair-accessible route in the United States, designed by disabled people.\n\n⚑ Roberts LED the CIL, did not found it. Never name the dean.",
+      "presenterNotes": "⏱ 5 min. The brief's \"resist and reshape\" beat.\n\n⚑ NOT \"invented the curb cut\" (Kalamazoo, Michigan, 1946). Say: first PLANNED wheelchair-accessible route in the United States, designed by disabled people.\n\n⚑ Roberts LED the CIL (1973–75); he did not found it — he was teaching in Kenya when it incorporated in 1972. Popular sources get this wrong.\n\n⚑ The designers of the route were Hale Zukas and Eric Dibner, not Roberts. Credit Zukas by name.\n\n⚑ Skip the midnight-sledgehammer story — Zukas and Dibner both denied it.",
       "slides": [
         {
           "kind": "caseStudy",
-          "title": "THE PEOPLE’S SIDEWALKS",
+          "title": "THE PEOPLE'S SIDEWALKS",
           "beats": [
-            "\"We’ve tried cripples before, and they just don’t work out.\"",
-            "Berkeley builds curb ramps. The disabled community says: wrong.",
-            "They mapped 125 of them and drew the compromise themselves."
+            {
+              "text": "Polio at 14. Berkeley admits him in 1962.",
+              "image": "ed-roberts.jpg",
+              "alt": "Ed Roberts, disability rights activist"
+            },
+            {
+              "text": "Cowell Hospital — but only if it counts as a dorm, not a ward."
+            },
+            {
+              "text": "\"We've tried cripples before, and they just don't work out.\""
+            }
           ],
-          "note": "→ \"Ed Roberts got polio at fourteen. Berkeley admitted him in 1962, and a dean’s recorded reaction was ‘we’ve tried cripples before, and they just don’t work out.’\"\n\n→ \"More disabled students arrive. They name themselves the Rolling Quads and start using civil-rights language for something always framed as charity.\"\n\n→ \"1969, Berkeley puts in wide flat ramps. The response is not gratitude.\"\n\n⚑ \"a dean’s recorded reaction\" — single-source, Williamson 2012. Never name him."
+          "note": "→ \"Ed Roberts got polio at fourteen, in 1953 — two years before the vaccine. Paralyzed from the neck down except two fingers and two toes. Slept in an 800-pound iron lung.\"\n\n→ \"Berkeley admits him in 1962. They put him in an empty wing of Cowell Hospital because no dorm could take the iron lung — and he only agrees on one condition: it gets treated as dormitory space, not a medical facility.\"\n\n⏱ That condition is the whole talk in one move. He refuses the category before he touches the architecture.\n\n⚑ On the quote — say \"a Berkeley dean is REPORTED to have said.\" Do not say \"recorded.\" Unnamed, wording varies between sources, traces to Brown 2000 in Disability Studies Quarterly.\n\n· On the slide's third bullet, then roll straight on: they named themselves the Rolling Quads.\n\n→ \"More disabled students arrive. They call themselves the Rolling Quads, and they start using civil-rights language for something that had always been framed as charity.\"\n\n· Bulletproof, and the best irony available: in 1975 Jerry Brown appointed Roberts director of the California Department of Rehabilitation — the same agency that had once declared him unemployable. Brown confirmed it in his own proclamation.\n\n→ \"1969: after they lobby, Berkeley starts putting in wide flat curb ramps. The response is not gratitude.\""
         },
         {
           "kind": "statement",
           "text": "The community was split against itself.",
-          "note": "→ \"Flat ramps erase the edge blind pedestrians navigate by. The diagonal angle pushes wheelchairs toward turning cars.\"\n\n→ \"Wheelchair users and blind pedestrians wanted opposite things. That’s the best detail in the story.\"\n\n→ \"1970 to ’74 they map 125 locations along Telegraph and Shattuck and propose a compromise they negotiated among themselves.\""
+          "note": "→ \"The flat ramp erases the curb edge — and that edge is exactly what a blind pedestrian's cane finds to know the street is coming. Smooth it out and you've deleted the signal.\"\n\n→ \"And the wheelchair users weren't happy either — the first ones were cut diagonally across the corner, which aims you straight into the path of turning cars.\"\n\n→ \"So: same object, two groups, opposite needs. The community was split against itself. That is the best detail in this entire story.\"\n\n· 1970–74 they work the problem themselves. In 1973 a Berkeley planning student, Ruth Grimes, draws the map — about 125 corners along Telegraph and parts of Shattuck. City of Berkeley Resolution No. 45,605-N.S., February 13 1973.\n\n· Geography, if you want it: Telegraph and Shattuck are Berkeley's two main north-south commercial arteries — Telegraph runs south from the edge of campus all the way into downtown Oakland, and Shattuck is the spine of downtown Berkeley, just west of campus.\n\n⚑ The compromise was NOT mainly \"a steeper ramp.\" They moved the ramp OUT of the crosswalk so an intact curb survived where blind people walk — and made it shorter and steeper (Zukas's prototype was 4ft deep by 8ft wide, well steeper than 1:12) to keep a detectable lip. Then that created its own problem: hydrants and meters forced some ramps mid-block, putting chair users into traffic. It took several more rounds.\n\n⚑ The bumpy yellow pads are NOT the 1970s Berkeley fix. Federal standard came with the ADA, 1991."
         },
         {
-          "kind": "quote",
-          "text": "The geometry was fought over. The texture was a gift.",
-          "attrib": "same object, two politics",
-          "note": "→ \"The ramp’s geometry was fought over in public by a community split against itself.\"\n\n→ \"The bumpy yellow texture has the opposite origin. Tenji paving — around 1965, one Japanese engineer, Seiichi Miyake, for one friend losing his sight.\"\n\n→ \"You’re standing on both at once — unconsciously. That’s the word.\"\n\n⚑ Say \"around 1965.\" Do not add a street name."
-        },
-        {
-          "kind": "image",
-          "src": "curb-cut-tenji.jpg",
-          "alt": "Curb cut with yellow tactile warning surface",
-          "note": "→ \"Sixteen years later the ADA makes it federal law. Today every stroller, suitcase and hand truck rides it.\"\n\n→ \"The system defined them as unable to move. They moved anyway, redrew the environment — and the redrawn environment redefined everyone else’s mobility.\"\n\n→ \"You didn’t design either one. And you move through both without a thought.\"\n\n· This absorbs the cut bridge beat."
+          "kind": "caseStudy",
+          "title": "SAME OBJECT, TWO POLITICS",
+          "beats": [
+            {
+              "text": "\"The geometry was fought over. The texture was a gift.\"",
+              "image": "curb-cut-tenji.jpg",
+              "alt": "Curb cut with yellow tactile warning surface"
+            },
+            {
+              "text": "The ramp: negotiated in public, corner by corner."
+            },
+            {
+              "text": "The texture: tenji paving, ~1965, one friend going blind."
+            }
+          ],
+          "note": "→ \"Look at what you're standing on at any crosswalk. It's two objects with completely opposite origins, fused into one.\"\n\n→ \"The ramp's geometry was fought over in public, for years, by a community split against itself, and negotiated corner by corner.\"\n\n→ \"The bumpy yellow texture has the opposite story. Tenji paving — around 1965, one Japanese engineer, Seiichi Miyake, who made it for one friend who was losing his sight.\"\n\n⚑ Say \"around 1965.\" Do not add a street name.\n\n→ \"A public fight and a private gift, and you're standing on both at once — unconsciously. That's the word from 1960.\"\n\n→ \"Sixteen years after that map, the ADA makes it federal law. Today every stroller, every suitcase, every hand truck rides it.\"\n\n→ \"The system defined these people as unable to move. They moved anyway, they redrew the environment — and the redrawn environment went on to redefine everyone else's mobility.\"\n\n→ \"You didn't design either one. And you move through both without a thought.\"\n\n· This absorbs the cut bridge beat."
         }
       ]
     },
