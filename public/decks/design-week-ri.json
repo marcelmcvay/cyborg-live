@@ -237,7 +237,10 @@
           "kind": "caseStudy",
           "title": "THE IMITATION GAME",
           "beats": [
-            "Turing, \"Computing Machinery and Intelligence,\" Mind, October 1950.",
+            {
+              "text": "Turing, \"Computing Machinery and Intelligence,\" Mind, October 1950.",
+              "image": "turing-mind-paper.jpg"
+            },
             "He replaced \"can machines think?\" with a game you could actually run.",
             "A judge types to two hidden players and guesses which is the machine."
           ],
