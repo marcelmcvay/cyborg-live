@@ -202,7 +202,11 @@
           "kind": "caseStudy",
           "title": "THE WORD THAT LEFT EARTH",
           "beats": [
-            "Sept 1960: Clynes & Kline coin \"cyborg\" in Astronautics.",
+            {
+              "text": "Sept 1960: Clynes & Kline coin \"cyborg\" in Astronautics.",
+              "image": "cyborgs-and-space-p26.jpg",
+              "alt": "Opening page of \"Cyborgs and Space,\" Astronautics, September 1960"
+            },
             "Cybernetic + organism. Not metaphor — a space-medicine engineering answer.",
             "\"The bubble all too easily bursts.\""
           ],
