@@ -370,7 +370,11 @@
         {
           "kind": "statement",
           "text": "He liked every concept. Every concept was wrong.",
-          "note": "\u2192 \"Decades in fast jets and then wide-bodies. Tens of thousands of hours.\"\n\n\u2192 \"Not messy, not unpolished \u2014 they didn\u2019t match the logic his body had spent decades building. He\u2019d tell me what he couldn\u2019t see, not because it was missing but because it wasn\u2019t where his body expected it.\"\n\n\u2192 \"The real user changed, and the whole table reordered around him. We weren\u2019t designing interface. We were translating fluency.\""
+          "note": "\u2192 \"Decades in fast jets and then wide-bodies. Tens of thousands of hours.\"\n\n\u2192 \"Not messy, not unpolished \u2014 they didn\u2019t match the logic his body had spent decades building. He\u2019d tell me what he couldn\u2019t see, not because it was missing but because it wasn\u2019t where his body expected it.\"\n\n\u2192 \"The real user changed, and the whole table reordered around him. We weren\u2019t designing interface. We were translating fluency.\"",
+          "image": {
+            "src": "regent-pfi.png",
+            "alt": "Regent seaglider Primary Flight Indicators interface design"
+          }
         },
         {
           "kind": "statement",
