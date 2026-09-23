@@ -128,4 +128,93 @@ submission as "SENDING" then "RECEIVED" with id readout. Errors visible inline.
 ## Success = MVP runs
 
   node server.js  ->  http://<host>:8787/  and  /presenter  work on iPhone Safari
-  and desktop Chrome; SSE feed updates presenter within 1s of a phone submit.
+
+## PROMPT BUILDER + TERMINAL RPG (added Sep 2026, Miami lecture activity)
+
+New collective-authoring feature: the room submits short phrases into a fixed
+set of story "slots" from their phones; a separate ASCII terminal-style text
+adventure (think early Zork/MUD) reads the current pool of submitted phrases
+and reskins itself live with the room's words. Two new frontend surfaces
+consume this; server.js owns the data model and is authored by the parent
+session, not a subagent, to avoid two agents fighting over the shared spine.
+
+### Slot catalog: public/prompt-format.json (server does not author content,
+only validates the slot IDs below against this file's `id` list at boot)
+
+```json
+{
+  "version": 1,
+  "title": "Build the world together",
+  "slots": [
+    { "id": "SETTING",   "label": "Setting",   "hint": "Where does this take place?", "placeholder": "a server room that hums in a key nobody can name" },
+    { "id": "COMPANION", "label": "Companion", "hint": "What travels with you?",       "placeholder": "a drone that finishes your sentences" },
+    { "id": "THREAT",    "label": "Threat",    "hint": "What's hunting the party?",    "placeholder": "an HOA with root access" },
+    { "id": "ARTIFACT",  "label": "Artifact",  "hint": "What did you find?",           "placeholder": "a keyboard with one key missing" },
+    { "id": "TWIST",     "label": "Twist",     "hint": "What rule breaks here?",       "placeholder": "nobody can lie twice in the same room" }
+  ]
+}
+```
+
+SLOT_IDS is a fixed set matching the `id`s above: SETTING, COMPANION, THREAT,
+ARTIFACT, TWIST. Server validates against this literal set (mirrored as a
+`Set` in server.js next to `KINDS`/`AXIS_IDS`) — it does NOT read the JSON
+file at request time, only static assets read it. If the slot list changes,
+update both the JSON (content) and the server's validation set (code) in the
+same commit; they must never drift.
+
+### POST /api/prompt-piece    body JSON
+  { sid, handle?, slot: one of SLOT_IDS, text }   text 1..60 chars
+  -> 201 { id, ts }
+  Same cleanText() discipline as /api/submit (strip control chars, trim).
+  Rate limit: shares the existing per-sid 3s limiter with /api/submit (one
+  combined budget across both endpoints — do not give this its own timer).
+  -> 429 { error } on limit, 400 on bad slot/text (400 message must name
+  which validation failed: "slot must be one of ..." vs "text required...").
+
+### GET /api/state — extended (existing fields unchanged, this is additive)
+  Adds:
+    promptPieces: { SETTING: [...], COMPANION: [...], THREAT: [...], ARTIFACT: [...], TWIST: [...] }
+      Each slot's array is that slot's own latest 8 pieces, newest LAST
+      (same convention as `submissions`), each { id, ts, sid, handle, text }.
+    promptCounts: { SETTING: n, COMPANION: n, THREAT: n, ARTIFACT: n, TWIST: n }
+      Total ever-submitted count per slot (not capped to 8 — this is the
+      tally the builder UI displays, independent of how much history ships).
+
+### GET /api/feed — new SSE event
+  `promptpiece`  (data = the new piece object, WITH `slot` included: { id, ts, sid, handle, slot, text })
+  Lowercase, one word, matching the existing lowercase event-name convention
+  (`submission`, `assemblage`, not `promptPiece` — SSE event names in this
+  codebase are all-lowercase nouns; don't introduce camelCase here).
+
+### Persistence
+  New log: data/prompt-pieces.jsonl (append-only, same replay-on-boot pattern
+  as submissions.jsonl / assemblages.jsonl). Included in reset-room.sh's
+  archive-on-reset rotation — reset-room.sh needs a one-line addition to its
+  file list, nothing else changes there.
+
+### Objects
+  promptPiece = { id, ts, sid, handle, slot, text }
+
+### Who owns which files (disjoint — no two agents touch the same file)
+
+| Owner | Files |
+|---|---|
+| Parent (this session) | server.js, CONTRACT.md, public/prompt-format.json, reset-room.sh (one-line diff) |
+| PROMPT-BUILDER agent | public/promptbuilder.html, promptbuilder.css, promptbuilder.js (new mode on the existing audience app OR standalone page — agent's call, document which) |
+| RPG agent | public/rpg.html, rpg.css, rpg.js (new standalone terminal page, projector-and-phone-friendly) |
+
+Both frontend agents READ public/prompt-format.json and GET /api/state /
+EventSource /api/feed. Neither WRITES server.js. Both may propose server
+contract changes back to the parent rather than editing the file themselves.
+
+### Producer/consumer census (parent verifies before calling this done)
+
+  POST /api/prompt-piece   producer: promptbuilder.js     consumer: server.js
+  promptpiece SSE event    producer: server.js             consumer: rpg.js (and optionally promptbuilder.js's own live tally)
+  GET promptPieces/state   producer: server.js             consumer: rpg.js, promptbuilder.js
+
+If rpg.js ships without ever calling GET /api/state or subscribing to the
+`promptpiece` SSE event, that is the orphaned-endpoint failure this project
+already hit once (see autonomous-coding-agents skill,
+parallel-file-ownership-decomposition.md) — grep for `promptpiece` and
+`api/state` in rpg.js before accepting the build as done.

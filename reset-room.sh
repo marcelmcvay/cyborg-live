@@ -18,8 +18,10 @@ import json,sys
 d = json.load(sys.stdin)
 sess = d.get("session", {}).get("label", "?")
 cue  = d.get("cue", {}).get("beatId", "?")
+prompt_total = sum(d.get("promptCounts", {}).values())
 print("  signals     :", len(d["submissions"]))
 print("  assemblages :", len(d["assemblages"]))
+print("  prompt pcs  :", prompt_total)
 print("  session     :", sess)
 print("  cue         :", cue)'
 }

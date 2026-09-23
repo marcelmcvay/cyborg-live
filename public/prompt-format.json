@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "title": "Build the world together",
+  "slots": [
+    { "id": "SETTING",   "label": "Setting",   "hint": "Where does this take place?", "placeholder": "a server room that hums in a key nobody can name" },
+    { "id": "COMPANION", "label": "Companion", "hint": "What travels with you?",       "placeholder": "a drone that finishes your sentences" },
+    { "id": "THREAT",    "label": "Threat",    "hint": "What's hunting the party?",    "placeholder": "an HOA with root access" },
+    { "id": "ARTIFACT",  "label": "Artifact",  "hint": "What did you find?",           "placeholder": "a keyboard with one key missing" },
+    { "id": "TWIST",     "label": "Twist",     "hint": "What rule breaks here?",       "placeholder": "nobody can lie twice in the same room" }
+  ]
+}

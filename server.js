@@ -14,8 +14,10 @@ const DATA_DIR = path.join(ROOT, 'data');
 const SUBMISSIONS_LOG = path.join(DATA_DIR, 'submissions.jsonl');
 const ASSEMBLAGES_LOG = path.join(DATA_DIR, 'assemblages.jsonl');
 const ROOM_LOG = path.join(DATA_DIR, 'room.jsonl'); // cue / session / stage events
+const PROMPT_LOG = path.join(DATA_DIR, 'prompt-pieces.jsonl'); // collective prompt-builder pieces
 const MAX_BODY = 16 * 1024;
 const MAX_SUBMISSIONS_IN_STATE = 200;
+const MAX_PROMPT_PIECES_PER_SLOT = 8; // /api/state ships only the latest N per slot
 const RATE_LIMIT_MS = 3000;
 const KINDS = new Set(['question', 'discussion', 'note']);
 // cue.mode drives what the phone offers. Order-agnostic: decks reference beats
@@ -24,6 +26,9 @@ const CUE_MODES = new Set(['intro', 'assemble', 'reveal', 'present', 'panel', 's
 // Radar axes — must match components.v2.json aggregation.axisOrder. The server
 // only validates axis NAMES; the fixed spoke ORDER is a client/data concern.
 const AXIS_IDS = new Set(['INTIMACY', 'DEPENDENCE', 'AGENCY', 'VISIBILITY', 'CONSENT', 'MASTERY', 'SURVEILLANCE']);
+// Collective prompt-builder slots. Mirrors public/prompt-format.json's `id`
+// list exactly — if the slot catalog changes, update BOTH in the same commit.
+const SLOT_IDS = new Set(['SETTING', 'COMPANION', 'THREAT', 'ARTIFACT', 'TWIST']);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -53,6 +58,7 @@ const state = {
   cue: { ...DEFAULT_CUE },    // what the room's phones are currently offering
   session: { n: 1, label: 'SESSION 001', startedAt: Date.now() },
   staged: null,               // submission id thrown full-screen on the deck
+  promptPieces: new Map(),    // slot -> array of pieces, ALL of them (trimmed only at serve time)
 };
 const sseClients = new Set();
 
@@ -73,6 +79,12 @@ function applyRoomLine(obj) {
   if (obj.cue) state.cue = obj.cue;
   else if (obj.session) state.session = obj.session;
   else if ('staged' in obj) state.staged = obj.staged;
+}
+function applyPromptLine(obj) {
+  if (!obj.id || !obj.sid || !obj.slot) return;
+  const arr = state.promptPieces.get(obj.slot) || [];
+  arr.push(obj);
+  state.promptPieces.set(obj.slot, arr);
 }
 
 function replayLog(file, apply) {
@@ -96,7 +108,8 @@ function boot() {
   const a = replayLog(SUBMISSIONS_LOG, applySubmissionLine);
   const b = replayLog(ASSEMBLAGES_LOG, applyAssemblageLine);
   const c = replayLog(ROOM_LOG, applyRoomLine);
-  console.log(`[boot] replayed ${a} submission lines, ${b} assemblage lines, ${c} room lines -> ` +
+  const d = replayLog(PROMPT_LOG, applyPromptLine);
+  console.log(`[boot] replayed ${a} submission lines, ${b} assemblage lines, ${c} room lines, ${d} prompt-piece lines -> ` +
     `${state.submissions.length} submissions, ${state.assemblages.size} assemblages, ` +
     `${state.session.label} @ cue ${state.cue.beatId}`);
 }
@@ -186,9 +199,17 @@ function buildState() {
     spectrumHistogram[b]++;
     for (const id of a.picks) componentTally[id] = (componentTally[id] || 0) + 1;
   }
+  const promptPieces = {};
+  const promptCounts = {};
+  for (const slot of SLOT_IDS) {
+    const arr = state.promptPieces.get(slot) || [];
+    promptCounts[slot] = arr.length;
+    promptPieces[slot] = arr.slice(-MAX_PROMPT_PIECES_PER_SLOT);
+  }
   return {
     submissions, assemblages, counts, spectrumHistogram, componentTally,
     cue: state.cue, session: state.session, staged: state.staged,
+    promptPieces, promptCounts,
   };
 }
 
@@ -279,7 +300,7 @@ async function handleReset(req, res) {
   const label = cleanText(body.label, 48) || `SESSION ${String(n).padStart(3, '0')}`;
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const archived = [];
-  for (const f of [SUBMISSIONS_LOG, ASSEMBLAGES_LOG, ROOM_LOG]) {
+  for (const f of [SUBMISSIONS_LOG, ASSEMBLAGES_LOG, ROOM_LOG, PROMPT_LOG]) {
     if (!fs.existsSync(f)) continue;
     const dest = path.join(DATA_DIR, `${path.basename(f, '.jsonl')}.${stamp}.jsonl`);
     try { fs.renameSync(f, dest); archived.push(path.basename(dest)); }
@@ -289,6 +310,7 @@ async function handleReset(req, res) {
   state.assemblages.clear();
   state.lastSubmitBySid.clear();
   state.staged = null;
+  state.promptPieces.clear();
   state.cue = { ...DEFAULT_CUE, ts: Date.now() };
   state.session = { n, label, startedAt: Date.now() };
   appendLog(ROOM_LOG, { session: state.session });
@@ -318,6 +340,34 @@ async function handleSubmit(req, res) {
   appendLog(SUBMISSIONS_LOG, sub);
   broadcast('submission', sub);
   sendJson(res, 201, { id: sub.id, ts: sub.ts });
+}
+
+async function handlePromptPiece(req, res) {
+  const body = await readJsonBody(req);
+  const { sid, slot } = body;
+  if (!isValidSid(sid)) return sendError(res, 400, 'sid required (8-64 chars, [A-Za-z0-9_-])');
+  if (typeof slot !== 'string' || !SLOT_IDS.has(slot)) {
+    return sendError(res, 400, `slot must be one of ${[...SLOT_IDS].join('|')}`);
+  }
+  const text = cleanText(body.text, 60);
+  if (!text) return sendError(res, 400, 'text required (1..60 chars)');
+  const now = Date.now();
+  // Shares the SAME per-sid rate-limit budget as /api/submit — one combined
+  // 3s window across both endpoints, not a separate timer for this one.
+  const last = state.lastSubmitBySid.get(sid) || 0;
+  if (now - last < RATE_LIMIT_MS) {
+    const wait = Math.ceil((RATE_LIMIT_MS - (now - last)) / 1000);
+    res.setHeader('Retry-After', String(wait));
+    return sendError(res, 429, `rate limited: 1 submission per 3s (retry in ${wait}s)`);
+  }
+  state.lastSubmitBySid.set(sid, now);
+  const piece = { id: newId(), ts: now, sid, handle: cleanHandle(body.handle), slot, text };
+  const arr = state.promptPieces.get(slot) || [];
+  arr.push(piece);
+  state.promptPieces.set(slot, arr);
+  appendLog(PROMPT_LOG, piece);
+  broadcast('promptpiece', piece);
+  sendJson(res, 201, { id: piece.id, ts: piece.ts });
 }
 
 async function handleAssemblage(req, res) {
@@ -387,6 +437,8 @@ function serveStatic(req, res, pathname) {
   if (pathname === '/') pathname = '/index.html';
   else if (pathname === '/presenter' || pathname === '/presenter/') pathname = '/presenter.html';
   else if (pathname === '/deck' || pathname === '/deck/') pathname = '/deck.html';
+  else if (pathname === '/rpg' || pathname === '/rpg/') pathname = '/rpg.html';
+  else if (pathname === '/promptbuilder' || pathname === '/promptbuilder/') pathname = '/promptbuilder.html';
   let rel;
   try { rel = decodeURIComponent(pathname); } catch (_) { return sendError(res, 400, 'bad path'); }
   const file = path.normalize(path.join(PUBLIC_DIR, rel));
@@ -422,6 +474,7 @@ const server = http.createServer(async (req, res) => {
     }
     if (p.startsWith('/api/')) {
       if (p === '/api/submit' && req.method === 'POST') return await handleSubmit(req, res);
+      if (p === '/api/prompt-piece' && req.method === 'POST') return await handlePromptPiece(req, res);
       if (p === '/api/assemblage' && req.method === 'POST') return await handleAssemblage(req, res);
       if (p === '/api/moderate' && req.method === 'POST') return await handleModerate(req, res);
       if (p === '/api/cue' && req.method === 'POST') return await handleCue(req, res);
