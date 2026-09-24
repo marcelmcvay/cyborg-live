@@ -1,6 +1,6 @@
 {
   "slug": "miami",
-  "title": "Designing Assemblages: A Cyborg Foundation for Interaction Design",
+  "title": "Beyond the Prompt: A Cyborg Foundation for Interaction Design",
   "venue": "University of Miami \u2014 graduate lecture",
   "totalMins": 79,
   "format": "lecture",
@@ -19,7 +19,7 @@
       "slides": [
         {
           "kind": "prompt",
-          "text": "Designing Assemblages \u2014 Join the room",
+          "text": "Beyond the Prompt \u2014 Join the room",
           "note": "\u2192 \"Open the link on your phone \u2014 the lecture runs on it.\"\n\n\u00b7 Join URL has to read from across the room."
         },
         {
@@ -132,7 +132,7 @@
       "slides": [
         {
           "kind": "statement",
-          "text": "Designing Assemblages.",
+          "text": "Beyond the Prompt.",
           "note": "\u2192 \"I'm a practicing designer, not an academic. That's the value I can offer you.\"\n\n\u00b7 If the pre-read went out: everyone was asked to identify one interface they use daily that demonstrates cyborg integration. Have them hold that example \u2014 I come back to it three times."
         },
         {
