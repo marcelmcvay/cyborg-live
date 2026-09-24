@@ -218,3 +218,112 @@ If rpg.js ships without ever calling GET /api/state or subscribing to the
 already hit once (see autonomous-coding-agents skill,
 parallel-file-ownership-decomposition.md) — grep for `promptpiece` and
 `api/state` in rpg.js before accepting the build as done.
+
+## COLLECTIVE TAB — style ideas + story voting/pinning (added Sep 2026)
+
+Third tab in the MAIN audience app (index.html/app.js), alongside existing
+SIGNAL and ASSEMBLE tabs. Two functions, kept deliberately simple for a live
+demo:
+
+1. **STYLE IDEAS** — free-text submissions restyling the space-sandbox
+   apps. No slots, no structure — just a text box and a live feed, same
+   shape as SIGNAL but a separate stream so it doesn't pollute the Q&A feed.
+2. **STORY BUILDER** — reuses the EXISTING prompt-piece slots (SETTING /
+   COMPANION / THREAT / ARTIFACT / TWIST, see prompt-format.json above) but
+   adds voting: the audience can upvote a phrase someone already submitted
+   instead of only ever adding new ones, and Marcel can PIN a winner from
+   the presenter side regardless of the vote count — "or just me picking
+   and stewarding," per his own framing. rpg.js's slot-picking logic must
+   prefer: **pinned > highest-voted > latest > built-in default** for each
+   slot, in that order.
+
+### POST /api/style-idea    body JSON
+  { sid, handle?, text }   text 1..120 chars (longer cap than prompt-pieces
+  — style ideas are more descriptive, e.g. "make it look like a 1970s NASA
+  mission patch, orange and cream")
+  -> 201 { id, ts }
+  Same cleanText() discipline, SAME shared 3s-per-sid rate-limit budget as
+  /api/submit and /api/prompt-piece (still one combined limiter, do not add
+  a fourth timer).
+  -> 400 on empty/oversized text, 429 on rate limit (Retry-After header).
+
+### POST /api/prompt-vote    body JSON
+  { sid, id }   id = an existing promptPiece's id (any slot)
+  -> 201 { id, votes }   -> 404 if id doesn't exist -> 409 if this sid
+  already voted this id (idempotent no-op, NOT an error the UI needs to
+  surface loudly — a repeat tap just confirms the vote already landed)
+  One vote per sid per piece, tracked server-side in memory (Set per piece,
+  NOT persisted as its own log — votes replay from prompt-pieces.jsonl's
+  piece objects themselves, see Persistence below). No rate limit on voting
+  separate from submission — voting is cheap and shouldn't compete with the
+  submission rate-limit budget.
+
+### POST /api/prompt-pin    body JSON   (admin-key gated, presenter-only)
+  { key, slot, id }   id = null to CLEAR the pin for that slot
+  -> 200 { ok, slot, pinnedId }   -> 403 bad key -> 400 bad slot/id
+  Same `requireKey` pattern as /api/cue, /api/moderate, /api/stage. Pin is
+  PER SLOT — one pinned piece id per slot, or none.
+
+### GET /api/state — extended again (additive, existing fields unchanged)
+  Adds:
+    styleIdeas: [...latest 12, newest last, { id, ts, sid, handle, text }]
+    styleIdeaCount: n
+    promptVotes: { pieceId: n, ... }   vote tally per piece id (only ids
+      that have at least 1 vote appear; absent = 0)
+    promptPins: { SETTING: id|null, COMPANION: id|null, THREAT: id|null,
+      ARTIFACT: id|null, TWIST: id|null }
+
+### GET /api/feed — two new SSE events
+  `styleidea`   (data = the new style-idea object)
+  `promptvote`  (data = { id, votes } — the piece id and its NEW total)
+  `promptpin`   (data = { slot, pinnedId } — pinnedId may be null on clear)
+  All lowercase single-word nouns, same convention as existing events.
+
+### Persistence
+  New log: data/style-ideas.jsonl (same append-only/replay pattern).
+  Votes: NOT their own log. A vote mutates the piece's own record in memory
+  (`piece.votes` counter + a `votedBy` Set not serialized). On replay from
+  prompt-pieces.jsonl, votes reset to 0 — this is an accepted simplification
+  for a live one-night demo, not a durable voting record. If Marcel wants
+  votes to survive a server restart mid-talk, that's a follow-up, not v1.
+  Pins: NOT their own log either — `state.promptPins` is in-memory only,
+  reset on restart. Same accepted simplification. Both reset-room.sh (which
+  archives logs, not memory state) and a plain restart already clear pins/
+  votes as a side effect; document this as intentional if asked, don't
+  "fix" it into a persistence feature nobody requested.
+
+### Objects
+  styleIdea = { id, ts, sid, handle, text }
+  promptPiece gains one new field: `votes` (number, default 0) — now
+  { id, ts, sid, handle, slot, text, votes }
+
+### Who owns which files for this pass (disjoint)
+
+| Owner | Files |
+|---|---|
+| Parent (this session) | server.js, CONTRACT.md, public/prompt-format.json (unchanged), reset-room.sh (no change needed — logs already covered) |
+| COLLECTIVE-TAB agent | public/index.html, app.js, app.css (adds third tab — these are EXISTING files, this agent is editing, not creating; read them fully first, match existing patterns exactly, e.g. `.mode`/`.seg-btn`/`.fui-panel` conventions) |
+| RPG-VOTING agent | public/rpg.js (adds pin>voted>latest>default slot-picking logic and a minimal on-screen indicator when a slot's active phrase is audience-voted or presenter-pinned vs. default), AND public/presenter.js + presenter.css (adds a small per-slot PIN control — five buttons/dropdowns, one per slot, showing that slot's current top-voted candidates with a pin/clear action, admin-key gated same as existing presenter controls) |
+
+Neither frontend agent touches server.js. The COLLECTIVE-TAB agent is
+editing shared files another surface (SIGNAL/ASSEMBLE tabs) already depends
+on — read the FULL current file before changing anything, and do not touch
+the SIGNAL or ASSEMBLE tab markup/logic, only add the third tab alongside them.
+The RPG-VOTING agent touches TWO files across two different pages
+(rpg.js is the projector-side game logic; presenter.js is Marcel's own
+control surface) — read both fully before starting, and do not touch any
+existing presenter.js control (cue/slide/stage/moderate) while adding pin.
+
+### Producer/consumer census (parent verifies before calling this done)
+
+  POST /api/style-idea    producer: app.js (COLLECTIVE tab)   consumer: server.js
+  POST /api/prompt-vote   producer: app.js (COLLECTIVE tab)   consumer: server.js
+  POST /api/prompt-pin    producer: presenter.js (new PIN control)   consumer: server.js
+  styleidea/promptvote/promptpin SSE events   producer: server.js
+    consumer: rpg.js (promptvote/promptpin only — style ideas have no
+    reason to reach rpg.js) and optionally app.js's own live tally
+
+Every endpoint in this section needs a real UI producer before this feature
+is called done — no exceptions this time, per the standing project rule
+after the earlier orphaned-endpoint incident.
+

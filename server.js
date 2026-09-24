@@ -15,9 +15,11 @@ const SUBMISSIONS_LOG = path.join(DATA_DIR, 'submissions.jsonl');
 const ASSEMBLAGES_LOG = path.join(DATA_DIR, 'assemblages.jsonl');
 const ROOM_LOG = path.join(DATA_DIR, 'room.jsonl'); // cue / session / stage events
 const PROMPT_LOG = path.join(DATA_DIR, 'prompt-pieces.jsonl'); // collective prompt-builder pieces
+const STYLE_LOG = path.join(DATA_DIR, 'style-ideas.jsonl'); // collective style-idea submissions
 const MAX_BODY = 16 * 1024;
 const MAX_SUBMISSIONS_IN_STATE = 200;
 const MAX_PROMPT_PIECES_PER_SLOT = 8; // /api/state ships only the latest N per slot
+const MAX_STYLE_IDEAS_IN_STATE = 12;
 const RATE_LIMIT_MS = 3000;
 const KINDS = new Set(['question', 'discussion', 'note']);
 // cue.mode drives what the phone offers. Order-agnostic: decks reference beats
@@ -59,8 +61,19 @@ const state = {
   session: { n: 1, label: 'SESSION 001', startedAt: Date.now() },
   staged: null,               // submission id thrown full-screen on the deck
   promptPieces: new Map(),    // slot -> array of pieces, ALL of them (trimmed only at serve time)
+  styleIdeas: [],             // all style-idea submissions, in order
+  promptVotesById: new Map(), // pieceId -> Set(sid) — who has voted; count = size
+  promptPins: { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null },
 };
 const sseClients = new Set();
+
+function findPromptPieceById(id) {
+  for (const arr of state.promptPieces.values()) {
+    const found = arr.find((p) => p.id === id);
+    if (found) return found;
+  }
+  return null;
+}
 
 function applySubmissionLine(obj) {
   if (obj.moderate) {
@@ -83,8 +96,13 @@ function applyRoomLine(obj) {
 function applyPromptLine(obj) {
   if (!obj.id || !obj.sid || !obj.slot) return;
   const arr = state.promptPieces.get(obj.slot) || [];
-  arr.push(obj);
+  // votes intentionally NOT replayed — in-memory only, resets on restart (see CONTRACT.md)
+  arr.push({ ...obj, votes: 0 });
   state.promptPieces.set(obj.slot, arr);
+}
+function applyStyleLine(obj) {
+  if (!obj.id || !obj.sid) return;
+  state.styleIdeas.push(obj);
 }
 
 function replayLog(file, apply) {
@@ -109,7 +127,8 @@ function boot() {
   const b = replayLog(ASSEMBLAGES_LOG, applyAssemblageLine);
   const c = replayLog(ROOM_LOG, applyRoomLine);
   const d = replayLog(PROMPT_LOG, applyPromptLine);
-  console.log(`[boot] replayed ${a} submission lines, ${b} assemblage lines, ${c} room lines, ${d} prompt-piece lines -> ` +
+  const e = replayLog(STYLE_LOG, applyStyleLine);
+  console.log(`[boot] replayed ${a} submission lines, ${b} assemblage lines, ${c} room lines, ${d} prompt-piece lines, ${e} style-idea lines -> ` +
     `${state.submissions.length} submissions, ${state.assemblages.size} assemblages, ` +
     `${state.session.label} @ cue ${state.cue.beatId}`);
 }
@@ -204,12 +223,23 @@ function buildState() {
   for (const slot of SLOT_IDS) {
     const arr = state.promptPieces.get(slot) || [];
     promptCounts[slot] = arr.length;
-    promptPieces[slot] = arr.slice(-MAX_PROMPT_PIECES_PER_SLOT);
+    // sync each piece's `votes` field from the authoritative vote-set sizes
+    // before serving, so consumers reading promptPieces[slot][i].votes don't
+    // need to cross-reference the separate promptVotes map.
+    promptPieces[slot] = arr.slice(-MAX_PROMPT_PIECES_PER_SLOT).map((p) => ({
+      ...p, votes: (state.promptVotesById.get(p.id) || new Set()).size,
+    }));
   }
+  const promptVotes = {};
+  for (const [id, set] of state.promptVotesById) promptVotes[id] = set.size;
   return {
     submissions, assemblages, counts, spectrumHistogram, componentTally,
     cue: state.cue, session: state.session, staged: state.staged,
     promptPieces, promptCounts,
+    styleIdeas: state.styleIdeas.slice(-MAX_STYLE_IDEAS_IN_STATE),
+    styleIdeaCount: state.styleIdeas.length,
+    promptVotes,
+    promptPins: { ...state.promptPins },
   };
 }
 
@@ -300,7 +330,7 @@ async function handleReset(req, res) {
   const label = cleanText(body.label, 48) || `SESSION ${String(n).padStart(3, '0')}`;
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
   const archived = [];
-  for (const f of [SUBMISSIONS_LOG, ASSEMBLAGES_LOG, ROOM_LOG, PROMPT_LOG]) {
+  for (const f of [SUBMISSIONS_LOG, ASSEMBLAGES_LOG, ROOM_LOG, PROMPT_LOG, STYLE_LOG]) {
     if (!fs.existsSync(f)) continue;
     const dest = path.join(DATA_DIR, `${path.basename(f, '.jsonl')}.${stamp}.jsonl`);
     try { fs.renameSync(f, dest); archived.push(path.basename(dest)); }
@@ -311,6 +341,9 @@ async function handleReset(req, res) {
   state.lastSubmitBySid.clear();
   state.staged = null;
   state.promptPieces.clear();
+  state.styleIdeas = [];
+  state.promptVotesById.clear();
+  state.promptPins = { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null };
   state.cue = { ...DEFAULT_CUE, ts: Date.now() };
   state.session = { n, label, startedAt: Date.now() };
   appendLog(ROOM_LOG, { session: state.session });
@@ -361,13 +394,77 @@ async function handlePromptPiece(req, res) {
     return sendError(res, 429, `rate limited: 1 submission per 3s (retry in ${wait}s)`);
   }
   state.lastSubmitBySid.set(sid, now);
-  const piece = { id: newId(), ts: now, sid, handle: cleanHandle(body.handle), slot, text };
+  const piece = { id: newId(), ts: now, sid, handle: cleanHandle(body.handle), slot, text, votes: 0 };
   const arr = state.promptPieces.get(slot) || [];
   arr.push(piece);
   state.promptPieces.set(slot, arr);
   appendLog(PROMPT_LOG, piece);
   broadcast('promptpiece', piece);
   sendJson(res, 201, { id: piece.id, ts: piece.ts });
+}
+
+async function handleStyleIdea(req, res) {
+  const body = await readJsonBody(req);
+  const { sid } = body;
+  if (!isValidSid(sid)) return sendError(res, 400, 'sid required (8-64 chars, [A-Za-z0-9_-])');
+  const text = cleanText(body.text, 120);
+  if (!text) return sendError(res, 400, 'text required (1..120 chars)');
+  const now = Date.now();
+  // Same shared 3s-per-sid budget as /api/submit and /api/prompt-piece.
+  const last = state.lastSubmitBySid.get(sid) || 0;
+  if (now - last < RATE_LIMIT_MS) {
+    const wait = Math.ceil((RATE_LIMIT_MS - (now - last)) / 1000);
+    res.setHeader('Retry-After', String(wait));
+    return sendError(res, 429, `rate limited: 1 submission per 3s (retry in ${wait}s)`);
+  }
+  state.lastSubmitBySid.set(sid, now);
+  const idea = { id: newId(), ts: now, sid, handle: cleanHandle(body.handle), text };
+  state.styleIdeas.push(idea);
+  appendLog(STYLE_LOG, idea);
+  broadcast('styleidea', idea);
+  sendJson(res, 201, { id: idea.id, ts: idea.ts });
+}
+
+async function handlePromptVote(req, res) {
+  const body = await readJsonBody(req);
+  const { sid, id } = body;
+  if (!isValidSid(sid)) return sendError(res, 400, 'sid required (8-64 chars, [A-Za-z0-9_-])');
+  if (typeof id !== 'string' || !id) return sendError(res, 400, 'id required');
+  const piece = findPromptPieceById(id);
+  if (!piece) return sendError(res, 404, 'prompt piece not found');
+  let voters = state.promptVotesById.get(id);
+  if (!voters) { voters = new Set(); state.promptVotesById.set(id, voters); }
+  if (voters.has(sid)) {
+    // idempotent no-op — repeat tap just confirms the vote already landed,
+    // not an error the UI needs to surface loudly (see CONTRACT.md)
+    return sendJson(res, 409, { id, votes: voters.size, alreadyVoted: true });
+  }
+  voters.add(sid);
+  const votes = voters.size;
+  // Votes are in-memory only — NOT appended to any log (see CONTRACT.md
+  // Persistence note). They reset on server restart by design for v1.
+  broadcast('promptvote', { id, votes });
+  sendJson(res, 201, { id, votes });
+}
+
+async function handlePromptPin(req, res) {
+  const body = await readJsonBody(req);
+  if (!requireKey(body, res)) return;
+  const slot = typeof body.slot === 'string' ? body.slot : '';
+  if (!SLOT_IDS.has(slot)) return sendError(res, 400, `slot must be one of ${[...SLOT_IDS].join('|')}`);
+  // id === null clears the pin for that slot; otherwise it must reference a real piece IN that slot.
+  if (body.id === null) {
+    state.promptPins[slot] = null;
+    broadcast('promptpin', { slot, pinnedId: null });
+    return sendJson(res, 200, { ok: true, slot, pinnedId: null });
+  }
+  if (typeof body.id !== 'string' || !body.id) return sendError(res, 400, 'id required (or null to clear)');
+  const arr = state.promptPieces.get(slot) || [];
+  const piece = arr.find((p) => p.id === body.id);
+  if (!piece) return sendError(res, 404, 'prompt piece not found in that slot');
+  state.promptPins[slot] = piece.id;
+  broadcast('promptpin', { slot, pinnedId: piece.id });
+  sendJson(res, 200, { ok: true, slot, pinnedId: piece.id });
 }
 
 async function handleAssemblage(req, res) {
@@ -475,6 +572,9 @@ const server = http.createServer(async (req, res) => {
     if (p.startsWith('/api/')) {
       if (p === '/api/submit' && req.method === 'POST') return await handleSubmit(req, res);
       if (p === '/api/prompt-piece' && req.method === 'POST') return await handlePromptPiece(req, res);
+      if (p === '/api/style-idea' && req.method === 'POST') return await handleStyleIdea(req, res);
+      if (p === '/api/prompt-vote' && req.method === 'POST') return await handlePromptVote(req, res);
+      if (p === '/api/prompt-pin' && req.method === 'POST') return await handlePromptPin(req, res);
       if (p === '/api/assemblage' && req.method === 'POST') return await handleAssemblage(req, res);
       if (p === '/api/moderate' && req.method === 'POST') return await handleModerate(req, res);
       if (p === '/api/cue' && req.method === 'POST') return await handleCue(req, res);
