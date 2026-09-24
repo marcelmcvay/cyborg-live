@@ -2,7 +2,7 @@
   "slug": "miami",
   "title": "Designing Assemblages: A Cyborg Foundation for Interaction Design",
   "venue": "University of Miami \u2014 graduate lecture",
-  "totalMins": 60,
+  "totalMins": 75,
   "format": "lecture",
   "beats": [
     {
@@ -409,16 +409,83 @@
       "presenterNotes": "\u23f1 6 min \u00b7 they'll push back hardest here \u2014 welcome it, model the uncertainty, don't defend the framework"
     },
     {
-      "id": "responsibility",
-      "label": "RESPONSIBILITY",
-      "mins": 7,
+      "id": "case-studies",
+      "label": "CASE STUDIES",
+      "mins": 18,
       "cue": {
         "mode": "present",
-        "prompt": "For whose interests does the interface serve?",
+        "prompt": "What's the steward move in each of these?",
         "signalOpen": true,
         "assembleOpen": true
       },
       "slides": [
+        {
+          "kind": "caseStudy",
+          "title": "CYBORG-LIVE \u2014 THE APP RUNNING THIS ROOM",
+          "beats": [
+            "This SIGNAL/ASSEMBLE tool, built for Design Week RI, running again tonight.",
+            "Not \"I asked an AI to build an app\" \u2014 a named multi-agent stack, roles divided.",
+            "Fact-check before voice-edit, never after. Sequence changes what survives revision.",
+            "You're looking at the assemblage. It built the room you're standing in."
+          ],
+          "note": "\u2192 \"The professor asked me to walk through what I'm actually building right now \u2014 so let's get concrete. Five short cases, same argument each time, different hands.\"\n\n\u2192 \"You're looking at it. This SIGNAL and ASSEMBLE tool, built for Design Week RI, running again tonight \u2014 same zero-dependency engine, two completely separate decks, neither one touching the other.\"\n\n\u2192 \"I didn't ask an AI to build an app. I run a named multi-agent stack \u2014 I orchestrate, one agent handles prose and voice, another fact-checks before any voice-edit ever touches a claim. That ordering matters: fact-check before voice-edit, never after, because sequence changes what survives revision. That discipline IS the stewardship the thesis names. An assemblage with roles, not one tool you operate.\"\n\n\u2192 \"You're looking at the assemblage. It built the room you're standing in.\"\n\n\u00b7 Live proof point if you have it handy: 29 people at Design Week RI built an assemblage, BODY outscored every cognition/AI category \u2014 shoes and caffeine beat every LLM-adjacent pick. Good moment to ask this room whether the same pattern holds."
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/pong3d-gameplay-screenshot.png",
+          "alt": "Pong3D live gameplay screenshot",
+          "note": "\u00b7 Live screenshot from demos.marcelmcvay.com/pong3d/."
+        },
+        {
+          "kind": "caseStudy",
+          "title": "PONG3D \u2014 THE VIBE-CODE ORIGIN STORY",
+          "beats": [
+            "Started as a test: run an agent in a loop, get a full game from one prompt.",
+            "With use, the process changed \u2014 the agent started choosing its own team.",
+            "One commit per slice, its own test suite embedded in the page.",
+            "The self-test isn't a feature. It's choosing what to verify and what to hand off."
+          ],
+          "note": "\u2192 \"This one started as a test: could I run an agent in a loop and get a complete game out of one prompt? Then, with use, the process changed \u2014 the agent started determining its own team composition instead of me specifying it upfront.\"\n\n\u2192 \"That shift is the steward's arc in miniature. One-prompt-one-shot to 'the system decides its own team.' The self-verifying build discipline \u2014 one commit per slice, its own test suite embedded in the page \u2014 that's what the process grew INTO. It wasn't there on day one.\"\n\n\u2192 \"The self-test isn't a feature. It's me choosing what part of verification to keep and what part to hand off \u2014 the actual daily practice of being a steward instead of a user. And that discipline itself grew out of the vibe-code phase.\""
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/ghost-field-the-district-screenshot.png",
+          "alt": "Ghost Field, THE DISTRICT track screenshot",
+          "note": "\u00b7 Live screenshot from demos.marcelmcvay.com/ghost-field/, track 7 \"THE DISTRICT.\""
+        },
+        {
+          "kind": "caseStudy",
+          "title": "GHOST FIELD \u2014 THE ROADMAPPED DESIGN DOC",
+          "beats": [
+            "A flight game, built under a named agent instance called RIG.",
+            "M1 flight core frozen and playable. M2.1 shipped. M2.2 is active right now.",
+            "\"anime.js choreographs, Three.js renders\" \u2014 an architecture decision, in writing.",
+            "The doc has me overriding RIG's scope creep \u2014 build the stage, not the play."
+          ],
+          "note": "\u2192 \"Different process, same discipline. This is a flight game, built under a named agent instance called RIG, run the traditional way \u2014 real milestone docs written before anything got built. Flight core is frozen and playable. The city district shipped its first pass. The architecture milestone you're looking at right now \u2014 replacing placeholder boxes with a real city language \u2014 is what's actively in progress.\"\n\n\u00b7 Show the doc on screen here \u2014 the actual M2.2 architecture Q&A document. RIG proposes a lean under each design question; I confirm it or redirect it.\n\n\u2192 \"Even the code libraries get roles in this build \u2014 the architecture doc literally says 'anime.js choreographs, Three.js renders.' That's not metaphor. That's the actual document.\"\n\n\u00b7 OPTIONAL, ~20 sec, cut first if short on time: there's a real moment in this doc where I catch RIG proposing scope creep \u2014 it wanted to build a whole vendor-and-collect gameplay loop into this milestone, and I redirected it back down to 'build the stage, not the play,' because that loop actually needs three other milestones of prerequisite work RIG hadn't accounted for."
+        },
+        {
+          "kind": "caseStudy",
+          "title": "SPACE SANDBOX \u2014 ACCURATE ISN'T HONEST",
+          "beats": [
+            "Two learning tools, one session: a space-policy timeline and a Voyager-scale tracker.",
+            "175 automated checks passed. Every object near Earth still read exactly 1.00 AU.",
+            "Correct, and it collapsed the ISS, the Moon, and a telescope into one dot.",
+            "The suite verifies the build. I verify the meaning. That's the integration."
+          ],
+          "note": "\u2192 \"Two more, built in one session as learning tools for myself, not client work. One's a timeline of fifty-nine space-policy initiatives since a 2010 speech \u2014 four argument arcs, a glossary that links itself across every card. The other's a three.js map of everything we've sent into space, scoped to Voyager 1's actual distance \u2014 forty spacecraft, eight planets, ten moons.\"\n\n\u2192 \"Here's the real story from building them, though: a hundred seventy-five automated browser checks ran clean, and the app was still wrong. Every object at Earth's distance read exactly one-point-oh AU. That's correct \u2014 heliocentrically, true. It's also useless, because it collapses the space station, the Moon, and a telescope a million miles out into the same dot. Accurate, and it lied.\"\n\n\u2192 \"Catching that wasn't a bug fix. It was asking a different question: not 'is this correct,' but 'does this leave someone with a true picture.' That's the seat a human holds in this kind of system \u2014 not oversight of the machine, a different kind of verification running right next to it. The suite verifies the build. I verify the meaning. That's the integration.\"\n\n\u2192 \"Both are running default Claude web-app styling right now \u2014 keen eyes in this room might already recognize it. Nobody specified this look. It just happened. So \u2014 what does it mean that it keeps happening? I want to open that up as a live activity: submit visual ideas, and we reskin one of these on the spot. The whole palette in each app is about a dozen lines at the top of one file, so this can genuinely happen live in under a minute.\"\n\n\u00b7 The audience app has a third COLLECTIVE tab for exactly this \u2014 a STYLE submission lane, plus a separate group-built ASCII text-adventure. First-draft prototype, test it live before trusting it cold."
+        },
+        {
+          "kind": "caseStudy",
+          "title": "SOLAR WITNESS \u2014 THE EIGHT-ROLE AGENT TEAM",
+          "beats": [
+            "Tracks human intervention across the solar system. Eight named agents, not one.",
+            "The expensive model went on whichever task fails silently \u2014 not the hardest-sounding one.",
+            "Designed as build, attack, fix \u2014 two passes. It took four.",
+            "Budget for the pass after the pass you think is last."
+          ],
+          "note": "\u2192 \"One more, and this is the resource-stewardship case. Solar Witness tracks human intervention across the solar system \u2014 right now, a ninety-nine-entry catalog of lunar artifacts, with almost four hundred sourced citations. It was built by eight named agents, not one: an orchestrator, a coordinate-math specialist, a researcher, an adversarial verifier that never sees the researcher's reasoning and can't write to the file, an ongoing audit loop, an imagery specialist, and some cheap plumbing and recon roles.\"\n\n\u2192 \"The expensive model didn't go on the hardest-sounding task. It went on whichever task fails silently. Bad coordinate math moves a lander a few kilometers and throws no error \u2014 that got the expensive model. Checking whether a URL returns 200 is either right or checkably wrong \u2014 that got the cheap one.\"\n\n\u2192 \"Here's the real finding, though. The design was build, then attack, then fix \u2014 two passes. It took four. The verifier caught real defects, the builder fixed them. Then I caught one both of them missed: a stale source document still cited for the position of something that landed years after that document was written. The verifier had actually flagged the same class of problem in a different field \u2014 but the fix only covered that one instance, not the pattern. A fourth pass then found the same stale-source problem on fourteen more entries nobody had flagged.\"\n\n\u2192 \"One error, four layers of checking, three of them turned out to be necessary. Budget for the pass after the pass you think is last.\"\n\n\u00b7 OPTIONAL second data point if the beat has room: a recon agent in this same build confidently reported that six data sources didn't support the kind of request the app needed. All six actually did. I only caught it by re-checking the claim myself. A subagent's confidence is not evidence."
+        },
         {
           "kind": "caseStudy",
           "title": "REGENT / THE SEAGLIDER",
@@ -426,21 +493,29 @@
             "Brief: an interface for a captain who can fly.",
             "Then the test pilot showed up. Call sign: Bob Dylan.",
             "\"That's not where I expect it to be.\"",
-            "We weren't designing interface. We were translating fluency."
+            "No agent. No model. No AI anywhere in this story."
           ],
-          "note": "\u2192 \"Regent builds a ground-effect craft that skims above the water, hovering below FAA classification.\"\n\n\u2192 \"The target operator was defined as a mariner. One wheel, one throttle \u2014 a captain that can fly. But the operational scope was aviation-grade and the mental model was maritime. That gap was the entire design problem.\"\n\n\u2192 \"Then a test pilot joined. Ex-Air Force, F-16s in service, 747s commercially, tens of thousands of hours. Call sign a folksinger's name \u2014 we called him Bob Dylan.\"\n\n\u2192 \"He liked every concept. Every concept was wrong \u2014 not because they were messy, but because they didn't match the logic his body had spent decades building.\"\n\n\u2192 \"Pilots scan. They feel for what's off. They process feedback faster than conscious thought. His most common note was 'that's not where I expect it to be.'\"\n\n\u2192 \"I spent hours in Microsoft Flight Simulator learning how altimeters behave and where attitude indicators live. Every cockpit has a language, and I needed to be fluent enough to design in dialect.\"\n\n\u2192 \"We ended with a recalibrated vocabulary, not a reinvented one. Semantic colour held to aviation standard \u2014 teal for set values, magenta for actuals.\"\n\n\u2192 \"Here's the theoretical payload: negotiated agency. The user isn't just an actor \u2014 they're being acted upon. Systems push back. By design they suggest, limit, surveil, and even discipline.\"\n\n\u2192 \"The experience isn't a smoothly-paved one-way street. It's a negotiation table.\""
+          "note": "\u2192 \"Last one, and it's different from everything else I just showed you. No agent. No model. No AI anywhere in this story.\"\n\n\u2192 \"Regent builds a ground-effect craft that skims above the water \u2014 a captain that can fly, on paper. The brief called for a mariner at the controls. Then a test pilot joined \u2014 decades of hours, call sign a folksinger's name, we called him Bob Dylan.\"\n\n\u2192 \"He liked every concept. Every concept was wrong \u2014 not messy, just mismatched with the logic his body had spent decades building. Pilots scan. They feel for what's off. They process feedback faster than conscious thought. His most common note: 'that's not where I expect it to be.'\"\n\n\u2192 \"I spent hours in a flight simulator learning how altimeters behave and where attitude indicators live. Every cockpit has a language, and I needed to be fluent enough to design in dialect. We ended with a recalibrated vocabulary, not a reinvented one.\"\n\n\u2192 \"Here's why this one closes instead of opens, and it's the whole reason I put it last: every other case tonight was an AI build story. This one has none of that. It's a human pilot's embodied feedback loop, negotiated by a human designer, no model in sight.\"\n\n\u2192 \"And that pilot, scanning his instruments faster than conscious thought \u2014 that's the exact NACA and NASA human-in-the-system note from the start of this talk. It's the same tension I told you about earlier tonight \u2014 ace pilots against systems engineers, Mercury astronauts fighting for manual control, Cooper-Harper turning felt experience into a design spec, Armstrong taking the controls by hand over a boulder field. Regent is that story again, just with no rocket involved.\"\n\n\u2192 \"Assemblage integration means designing the negotiation, not the screen. And notice: nothing here was an AI system. The thesis was never about AI \u2014 AI is just the loudest, newest wire in the assemblage. The pilot and the instrument panel were already a cyborg circuit long before any of this was intelligent.\""
         },
         {
-          "kind": "caseStudy",
-          "title": "SELF-CHECKOUT",
-          "beats": [
-            "\"Self\"-checkout is a misnomer.",
-            "The chain protecting margins. The card companies extracting fees.",
-            "Age verification. Municipal regulation. Produce indexing.",
-            "And the machine \u2014 sensor-driven, impatient."
-          ],
-          "note": "\u2192 \"Self-checkout makes the table visible.\"\n\n\u2192 \"The grocery chain protecting margins. The card companies extracting fees. Age verification enforcing policy. Municipal regulations. Produce vendors dictating indexing. And the machine itself, ever-ready to flag 'unexpected item in the bagging area.'\"\n\n\u2192 \"To design responsibly in a cyborg world is to name these actors, question their power, and decide how \u2014 and whether \u2014 they belong at the table.\""
-        },
+          "kind": "statement",
+          "text": "The pilot and the instrument panel were already a cyborg circuit.",
+          "note": "\u2192 \"The pilot and the instrument panel were already a cyborg circuit long before any of this was intelligent.\"\n\n\u23f1 Let this land \u2014 it's the hinge straight into STEWARD's close, not just a chronological ending."
+        }
+      ],
+      "presenterNotes": "\u23f1 18 min \u00b7 five cases, same argument each time, Regent closes as the deliberate non-AI bookend\n\n\u23f1 If running long: fold the two space-sandbox apps' delivery into one tighter pass (cut the COLLECTIVE-tab aside), or trim Solar Witness to the four-pass story only, dropping the SCOUT/CORS aside.\n\n\u2691 Don't present these as a portfolio tour. What / steward move / tie-back, nothing more \u2014 density is the argument."
+    },
+    {
+      "id": "responsibility",
+      "label": "RESPONSIBILITY",
+      "mins": 4,
+      "cue": {
+        "mode": "present",
+        "prompt": "For whose interests does the interface serve?",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
         {
           "kind": "statement",
           "text": "Technological coevolution is not an even playing field.",
@@ -452,7 +527,7 @@
           "note": "\u2192 \"Go back to your pre-read interface. Whose interests does it serve? What negotiation table is it representing?\""
         }
       ],
-      "presenterNotes": "\u23f1 7 min \u00b7 longest beat \u2014 watch the clock"
+      "presenterNotes": "\u23f1 4 min \u00b7 the self-checkout material moved into Regent's case study \u2014 self-checkout ITSELF was cut per Marcel's live call. This beat is now the short power/responsibility landing, not a second case-study run."
     },
     {
       "id": "steward",
