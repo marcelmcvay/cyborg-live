@@ -10,6 +10,8 @@ RestartSec=2
 Environment=ADMIN_KEY=cyborg
 Environment=PORT=8787
 Environment=NODE_ENV=production
+# Optional secrets (ANTHROPIC_API_KEY for ascii-art). Leading '-' = OK if absent.
+EnvironmentFile=-/home/marcel/.config/cyborg-live.env
 
 [Install]
 WantedBy=default.target

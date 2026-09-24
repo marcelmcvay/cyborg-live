@@ -358,3 +358,29 @@ room at it. It is now gated exactly like SIGNAL/ASSEMBLE.
   styleidea SSE    consumers now: app.js, presenter.js (RESTYLE IDEAS panel, COPY = restyle prompt)
   POST /api/prompt-piece  producers now: promptbuilder.js AND app.js per-slot composer
 
+
+## ASCII ART (added Sep 24 2026)
+
+Claude draws a small ASCII picture of each game slot's WINNING phrase
+(pinned > voted > latest, same order as rpg.js). Server-side only: the key
+never reaches a browser. Module: `ascii-art.js`. Zero npm deps.
+
+  env    ANTHROPIC_API_KEY      unset = feature OFF, rpg keeps built-in art
+         ANTHROPIC_WORKSPACE_ID required if the key isn't scoped to a workspace
+         ASCII_ART_MODEL        default claude-haiku-4-5
+         ASCII_ART_TIMEOUT_MS   default 8000
+         ASCII_ART_MAX_CALLS    default 80 per process (runaway guard)
+  key    lives in ~/.config/cyborg-live.env (chmod 600), loaded by the unit's
+         EnvironmentFile=. Never in git.
+  SSE    `asciiart` { slot, text, art }  fired when a winner's drawing lands,
+         only if that phrase is STILL the winner. Debounced 1.5s per slot.
+  state  GET /api/state -> asciiArt { SLOT: { text, art } } for current winners
+  health GET /api/health -> asciiArt { enabled, model, calls, cached, lastError }
+  cache  data/ascii-art.jsonl, replayed on boot; same slot+phrase is never
+         drawn twice. reset-room.sh does NOT rotate it (drawings are reusable).
+  art    <= 44 cols x 10 rows, sanitized to printable ASCII + box glyphs.
+  rooms  threshold=SETTING, vent=COMPANION, control=THREAT (until resolved),
+         core=TWIST (also on the reveal), ARTIFACT on TAKE.
+  fail   no key / timeout / junk / API error -> no event, built-in art stays.
+  test   node tools/fake-claude.js <port>  (FAKE_MODE=slow|bad|error), point
+         ANTHROPIC_BASE_URL at it on a spare port.

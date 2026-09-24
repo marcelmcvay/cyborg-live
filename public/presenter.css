@@ -1373,3 +1373,8 @@ kbd {
 .stylerow__txt { flex: 1 1 auto; min-width: 0; color: var(--fg); line-height: 1.35; }
 .stylerow__who { flex: none; color: var(--mid); font-size: 9px; }
 .stylerow__empty { color: var(--mid); font-size: 11px; padding: 4px 6px; }
+
+/* ── Game prompt (copy a build prompt from the room's blanks) ── */
+.gameprompt { display: flex; align-items: center; gap: 10px; padding: 10px 14px 0; flex-wrap: wrap; }
+.gameprompt__btn { min-height: 36px; padding: 0 14px; font-size: 11px; border-color: var(--accent); color: var(--fg); }
+.gameprompt__hint { color: var(--mid); font-size: 9px; }

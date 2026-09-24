@@ -584,7 +584,7 @@
       "mins": 6,
       "cue": {
         "mode": "steward",
-        "prompt": "One sentence: what changes in your thesis if you frame it as assemblage integration?",
+        "prompt": "One sentence: what changes about something you're making when you frame it as assemblage integration?",
         "signalOpen": true,
         "assembleOpen": true,
         "collectiveOpen": true
@@ -612,8 +612,8 @@
         },
         {
           "kind": "prompt",
-          "text": "Reframe your thesis as assemblage integration. What research question appears?",
-          "note": "\u2192 \"Reframe your thesis as assemblage integration. What research question appears?\"\n\n\u23f1 One sentence each from three students."
+          "text": "Take something you're making. Frame it as assemblage integration. What new question appears?",
+          "note": "\u2192 \"Take something you're making. A project, a class assignment, a habit, a side thing. Frame it as assemblage integration. What new question appears?\"\n\n\u00b7 Freshmen in the room: no thesis required. Anything they make or use counts.\n\n\u23f1 One sentence each from three students."
         },
         {
           "kind": "staged",

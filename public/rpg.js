@@ -60,6 +60,12 @@
   // and kept current over the `promptpin` SSE event.
   const promptPins = { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null };
 
+  // Claude-drawn ASCII art per slot, keyed to the phrase it depicts:
+  // genArt[slot] = { text, art }. Only shown while that phrase is still the
+  // slot's winner; otherwise the built-in drawing (or none) is used. Arrives
+  // via /api/state seed + the `asciiart` SSE event (see CONTRACT.md).
+  const genArt = {};
+
   function seedDefault(slot, text) {
     pools[slot].push({ text: cleanPhrase(text), source: 'default' });
   }
@@ -139,6 +145,21 @@
   function pick(slot, seedIndex) {
     void seedIndex; // retired: presenter pin / room vote now decides the single per-slot winner
     return latest(slot);
+  }
+
+  // Live art for a slot if Claude has drawn the CURRENT winner, else null.
+  function slotArt(slot) {
+    const a = genArt[slot];
+    if (!a || !a.art) return null;
+    return cleanPhrase(a.text) === latest(slot).text ? a.art : null;
+  }
+
+  // Which slot's drawing a room shows. Built-in art is the fallback.
+  const ROOM_ART_SLOT = { threshold: 'SETTING', vent: 'COMPANION', control: 'THREAT', core: 'TWIST' };
+  function roomArt(room) {
+    const slot = ROOM_ART_SLOT[room.id];
+    if (room.id === 'control' && flags.threatResolved) return room.art;
+    return (slot && slotArt(slot)) || room.art;
   }
 
   // Tiny diagnostic tag for Marcel during a live demo — not audience-facing.
@@ -479,7 +500,8 @@
     opts = opts || {};
     printBlank();
     printLine(`== ${room.title} ==`, 'line-title');
-    if (room.art) printAscii(room.art);
+    const art = roomArt(room);
+    if (art) printAscii(art);
     const desc = room.describe();
     if (opts.slow) {
       printSlow([desc]);
@@ -502,6 +524,8 @@
       setTimeout(() => {
         printBlank();
         printLine('▓▓▓ THE TWIST ▓▓▓', 'line-warn');
+        const twistArt = slotArt('TWIST');
+        if (twistArt) printAscii(twistArt);
         printSlow([`The rule here is: ${twistText()}.`], 'line-warn');
         setTimeout(() => {
           printBlank();
@@ -555,6 +579,8 @@
     inventory.push({ id: itemId, name, desc: `${name}${info.handle ? ` (from ${info.handle})` : ''}` });
     if (room.id === 'archive') flags.takenArchive = true;
     if (room.id === 'vent') flags.takenVent = true;
+    const itemArt = slotArt('ARTIFACT');
+    if (itemArt && latest('ARTIFACT').text === name) printAscii(itemArt);
     printLine(`You take: ${name}.`, 'line-tag');
     renderSidebar();
   }
@@ -848,6 +874,9 @@
           }
         });
       }
+      if (data && data.asciiArt && typeof data.asciiArt === 'object') {
+        SLOT_IDS.forEach((slot) => { if (data.asciiArt[slot]) genArt[slot] = data.asciiArt[slot]; });
+      }
       if (data && data.promptPins && typeof data.promptPins === 'object') {
         SLOT_IDS.forEach((slot) => setPin(slot, data.promptPins[slot] || null));
       }
@@ -917,6 +946,21 @@
       if (!d || !d.slot || !SLOT_IDS.includes(d.slot)) return;
       setPin(d.slot, d.pinnedId || null);
       onSlotResolutionChanged(d.slot);
+    });
+
+    // Claude finished drawing a slot's winning phrase. Redraw the room if
+    // the player is standing where that drawing lives.
+    es.addEventListener('asciiart', (evt) => {
+      let d;
+      try { d = JSON.parse(evt.data); } catch (err) { return; }
+      if (!d || !SLOT_IDS.includes(d.slot) || typeof d.art !== 'string') return;
+      genArt[d.slot] = { text: d.text, art: d.art };
+      const room = currentRoom();
+      if (ROOM_ART_SLOT[room.id] === d.slot && slotArt(d.slot)) {
+        printBlank();
+        printLine('~~~ the room draws what you wrote ~~~', 'line-tag');
+        renderRoom(room);
+      }
     });
 
     es.addEventListener('ping', () => {

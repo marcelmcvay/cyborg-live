@@ -1290,12 +1290,20 @@
         </button>
       </div>
       <div class="panel__collapse" id="pinBody">
+        <div class="gameprompt">
+          <button type="button" class="pinbtn gameprompt__btn" id="gamePromptBtn"
+                  title="Copy a build prompt for a capable model: the room's winning blanks + an 80s-90s studio agent team">COPY GAME PROMPT</button>
+          <span class="gameprompt__hint micro-label" id="gamePromptHint">PINNED &gt; VOTED &gt; LATEST · TOP 3 PER BLANK</span>
+        </div>
         <ol class="pinrows" id="pinRows"></ol>
       </div>`;
     tele.appendChild(section);
     el.pinPanel = section;
     el.pinRows = $('#pinRows', section);
     el.pinProxy = $('#pinProxy', section);
+    el.gamePromptBtn = $('#gamePromptBtn', section);
+    el.gamePromptHint = $('#gamePromptHint', section);
+    el.gamePromptBtn.addEventListener('click', () => copyGamePrompt(el.gamePromptBtn));
 
     // NOTE: the [data-collapse] button is wired generically by initCollapse()
     // (it queries the whole document), same as every other telemetry module —
@@ -1340,6 +1348,99 @@
         </div>
         <ul class="pinrow__list">${candidates}</ul>
       </li>`;
+  }
+
+  /* ═════════════════════════════════════════════════════════════════
+     GAME PROMPT — turns the room's blanks into a build prompt Marcel pastes
+     into a capable model OUTSIDE the talk. Winner per slot resolves exactly
+     like rpg.js (pinned > most voted > latest); runners-up ride along as
+     flavor. Appends a small 80s-90s game-studio agent team to execute it.
+     Client-side only: nothing is sent anywhere, it just hits the clipboard.
+     ═════════════════════════════════════════════════════════════════ */
+  const SLOT_ROLE = {
+    SETTING: 'Where the game takes place',
+    COMPANION: 'Who travels with the player',
+    THREAT: "What's hunting the player",
+    ARTIFACT: 'The object that matters',
+    TWIST: 'The rule that breaks the world',
+  };
+
+  function slotRanking(slot) {
+    const pieces = (S.promptPieces[slot] || []).slice();
+    if (!pieces.length) return { winner: null, how: 'none', rest: [] };
+    const pinId = pinnedIdFor(slot);
+    const pinned = pinId && pieces.find((p) => p.id === pinId);
+    const byVotes = pieces.slice().sort((a, b) => (b.votes || 0) - (a.votes || 0) || (b.ts || 0) - (a.ts || 0));
+    const newest = pieces.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
+    const winner = pinned || ((byVotes[0].votes || 0) > 0 ? byVotes[0] : newest);
+    const how = pinned ? 'pinned by the presenter' : (winner.votes || 0) > 0 ? `${winner.votes} vote${winner.votes === 1 ? '' : 's'}` : 'latest submission';
+    const rest = byVotes.filter((p) => p.id !== winner.id).slice(0, 2);
+    return { winner, how, rest };
+  }
+
+  function buildGamePrompt() {
+    const lines = [];
+    const filled = PROMPT_SLOTS.filter((s) => (S.promptPieces[s] || []).length);
+    const deckTitle = (S.deck && S.deck.title) || 'a live lecture';
+    lines.push(
+      '# BUILD THE ROOM\'S GAME',
+      '',
+      `A lecture audience ("${deckTitle}") co-wrote this game live on their phones, one blank at a time, then voted. ` +
+      'Your job is to build it as a finished, playable browser game. Treat their words as the creative brief: ' +
+      'interpret them literally and with wit, never sand them down into something generic.',
+      '',
+      '## THE ROOM\'S BLANKS (winner first, runners-up are optional flavor)',
+    );
+    PROMPT_SLOTS.forEach((slot) => {
+      const { winner, how, rest } = slotRanking(slot);
+      lines.push('', `${slot} — ${SLOT_ROLE[slot]}`);
+      if (!winner) { lines.push('  WINNER: (the room left this blank; the studio invents one that fits the others)'); return; }
+      lines.push(`  WINNER: "${winner.text}"  [${how}${winner.handle ? `, from ${winner.handle}` : ''}]`);
+      rest.forEach((p) => lines.push(`  also:   "${p.text}"  [${p.votes || 0} vote${(p.votes || 0) === 1 ? '' : 's'}]`));
+    });
+    lines.push(
+      '',
+      '## THE STUDIO',
+      'Run this as a small game studio circa 1987-1995 (think Sierra, LucasArts, Infocom, early id): tight team, hard constraints, ' +
+      'strong authorship, ship on a floppy. Work as five agents with clear ownership. If you can spawn subagents, give each role its own; ' +
+      'if not, work through the roles in order and label each hand-off.',
+      '',
+      '1. CREATIVE DIRECTOR — owns the vision. Writes a one-page design doc first: premise, tone, the core loop, a win and a lose state. ' +
+      'Every blank above must be load-bearing in the design, not set dressing. Makes the final call on every dispute. Protects the weird.',
+      '2. DESIGNER / WRITER — owns rooms, puzzles and words. 5-8 locations, at least one puzzle that uses the ARTIFACT, the COMPANION ' +
+      'with a voice and opinions, the THREAT with escalating pressure, and the TWIST changing how the player reads everything before it. ' +
+      'Parser verbs or point-and-click, whichever serves the idea. Every line of text earns its space.',
+      '3. PIXEL / ASCII ARTIST — owns every visual. Period-true: EGA or VGA palette, or pure ASCII/ANSI art in a 16-colour terminal. ' +
+      'A title screen, a drawing for every location, and a portrait for the COMPANION and the THREAT. Readable from the back of a room.',
+      '4. PROGRAMMER — owns the build. One self-contained index.html: vanilla JS, no frameworks, no build step, no network requests, ' +
+      'runs by double-clicking. Keyboard-first, works on a phone too. Save/restore to localStorage. Chiptune-style sound via Web Audio, ' +
+      'muted until the player turns it on.',
+      '5. QA / PLAYTESTER — owns nothing and checks everything. Plays start to finish, tries to break the parser, softlock the puzzles ' +
+      'and skip the TWIST. Files bugs back to the owning role. Nothing ships until QA can finish the game and lose it.',
+      '',
+      '## PROCESS',
+      '- Director\'s design doc before any code. Then build a vertical slice (title, one room, one interaction) and playtest it before the rest.',
+      '- Keep a short studio log: each hand-off, each QA bug, each call the Director made.',
+      '',
+      '## DELIVER',
+      '- index.html (the whole game), the one-page design doc, the studio log.',
+      '- A 3-line "how to play" and the credits screen naming the audience as co-writers.',
+    );
+    return { text: lines.join('\n'), filled: filled.length };
+  }
+
+  async function copyGamePrompt(btn) {
+    const { text, filled } = buildGamePrompt();
+    fire(btn);
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = 'COPIED';
+      btn.classList.add('is-active');
+      status(`GAME PROMPT COPIED · ${filled}/${PROMPT_SLOTS.length} BLANKS FROM THE ROOM`);
+      setTimeout(() => { btn.textContent = 'COPY GAME PROMPT'; btn.classList.remove('is-active'); }, 2500);
+    } catch {
+      window.prompt('Copy this game prompt:', text);
+    }
   }
 
   function renderPinPanel() {

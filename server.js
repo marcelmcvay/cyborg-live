@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { URL } = require('url');
+const asciiArt = require('./ascii-art');
 
 const PORT = Number(process.env.PORT) || 8787;
 const ADMIN_KEY = process.env.ADMIN_KEY || 'cyborg';
@@ -78,6 +79,24 @@ function findPromptPieceById(id) {
   return null;
 }
 
+// Current game winner per slot, same order rpg.js resolves: PINNED > most
+// VOTED (ties -> newest) > LATEST. null = no audience phrase yet.
+function slotWinnerText(slot) {
+  const arr = state.promptPieces.get(slot) || [];
+  if (!arr.length) return null;
+  const pin = state.promptPins[slot] && arr.find((p) => p.id === state.promptPins[slot]);
+  if (pin) return pin.text;
+  let best = null, bestVotes = 0;
+  for (const p of arr) {
+    const v = (state.promptVotesById.get(p.id) || new Set()).size;
+    if (v > 0 && (v > bestVotes || (v === bestVotes && p.ts >= best.ts))) { best = p; bestVotes = v; }
+  }
+  return (best || arr[arr.length - 1]).text;
+}
+function refreshArt(slot) {
+  asciiArt.schedule(slot, slotWinnerText, (a) => broadcast('asciiart', a));
+}
+
 function applySubmissionLine(obj) {
   if (obj.moderate) {
     const s = state.submissions.find((x) => x.id === obj.moderate);
@@ -131,6 +150,9 @@ function boot() {
   const c = replayLog(ROOM_LOG, applyRoomLine);
   const d = replayLog(PROMPT_LOG, applyPromptLine);
   const e = replayLog(STYLE_LOG, applyStyleLine);
+  const f = asciiArt.init(DATA_DIR);
+  const st = asciiArt.status();
+  console.log(`[ascii-art] ${st.enabled ? `ON (${st.model})` : 'OFF (no ANTHROPIC_API_KEY) — rpg uses built-in art'} · ${f} cached drawings`);
   console.log(`[boot] replayed ${a} submission lines, ${b} assemblage lines, ${c} room lines, ${d} prompt-piece lines, ${e} style-idea lines -> ` +
     `${state.submissions.length} submissions, ${state.assemblages.size} assemblages, ` +
     `${state.session.label} @ cue ${state.cue.beatId}`);
@@ -243,6 +265,7 @@ function buildState() {
     styleIdeaCount: state.styleIdeas.length,
     promptVotes,
     promptPins: { ...state.promptPins },
+    asciiArt: asciiArt.forWinners(slotWinnerText, SLOT_IDS),
   };
 }
 
@@ -421,6 +444,7 @@ async function handlePromptPiece(req, res) {
   state.promptPieces.set(slot, arr);
   appendLog(PROMPT_LOG, piece);
   broadcast('promptpiece', piece);
+  refreshArt(slot);
   sendJson(res, 201, { id: piece.id, ts: piece.ts });
 }
 
@@ -465,6 +489,7 @@ async function handlePromptVote(req, res) {
   // Votes are in-memory only — NOT appended to any log (see CONTRACT.md
   // Persistence note). They reset on server restart by design for v1.
   broadcast('promptvote', { id, votes });
+  refreshArt(piece.slot);
   sendJson(res, 201, { id, votes });
 }
 
@@ -477,6 +502,7 @@ async function handlePromptPin(req, res) {
   if (body.id === null) {
     state.promptPins[slot] = null;
     broadcast('promptpin', { slot, pinnedId: null });
+    refreshArt(slot);
     return sendJson(res, 200, { ok: true, slot, pinnedId: null });
   }
   if (typeof body.id !== 'string' || !body.id) return sendError(res, 400, 'id required (or null to clear)');
@@ -485,6 +511,7 @@ async function handlePromptPin(req, res) {
   if (!piece) return sendError(res, 404, 'prompt piece not found in that slot');
   state.promptPins[slot] = piece.id;
   broadcast('promptpin', { slot, pinnedId: piece.id });
+  refreshArt(slot);
   sendJson(res, 200, { ok: true, slot, pinnedId: piece.id });
 }
 
@@ -605,7 +632,7 @@ const server = http.createServer(async (req, res) => {
       if (p === '/api/state' && req.method === 'GET') return sendJson(res, 200, buildState());
       if (p === '/api/feed' && req.method === 'GET') return handleFeed(req, res);
       if (p === '/api/health' && req.method === 'GET') {
-        return sendJson(res, 200, { ok: true, uptime: process.uptime(), sse: sseClients.size });
+        return sendJson(res, 200, { ok: true, uptime: process.uptime(), sse: sseClients.size, asciiArt: asciiArt.status() });
       }
       return sendError(res, 404, 'unknown API route');
     }
