@@ -405,6 +405,34 @@
               </div>`;
     },
 
+    // Closing "stay in touch": ONE primary CTA with a big QR, plus a row of
+    // smaller secondary links. primary = {src, label, url, pitch}; links = [{src, label, url}]
+    thanks(s) {
+      const p = s.primary || {};
+      const links = Array.isArray(s.links) ? s.links : [];
+      return `<div class="thanks">
+                <div class="thanks__lead">
+                  <h2 class="thanks__title">${esc(s.title || 'Thank you.')}</h2>
+                  ${s.sub ? `<p class="thanks__sub">${esc(s.sub)}</p>` : ''}
+                  <div class="thanks__primary">
+                    <img class="thanks__qr thanks__qr--primary" src="images/${esc(p.src || '')}" alt="QR code: ${esc(p.label || '')}">
+                    <div class="thanks__cta">
+                      <span class="micro-label thanks__eyebrow">${esc(p.label || '')}</span>
+                      <span class="thanks__pitch">${esc(p.pitch || '')}</span>
+                      <span class="thanks__url">${esc(p.url || '')}</span>
+                    </div>
+                  </div>
+                </div>
+                <ul class="thanks__links">
+                  ${links.map((l) => `<li class="thanks__link">
+                      <img class="thanks__qr" src="images/${esc(l.src || '')}" alt="QR code: ${esc(l.label || '')}">
+                      <span class="micro-label thanks__label">${esc(l.label || '')}</span>
+                      <span class="thanks__small-url">${esc(l.url || '')}</span>
+                    </li>`).join('')}
+                </ul>
+              </div>`;
+    },
+
     staged() {
       return `<div class="staged" data-live="staged">
                 <div class="js-staged-body">

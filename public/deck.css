@@ -325,6 +325,35 @@
 .game-slide { position: absolute; inset: 0; }
 .game-slide__frame { width: 100%; height: 100%; border: 0; background: #000; display: block; }
 
+/* ── thank-you / stay in touch ───────────────────────────────────
+   One primary CTA (subscribe) dominates; secondary links are a quiet
+   row. QRs sit on a white tile: a black-on-white code with its own quiet
+   zone scans off a projector far more reliably than one inverted on black. */
+.slide--thanks { justify-content: center; }
+.thanks { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 5vw; width: 100%; }
+.thanks__lead { display: flex; flex-direction: column; gap: 2.4vh; min-width: 0; }
+.thanks__title {
+  font-family: var(--font-display); font-weight: 500;
+  font-size: clamp(3.4rem, 6.4vw, 9rem); line-height: 0.98; letter-spacing: -0.03em;
+}
+.thanks__sub { font-size: clamp(1.3rem, 1.8vw, 2.4rem); line-height: 1.3; color: var(--fg); opacity: 0.75; max-width: 34ch; }
+.thanks__primary {
+  display: flex; align-items: center; gap: 2.4vw;
+  padding: 2vh 2vw 2vh 2vh; margin-top: 1vh;
+  border: 1px solid var(--accent); background: rgba(0, 229, 204, 0.05);
+}
+.thanks__qr { display: block; background: #fff; image-rendering: pixelated; }
+.thanks__qr--primary { width: min(30vh, 18vw); height: min(30vh, 18vw); }
+.thanks__cta { display: flex; flex-direction: column; gap: 1vh; min-width: 0; }
+.thanks__eyebrow { color: var(--accent); font-size: clamp(1.1rem, 1.5vw, 2rem); letter-spacing: 0.14em; }
+.thanks__pitch { font-family: var(--font-display); font-size: clamp(2rem, 3.1vw, 4.2rem); line-height: 1.08; color: var(--fg); }
+.thanks__url { font-family: var(--font-mono); font-size: clamp(1.2rem, 1.7vw, 2.3rem); color: var(--accent); }
+.thanks__links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3vh; }
+.thanks__link { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 1.2vw; align-items: center; }
+.thanks__link .thanks__qr { grid-row: 1 / 3; width: min(14vh, 8.5vw); height: min(14vh, 8.5vw); }
+.thanks__label { color: var(--fg); font-size: clamp(1rem, 1.3vw, 1.7rem); letter-spacing: 0.12em; align-self: end; }
+.thanks__small-url { font-family: var(--font-mono); color: var(--fg); opacity: 0.65; font-size: clamp(0.9rem, 1.1vw, 1.45rem); align-self: start; }
+
 /* ── qr slide ────────────────────────────────────────────────────── */
 .qr-slide {
   display: flex;

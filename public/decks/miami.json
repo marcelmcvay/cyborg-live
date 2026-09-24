@@ -24,10 +24,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Build your cyborg assemblage",
-          "note": "QR code - build your cyborg assemblage"
+          "note": "QR code - build your cyborg assemblage",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "statement",
@@ -36,10 +37,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Submit questions or discussion points",
-          "note": "QR code - submit questions or discussion points"
+          "note": "QR code - submit questions or discussion points",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "prompt",
@@ -48,10 +50,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Build your cyborg assemblage",
-          "note": "QR code - build your cyborg assemblage"
+          "note": "QR code - build your cyborg assemblage",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "image",
@@ -61,10 +64,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Submit questions or discussion points",
-          "note": "QR code - submit questions or discussion points"
+          "note": "QR code - submit questions or discussion points",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "image",
@@ -74,10 +78,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Build your cyborg assemblage",
-          "note": "QR code - build your cyborg assemblage"
+          "note": "QR code - build your cyborg assemblage",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "image",
@@ -87,10 +92,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Submit questions or discussion points",
-          "note": "QR code - submit questions or discussion points"
+          "note": "QR code - submit questions or discussion points",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "statement",
@@ -99,10 +105,11 @@
         },
         {
           "kind": "qr",
-          "src": "qr-code.png",
+          "src": "qr-join.png",
           "alt": "QR code to join live.marcelmcvay.com",
           "title": "Build your cyborg assemblage",
-          "note": "QR code - build your cyborg assemblage"
+          "note": "QR code - build your cyborg assemblage",
+          "sub": "live.marcelmcvay.com"
         },
         {
           "kind": "radar",
@@ -132,6 +139,14 @@
           "kind": "prompt",
           "text": "Phones out. This lecture runs on you.",
           "note": "\u2192 \"Phones out. This lecture runs on you.\"\n\n\u23f1 Join URL up before anything else."
+        },
+        {
+          "kind": "qr",
+          "src": "qr-join.png",
+          "alt": "QR code to join live.marcelmcvay.com",
+          "title": "Scan to join the room",
+          "sub": "live.marcelmcvay.com",
+          "note": "\u23f1 Hold here until most phones are up. Leave it on screen ~20 sec.\n\n\u2192 \"Camera app, point, tap. If you joined during the lobby, you're already in.\""
         }
       ],
       "presenterNotes": "\u23f1 2 min \u00b7 practitioner, not academic \u2014 that's the value here"
@@ -618,9 +633,38 @@
         {
           "kind": "staged",
           "note": "\u00b7 Stage the sharpest, then Q&A."
+        },
+        {
+          "kind": "thanks",
+          "title": "Thank you.",
+          "sub": "How to find me and stay engaged.",
+          "primary": {
+            "src": "qr-subscribe.png",
+            "label": "SUBSCRIBE \u00b7 SIGNAL+STATIC",
+            "pitch": "Cyborg theory, speculative design, and the people building with intelligent machines.",
+            "url": "signalstatic.net"
+          },
+          "links": [
+            {
+              "src": "qr-site.png",
+              "label": "WEBSITE",
+              "url": "marcelmcvay.com"
+            },
+            {
+              "src": "qr-linkedin.png",
+              "label": "LINKEDIN",
+              "url": "in/marcelmcvay"
+            },
+            {
+              "src": "qr-octo.png",
+              "label": "OCTO PD",
+              "url": "octopd.com"
+            }
+          ],
+          "note": "\u23f1 Put this up for Q&A and leave it up until the room empties.\n\n\u2192 \"If any of this stuck, I write about it at Signal+Static \u2014 the big code. That's the one I'd ask you to scan.\"\n\n\u2192 \"Website, LinkedIn, and OCTO are on the right if you want to find me any other way.\"\n\n\u00b7 Every QR is verified to decode to its URL. Subscribe code lands directly on signalstatic.net/subscribe."
         }
       ],
-      "presenterNotes": "\u23f1 4 min \u00b7 close with an invitation, not a prescription\n\n\u00b7 The cyborg frame is generative, not directive. Using the word is the intervention \u2014 a linguistic hack."
+      "presenterNotes": "\u23f1 4 min \u00b7 close with an invitation, not a prescription\n\n\u00b7 The cyborg frame is generative, not directive. Using the word is the intervention \u2014 a linguistic hack.\n\n\u23f1 Last slide is the thank-you / subscribe card. Take Q&A over it."
     }
   ]
 }

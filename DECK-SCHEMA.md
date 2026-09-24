@@ -79,6 +79,11 @@ Ordered within the beat. `kind` is one of:
 | `prompt` | `text` | big question + the join URL, for discussion blocks |
 | `slots` | `title` | LIVE the five COLLECTIVE game blanks, current winner per slot |
 | `game` | `src` (default `rpg`), `title` | full-bleed iframe of the terminal RPG |
+| `thanks` | `title`, `sub`, `primary {src,label,pitch,url}`, `links [{src,label,url}]` | closing card: one big primary QR CTA + small secondary QRs |
+
+QR images live in `public/images/qr-*.png`. Regenerate + verify them with a
+decoder (they must round-trip to the exact URL). Never trust a vision model's
+read of a QR: one confidently misreported the join code as a Rickroll.
 
 Any slide may also carry `cue: { prompt?, collectiveOpen?, collectiveFocus? }`.
 When the presenter steps to that slide it changes what the room's phones
