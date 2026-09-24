@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CYBORG // LIVE — TERMINAL</title>
+<meta name="description" content="A live-reskinning ASCII text adventure fed by the lecture hall's own words.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<link rel="stylesheet" href="rpg.css">
+</head>
+<body class="rpg-body">
+
+<div id="app" class="rpg-shell">
+
+  <header class="rpg-topbar">
+    <div class="rpg-topbar-left">
+      <span class="micro-label is-fg">CYBORG // LIVE</span>
+      <span class="micro-label">TERMINAL RPG</span>
+    </div>
+    <div class="rpg-topbar-right">
+      <span id="linkPill" class="pill" role="status" aria-live="polite">
+        <span class="dot"></span><span id="linkPillLabel">CONNECTING</span>
+      </span>
+      <span id="feedCounter" class="micro-label readout">PHRASES 000</span>
+    </div>
+  </header>
+
+  <main class="rpg-main">
+    <section id="screen" class="rpg-screen fui-panel" aria-live="polite" aria-label="Game output">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <pre id="screenLog" class="rpg-log"></pre>
+    </section>
+
+    <aside class="rpg-side">
+      <div class="fui-panel rpg-panel">
+        <span class="fui-corners" aria-hidden="true"></span>
+        <h2 class="micro-label is-fg">PARTY</h2>
+        <div id="sideCompanion" class="rpg-side-block">— loading —</div>
+      </div>
+      <div class="fui-panel rpg-panel">
+        <span class="fui-corners" aria-hidden="true"></span>
+        <h2 class="micro-label is-fg">THREAT LEVEL</h2>
+        <div id="sideThreat" class="rpg-side-block">— loading —</div>
+      </div>
+      <div class="fui-panel rpg-panel">
+        <span class="fui-corners" aria-hidden="true"></span>
+        <h2 class="micro-label is-fg">INVENTORY</h2>
+        <ul id="sideInventory" class="rpg-inv-list"><li class="micro-label">(empty)</li></ul>
+      </div>
+      <div class="fui-panel rpg-panel">
+        <span class="fui-corners" aria-hidden="true"></span>
+        <h2 class="micro-label is-fg">LATEST TRANSMISSIONS</h2>
+        <ul id="sideFeed" class="rpg-feed-list"></ul>
+      </div>
+    </aside>
+  </main>
+
+  <div class="rpg-verbs" role="toolbar" aria-label="Quick commands">
+    <button class="btn rpg-verb-btn" data-cmd="look">LOOK</button>
+    <button class="btn rpg-verb-btn" data-cmd="north">NORTH</button>
+    <button class="btn rpg-verb-btn" data-cmd="south">SOUTH</button>
+    <button class="btn rpg-verb-btn" data-cmd="east">EAST</button>
+    <button class="btn rpg-verb-btn" data-cmd="west">WEST</button>
+    <button class="btn rpg-verb-btn" data-cmd="inventory">INV</button>
+    <button class="btn rpg-verb-btn" data-cmd="take">TAKE</button>
+    <button class="btn rpg-verb-btn" data-cmd="talk">TALK</button>
+    <button class="btn rpg-verb-btn" data-cmd="help">HELP</button>
+  </div>
+
+  <form id="cmdForm" class="rpg-cmdline" autocomplete="off">
+    <label for="cmdInput" class="visually-hidden">Command input</label>
+    <span class="rpg-prompt" aria-hidden="true">&gt;</span>
+    <input id="cmdInput" name="cmd" type="text" inputmode="text" spellcheck="false"
+           placeholder="type a command… (try: look, help)" autocomplete="off" autocapitalize="off">
+    <button type="submit" class="btn is-primary rpg-cmd-submit">ENTER</button>
+  </form>
+
+</div>
+
+<script src="rpg.js"></script>
+</body>
+</html>

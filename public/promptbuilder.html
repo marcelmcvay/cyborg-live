@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0F0F0D">
+  <meta name="color-scheme" content="dark">
+  <title>CYBORG // LIVE — Prompt Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="shared.css?v=20260923a">
+  <link rel="stylesheet" href="promptbuilder.css?v=20260923a">
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-title">
+    <span class="reticle is-accent" aria-hidden="true"></span>
+    <h1>CYBORG <span class="hdr-sep">//</span> BUILD</h1>
+  </div>
+  <div class="hdr-right">
+    <span class="readout micro-label hdr-sid" id="sid-readout" title="session">SID ····</span>
+    <span class="pill is-pulsing" id="link-pill" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <span>LINK</span><span class="pill-state" id="link-state">CONNECTING</span>
+    </span>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- ================= LANDING VIEW: slot grid ================= -->
+  <section class="pb-view" id="view-grid" data-view="grid">
+
+    <div class="mode-head">
+      <h2 class="display" id="pb-title">Build the world together</h2>
+      <p class="mode-sub">Tap a slot, add a phrase. Everyone's answers stack into one shared story.</p>
+    </div>
+
+    <div class="fui-panel identity-panel">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="field is-bare">
+        <label class="micro-label" for="handle-input">HANDLE <span class="is-dim">(optional, shown on your chips)</span></label>
+        <input id="handle-input" class="input" type="text" maxlength="24"
+          placeholder="name or initials (optional)" autocomplete="nickname" autocapitalize="off">
+      </div>
+    </div>
+
+    <p class="inline-error" id="grid-error" role="alert" hidden></p>
+
+    <div class="slot-grid" id="slot-grid" aria-live="polite">
+      <p class="micro-label slots-loading" id="slots-loading">LOADING SLOTS…</p>
+    </div>
+  </section>
+
+  <!-- ================= COMPOSE VIEW: one slot ================= -->
+  <section class="pb-view" id="view-compose" data-view="compose" hidden>
+    <button class="btn back-btn" id="back-btn" type="button">
+      <span aria-hidden="true">←</span> BACK TO SLOTS
+    </button>
+
+    <div class="fui-panel compose-panel" id="compose-panel">
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="compose-head">
+        <span class="micro-label" id="compose-slot-id">SLOT</span>
+        <span class="readout micro-label" id="compose-count">000 SUBMITTED</span>
+      </div>
+      <h3 class="display compose-label" id="compose-label">Label</h3>
+      <p class="mode-sub compose-hint" id="compose-hint">Hint question</p>
+
+      <form id="compose-form" novalidate>
+        <div class="field">
+          <div class="field-row">
+            <label class="micro-label" for="compose-text">YOUR PHRASE</label>
+            <span class="readout counter" id="compose-counter" aria-live="polite">00<span class="counter-sep">/</span>60</span>
+          </div>
+          <textarea id="compose-text" name="text" class="textarea" rows="3" maxlength="60"
+            placeholder="type here" autocomplete="off" spellcheck="true"></textarea>
+        </div>
+
+        <div class="form-foot">
+          <p class="inline-error" id="compose-error" role="alert" hidden></p>
+          <p class="compose-status micro-label" id="compose-status" aria-live="polite" hidden></p>
+          <button class="btn is-primary send-btn" id="compose-submit" type="submit" disabled>
+            <span class="send-label" id="compose-submit-label">ADD TO POOL</span>
+            <span class="send-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="recent-block">
+      <div class="log-head">
+        <span class="micro-label">RECENT IN THIS SLOT</span>
+      </div>
+      <ul class="chip-list" id="compose-recent" aria-live="polite"></ul>
+    </div>
+  </section>
+
+</main>
+
+<script src="promptbuilder.js?v=20260923a" defer></script>
+</body>
+</html>
