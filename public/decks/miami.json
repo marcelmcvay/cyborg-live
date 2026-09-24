@@ -198,8 +198,8 @@
         },
         {
           "kind": "statement",
-          "text": "This room is already a cyborg.",
-          "note": "\u2192 \"This room is already a cyborg.\"\n\n\u2192 \"Questions, objections, challenges \u2014 SIGNAL is open and stays open. I'd rather have a challenge than a clarification, because a challenge means you're building with it.\""
+          "text": "This room is full of cyborgs.",
+          "note": "\u2192 \"This room is full of cyborgs.\"\n\n\u2192 \"Questions, objections, challenges \u2014 SIGNAL is open and stays open. I'd rather have a challenge than a clarification, because a challenge means you're building with it.\""
         }
       ],
       "presenterNotes": "\u23f1 2 min \u00b7 SIGNAL opens here and never closes\n\n\u2691 Do NOT rank students. Do NOT compare enclosed areas \u2014 area is an artifact of the rendering, not something anyone authored."
@@ -222,15 +222,15 @@
         },
         {
           "kind": "image",
-          "src": "_research_miami/wwii-mk37-aa-fire-control-director-1944.jpg",
-          "alt": "WWII Mark 37 anti-aircraft fire-control director, 1944",
-          "note": "\u00b7 The actual predictor/feedback-loop hardware Wiener worked from \u2014 sensor and gun closed into one loop."
-        },
-        {
-          "kind": "image",
           "src": "_research_miami/wiener-cybernetics-1948-book-cover.jpg",
           "alt": "Cover of Norbert Wiener's Cybernetics, 1948",
           "note": "\u00b7 The book itself: control and communication in the animal and the machine."
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/wwii-mk37-aa-fire-control-director-1944.jpg",
+          "alt": "WWII Mark 37 anti-aircraft fire-control director, 1944",
+          "note": "\u00b7 The actual predictor/feedback-loop hardware Wiener worked from \u2014 sensor and gun closed into one loop."
         },
         {
           "kind": "statement",
