@@ -54,3 +54,7 @@ Rebuild (Sep 2026).md` in the vault for beat assignments). Format:
 ## Totals
 
 15 images downloaded and verified · 3 gaps flagged above (cyborg-live screenshot, Wiener portrait, timeline infographic) · 1 licensing flag (Vader) · 1 sub-800px flag (McLuhan book cover, small Vader backup).
+
+## AUTHENTICATION — Ghost in the Shell
+
+- gits-1995-kusanagi-rooftop.jpg | FUI Archive capture (fui-archive entries/ghost-in-the-shell-1995/net-diving/images/net-diving-rooftop-perch-01.jpg) | 1600×863 | Major Motoko Kusanagi, rooftop perch, neck cable visible, Ghost in the Shell (1995) — film still, copyrighted, used as lecture illustration | AUTHENTICATION, after "The veil between I, we and technology…"
