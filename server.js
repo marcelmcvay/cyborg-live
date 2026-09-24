@@ -50,8 +50,11 @@ const MIME = {
 // ---------------------------------------------------------------- state
 const DEFAULT_CUE = Object.freeze({
   beatId: 'intro', label: 'INTRO', mode: 'intro',
-  prompt: '', signalOpen: false, assembleOpen: false, slide: 0, ts: 0,
+  prompt: '', signalOpen: false, assembleOpen: false,
+  collectiveOpen: false, collectiveFocus: null, slide: 0, ts: 0,
 });
+// Which COLLECTIVE sub-section a cue points phones at. null = no preference.
+const COLLECTIVE_FOCUS = new Set(['style', 'story']);
 
 const state = {
   submissions: [],            // all submissions in order (incl. hidden)
@@ -269,6 +272,10 @@ async function handleCue(req, res) {
     // Explicit booleans: the deck decides what the room can do, not the mode name.
     signalOpen: !!body.signalOpen,
     assembleOpen: !!body.assembleOpen,
+    // COLLECTIVE (restyle + build-the-game) follows the same explicit-boolean
+    // rule. collectiveFocus optionally lands phones on one sub-section.
+    collectiveOpen: !!body.collectiveOpen,
+    collectiveFocus: COLLECTIVE_FOCUS.has(body.collectiveFocus) ? body.collectiveFocus : null,
     // Slide position within the beat. A beat cue ALWAYS lands on slide 0 —
     // the presenter drives individual slides via POST /api/slide so that
     // stepping a slide never re-fires the beat (which would reset the clocks).
@@ -298,9 +305,23 @@ async function handleSlide(req, res) {
     return sendError(res, 409, `beat mismatch: room is on ${state.cue.beatId}`);
   }
   state.cue = { ...state.cue, slide: n };
+  // Optional per-slide room change, authored on the slide in the deck JSON
+  // (slide.cue). Lets one slide mid-beat open COLLECTIVE / swap the phone
+  // prompt without re-cueing the beat (which would reset the clocks).
+  // Only these fields may change here; mode/beat identity never does.
+  const sc = body.slideCue && typeof body.slideCue === 'object' ? body.slideCue : null;
+  let cueChanged = false;
+  if (sc) {
+    if (typeof sc.prompt === 'string') { state.cue.prompt = cleanText(sc.prompt, 280); cueChanged = true; }
+    // ratchet like every other gate: a slide can open, never close
+    if (sc.collectiveOpen === true) { state.cue.collectiveOpen = true; cueChanged = true; }
+    if (COLLECTIVE_FOCUS.has(sc.collectiveFocus)) { state.cue.collectiveFocus = sc.collectiveFocus; cueChanged = true; }
+    if (cueChanged) state.cue.ts = Date.now();
+  }
   appendLog(ROOM_LOG, { slide: { beatId: state.cue.beatId, slide: n, ts: Date.now() } });
+  if (cueChanged) { appendLog(ROOM_LOG, { cue: state.cue }); broadcast('cue', state.cue); }
   broadcast('slide', { beatId: state.cue.beatId, slide: n });
-  sendJson(res, 200, { ok: true, beatId: state.cue.beatId, slide: n });
+  sendJson(res, 200, { ok: true, beatId: state.cue.beatId, slide: n, cue: state.cue });
 }
 
 async function handleStage(req, res) {

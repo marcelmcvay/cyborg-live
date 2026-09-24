@@ -599,6 +599,8 @@
       prompt: c.prompt || '',
       signalOpen: !!c.signalOpen,
       assembleOpen: !!c.assembleOpen,
+      collectiveOpen: !!c.collectiveOpen,
+      ...(c.collectiveFocus ? { collectiveFocus: c.collectiveFocus } : {}),
       key,
     };
 
@@ -626,6 +628,17 @@
       // loop even if this presenter's own stream is momentarily down.
       if (json && json.cue) applyCue(json.cue);
       status(`CUE OK · ${beat.id.toUpperCase()}`);
+      // A beat cue always lands on slide 0 without a slide POST, so a room
+      // change authored on slide 0 (slide.cue) would never fire. Send it now.
+      const s0 = Array.isArray(beat.slides) && beat.slides[0];
+      if (s0 && s0.cue) {
+        const r2 = await fetch(API.slide, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ beatId: beat.id, slide: 0, key, slideCue: s0.cue }),
+        });
+        if (!r2.ok) ctrlError(`SLIDE-1 ROOM CHANGE FAILED · HTTP ${r2.status}`);
+      }
     } catch (err) {
       // WORST CASE: a silent failed cue mid-talk. Never silent.
       S.pendingBeatId = null;
@@ -1153,6 +1166,103 @@
       });
     }
     renderPinPanel();
+    // style ideas ride the same /api/state payload
+    if (st && Array.isArray(st.styleIdeas)) {
+      S.styleIdeas = st.styleIdeas.slice(-40);
+      renderStylePanel();
+    }
+  }
+
+  /* ═════════════════════════════════════════════════════════════════
+     STYLE IDEAS PANEL — the room's restyle pitches for the Space Sandbox
+     apps. Marcel reads, picks one, COPY puts it on the clipboard as a
+     ready-to-paste prompt for Claude Code on the laptop. No server write:
+     picking is a stage act, the room sees the result on the projector.
+     ═════════════════════════════════════════════════════════════════ */
+  S.styleIdeas = [];
+  S.stylePicked = null;
+
+  function injectStylePanel() {
+    const tele = $('.tele');
+    if (!tele) return;
+    const section = document.createElement('section');
+    section.className = 'fui-panel stylepanel';
+    section.id = 'stylePanel';
+    section.dataset.module = 'style';
+    section.setAttribute('aria-label', 'Room restyle ideas');
+    section.innerHTML = `
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="panel__head panel__head--tight">
+        <button class="panel__toggle" type="button" data-collapse="style" aria-expanded="true" aria-controls="styleBody">
+          <span class="panel__caret" aria-hidden="true"></span>
+          <span class="panel__title">
+            <span class="micro-label">SPACE SANDBOX</span>
+            <span class="panel__h" role="heading" aria-level="2">RESTYLE IDEAS</span>
+          </span>
+          <span class="panel__proxy readout" id="styleProxy">000</span>
+        </button>
+      </div>
+      <div class="panel__collapse" id="styleBody">
+        <ol class="stylerows" id="styleRows"></ol>
+      </div>`;
+    // sit above the pin panel: restyle happens first in the running order
+    const pin = $('#pinPanel', tele);
+    tele.insertBefore(section, pin || null);
+    el.styleRows = $('#styleRows', section);
+    el.styleProxy = $('#styleProxy', section);
+    el.styleRows.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-copy]');
+      if (!btn) return;
+      copyStyleIdea(btn.dataset.copy, btn);
+    });
+  }
+
+  function renderStylePanel() {
+    if (!el.styleRows) return;
+    if (el.styleProxy) el.styleProxy.textContent = pad(S.styleIdeas.length, 3);
+    if (!S.styleIdeas.length) {
+      el.styleRows.innerHTML = '<li class="stylerow__empty micro-label">NOTHING YET · CUE THE RESTYLE SLIDE TO OPEN IT ON PHONES</li>';
+      return;
+    }
+    el.styleRows.innerHTML = S.styleIdeas.slice().reverse().map((s) => `
+      <li class="stylerow${S.stylePicked === s.id ? ' is-picked' : ''}">
+        <span class="stylerow__txt">${esc(s.text)}</span>
+        <span class="stylerow__who micro-label">${esc(s.handle || 'ANON')}</span>
+        <button type="button" class="pinbtn${S.stylePicked === s.id ? ' is-active' : ''}" data-copy="${esc(s.id)}"
+                title="Copy as a restyle prompt for Claude Code">${S.stylePicked === s.id ? 'COPIED' : 'COPY'}</button>
+      </li>`).join('');
+  }
+
+  async function copyStyleIdea(id, btn) {
+    const idea = S.styleIdeas.find((s) => s.id === id);
+    if (!idea) return;
+    fire(btn);
+    const prompt = `Restyle this app's visual design based on this idea from the audience: "${idea.text}". ` +
+      'Only change the CSS custom properties in the :root block (colors, fonts, radii). Keep the layout, content, and behavior exactly as they are. Show me the diff.';
+    try {
+      await navigator.clipboard.writeText(prompt);
+      S.stylePicked = id;
+      renderStylePanel();
+      status('RESTYLE PROMPT COPIED · PASTE INTO CLAUDE CODE');
+    } catch {
+      // clipboard needs a secure, focused page; fall back to a selectable prompt
+      window.prompt('Copy this restyle prompt:', prompt);
+    }
+  }
+
+  function onStyleIdea(idea) {
+    if (!idea || !idea.id || S.styleIdeas.some((s) => s.id === idea.id)) return;
+    S.styleIdeas.push(idea);
+    S.styleIdeas = S.styleIdeas.slice(-40);
+    renderStylePanel();
+  }
+
+  function onPromptPieceFrame(piece) {
+    if (!piece || !piece.id || !PROMPT_SLOTS.includes(piece.slot)) return;
+    const arr = S.promptPieces[piece.slot] || (S.promptPieces[piece.slot] = []);
+    if (arr.some((p) => p.id === piece.id)) return;
+    arr.push({ votes: 0, ...piece });
+    renderPinPanel();
   }
 
   function pinnedIdFor(slot) {
@@ -1423,6 +1533,14 @@
       } catch { /* ignore malformed frame */ }
     });
 
+    es.addEventListener('styleidea', (e) => {
+      try { onStyleIdea(JSON.parse(e.data)); } catch { /* ignore malformed frame */ }
+    });
+
+    es.addEventListener('promptpiece', (e) => {
+      try { onPromptPieceFrame(JSON.parse(e.data)); } catch { /* ignore malformed frame */ }
+    });
+
     // Slide moved — by this presenter, another presenter, or a clicker on the
     // deck machine. Ignore frames for a beat we are not on.
     es.addEventListener('slide', (e) => {
@@ -1521,7 +1639,12 @@
       const res = await fetch(API.slide, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ beatId: beat.id, slide: next, key }),
+        body: JSON.stringify({
+          beatId: beat.id, slide: next, key,
+          // a slide may carry its own room change (e.g. open COLLECTIVE mid-beat);
+          // sent verbatim from the deck JSON, never synthesised here
+          ...(beat.slides[next] && beat.slides[next].cue ? { slideCue: beat.slides[next].cue } : {}),
+        }),
       });
       if (res.status === 403) {
         localStorage.removeItem(ADMIN_KEY_LS);
@@ -1659,6 +1782,8 @@
     initTabs();
     initCollapse();
     injectPinPanel();
+    injectStylePanel();
+    renderStylePanel();
     setLink('offline');
     renderCounts();
     renderSpectrum();

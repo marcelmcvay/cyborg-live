@@ -379,6 +379,23 @@
               </div>`;
     },
 
+    // LIVE: the five game blanks with whichever phrase currently wins each
+    // (pinned > top-voted > latest). Painted by paintSlots() from /api/state.
+    slots(s) {
+      return `<div class="slots-live">
+                <h2 class="slots-live__title">${esc(s.title || 'The room is writing the game')}</h2>
+                <ol class="slots-live__list" id="slotsLive"></ol>
+                <p class="micro-label slots-live__foot">COLLECTIVE → BUILD THE GAME · ${esc(joinUrl())}</p>
+              </div>`;
+    },
+
+    // The terminal RPG, full-bleed. Same origin, so it shares the live room.
+    game(s) {
+      return `<div class="game-slide">
+                <iframe class="game-slide__frame" src="${esc(s.src || 'rpg')}" title="${esc(s.title || 'The room\u2019s game')}"></iframe>
+              </div>`;
+    },
+
     qr(s) {
       // eager, not lazy: the lobby loop auto-advances and a lazy QR can paint blank
       return `<div class="qr-slide">
@@ -432,7 +449,7 @@
     S.slideIdx = Math.min(S.slideIdx, slides.length - 1);
     const slide = slides[S.slideIdx];
     const kind = RENDER[slide.kind] ? slide.kind : 'statement';
-    const live = kind === 'histogram' || kind === 'staged' || kind === 'radar' || kind === 'assemblages';
+    const live = kind === 'histogram' || kind === 'staged' || kind === 'radar' || kind === 'assemblages' || kind === 'slots';
 
     const sec = document.createElement('section');
     sec.className = `slide slide--${kind} is-current`;
@@ -451,6 +468,7 @@
     if (kind === 'axes') paintAxes();
     if (kind === 'staged') paintStaged();
     if (kind === 'assemblages') paintAssemblages();
+    if (kind === 'slots') paintSlots();
     renderStrip();
   }
 
@@ -608,6 +626,37 @@
     if (kind === 'axes') paintAxes();
     if (kind === 'staged') paintStaged();
     if (kind === 'assemblages') paintAssemblages();
+    if (kind === 'slots') paintSlots();
+  }
+
+  // ── LIVE game blanks ─────────────────────────────────────────────
+  // Same resolution order rpg.js uses: pinned > highest-voted > latest.
+  const SLOT_ORDER = [
+    ['SETTING', 'Setting'], ['COMPANION', 'Companion'], ['THREAT', 'Threat'],
+    ['ARTIFACT', 'Artifact'], ['TWIST', 'Twist'],
+  ];
+  S.promptPieces = {}; S.promptPins = {};
+  function winnerFor(slot) {
+    const arr = S.promptPieces[slot] || [];
+    if (!arr.length) return null;
+    const pin = S.promptPins[slot];
+    const pinned = pin && arr.find((p) => p.id === pin);
+    if (pinned) return { piece: pinned, why: 'PINNED' };
+    const top = arr.slice().sort((a, b) => (b.votes || 0) - (a.votes || 0) || (b.ts || 0) - (a.ts || 0))[0];
+    return { piece: top, why: (top.votes || 0) > 0 ? `▲ ${top.votes}` : 'NEWEST' };
+  }
+  function paintSlots() {
+    const root = $('#slotsLive', el.stage);
+    if (!root) return;
+    root.innerHTML = SLOT_ORDER.map(([id, label]) => {
+      const w = winnerFor(id);
+      const n = (S.promptPieces[id] || []).length;
+      return `<li class="slots-live__row${w ? '' : ' is-empty'}">
+          <span class="slots-live__label micro-label">${esc(label)}</span>
+          <span class="slots-live__text">${w ? esc(w.piece.text) : 'waiting for the room…'}</span>
+          <span class="slots-live__why readout">${w ? esc(w.why) : ''}${n ? ` · ${pad(n, 2)}` : ''}</span>
+        </li>`;
+    }).join('');
   }
 
   // ── Status strip ─────────────────────────────────────────────────
@@ -641,6 +690,8 @@
     S.spectrumHistogram = (Array.isArray(st.spectrumHistogram) && st.spectrumHistogram.length === 10)
       ? st.spectrumHistogram.slice() : new Array(10).fill(0);
     if (st.session && st.session.label) S.session = st.session;
+    if (st.promptPieces && typeof st.promptPieces === 'object') S.promptPieces = st.promptPieces;
+    if (st.promptPins && typeof st.promptPins === 'object') S.promptPins = st.promptPins;
     if ('staged' in st) {
       S.stagedId = st.staged || null;
       S.stagedSub = S.stagedId ? S.submissions.find((s) => s.id === S.stagedId) || null : null;
@@ -710,6 +761,33 @@
         const d = JSON.parse(e.data);
         if (d.beatId && d.beatId !== S.beatId) return;
         setSlide(d.slide);
+      } catch { /* malformed frame */ }
+    });
+
+    // ── game blanks: new phrases, votes and pins move the LIVE slots slide ──
+    es.addEventListener('promptpiece', (e) => {
+      try {
+        const p = JSON.parse(e.data);
+        if (!p || !p.id || !p.slot) return;
+        const arr = S.promptPieces[p.slot] || (S.promptPieces[p.slot] = []);
+        if (!arr.some((x) => x.id === p.id)) arr.push({ votes: 0, ...p });
+        repaintLive();
+      } catch { /* malformed frame */ }
+    });
+    es.addEventListener('promptvote', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        for (const arr of Object.values(S.promptPieces)) {
+          const hit = (arr || []).find((x) => x.id === d.id);
+          if (hit) { hit.votes = d.votes; break; }
+        }
+        repaintLive();
+      } catch { /* malformed frame */ }
+    });
+    es.addEventListener('promptpin', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (d && d.slot) { S.promptPins[d.slot] = d.pinnedId || null; repaintLive(); }
       } catch { /* malformed frame */ }
     });
 

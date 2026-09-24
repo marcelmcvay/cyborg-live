@@ -2,7 +2,7 @@
   "slug": "miami",
   "title": "Designing Assemblages: A Cyborg Foundation for Interaction Design",
   "venue": "University of Miami \u2014 graduate lecture",
-  "totalMins": 75,
+  "totalMins": 79,
   "format": "lecture",
   "beats": [
     {
@@ -416,7 +416,8 @@
         "mode": "present",
         "prompt": "What's the steward move in each of these?",
         "signalOpen": true,
-        "assembleOpen": true
+        "assembleOpen": true,
+        "collectiveOpen": true
       },
       "slides": [
         {
@@ -428,7 +429,12 @@
             "Fact-check before voice-edit, never after. Sequence changes what survives revision.",
             "You're looking at the assemblage. It built the room you're standing in."
           ],
-          "note": "\u2192 \"The professor asked me to walk through what I'm actually building right now \u2014 so let's get concrete. Five short cases, same argument each time, different hands.\"\n\n\u2192 \"You're looking at it. This SIGNAL and ASSEMBLE tool, built for Design Week RI, running again tonight \u2014 same zero-dependency engine, two completely separate decks, neither one touching the other.\"\n\n\u2192 \"I didn't ask an AI to build an app. I run a named multi-agent stack \u2014 I orchestrate, one agent handles prose and voice, another fact-checks before any voice-edit ever touches a claim. That ordering matters: fact-check before voice-edit, never after, because sequence changes what survives revision. That discipline IS the stewardship the thesis names. An assemblage with roles, not one tool you operate.\"\n\n\u2192 \"You're looking at the assemblage. It built the room you're standing in.\"\n\n\u00b7 Live proof point if you have it handy: 29 people at Design Week RI built an assemblage, BODY outscored every cognition/AI category \u2014 shoes and caffeine beat every LLM-adjacent pick. Good moment to ask this room whether the same pattern holds."
+          "note": "\u23f1 This slide OPENS the COLLECTIVE tab on phones (BUILD THE GAME). Say it out loud:\n\n\u2192 \"Before I start \u2014 your phones just unlocked a third tab. Five blanks: a setting, a companion, a threat, an artifact, a twist. Fill them in while I talk. We're going to play what you write at the end.\"\n\n\u2192 \"The professor asked me to walk through what I'm actually building right now \u2014 so let's get concrete. Five short cases, same argument each time, different hands.\"\n\n\u2192 \"You're looking at it. This SIGNAL and ASSEMBLE tool, built for Design Week RI, running again tonight \u2014 same zero-dependency engine, two completely separate decks, neither one touching the other.\"\n\n\u2192 \"I didn't ask an AI to build an app. I run a named multi-agent stack \u2014 I orchestrate, one agent handles prose and voice, another fact-checks before any voice-edit ever touches a claim. That ordering matters: fact-check before voice-edit, never after, because sequence changes what survives revision. That discipline IS the stewardship the thesis names. An assemblage with roles, not one tool you operate.\"\n\n\u2192 \"You're looking at the assemblage. It built the room you're standing in.\"\n\n\u00b7 Live proof point if you have it handy: 29 people at Design Week RI built an assemblage, BODY outscored every cognition/AI category \u2014 shoes and caffeine beat every LLM-adjacent pick. Good moment to ask this room whether the same pattern holds.",
+          "cue": {
+            "collectiveOpen": true,
+            "collectiveFocus": "story",
+            "prompt": "Write the game while I talk: fill in the five blanks."
+          }
         },
         {
           "kind": "image",
@@ -473,7 +479,17 @@
             "Correct, and it collapsed the ISS, the Moon, and a telescope into one dot.",
             "The suite verifies the build. I verify the meaning. That's the integration."
           ],
-          "note": "\u2192 \"Two more, built in one session as learning tools for myself, not client work. One's a timeline of fifty-nine space-policy initiatives since a 2010 speech \u2014 four argument arcs, a glossary that links itself across every card. The other's a three.js map of everything we've sent into space, scoped to Voyager 1's actual distance \u2014 forty spacecraft, eight planets, ten moons.\"\n\n\u2192 \"Here's the real story from building them, though: a hundred seventy-five automated browser checks ran clean, and the app was still wrong. Every object at Earth's distance read exactly one-point-oh AU. That's correct \u2014 heliocentrically, true. It's also useless, because it collapses the space station, the Moon, and a telescope a million miles out into the same dot. Accurate, and it lied.\"\n\n\u2192 \"Catching that wasn't a bug fix. It was asking a different question: not 'is this correct,' but 'does this leave someone with a true picture.' That's the seat a human holds in this kind of system \u2014 not oversight of the machine, a different kind of verification running right next to it. The suite verifies the build. I verify the meaning. That's the integration.\"\n\n\u2192 \"Both are running default Claude web-app styling right now \u2014 keen eyes in this room might already recognize it. Nobody specified this look. It just happened. So \u2014 what does it mean that it keeps happening? I want to open that up as a live activity: submit visual ideas, and we reskin one of these on the spot. The whole palette in each app is about a dozen lines at the top of one file, so this can genuinely happen live in under a minute.\"\n\n\u00b7 The audience app has a third COLLECTIVE tab for exactly this \u2014 a STYLE submission lane, plus a separate group-built ASCII text-adventure. First-draft prototype, test it live before trusting it cold."
+          "note": "\u2192 \"Two more, built in one session as learning tools for myself, not client work. One's a timeline of fifty-nine space-policy initiatives since a 2010 speech \u2014 four argument arcs, a glossary that links itself across every card. The other's a three.js map of everything we've sent into space, scoped to Voyager 1's actual distance \u2014 forty spacecraft, eight planets, ten moons.\"\n\n\u2192 \"Here's the real story from building them, though: a hundred seventy-five automated browser checks ran clean, and the app was still wrong. Every object at Earth's distance read exactly one-point-oh AU. That's correct \u2014 heliocentrically, true. It's also useless, because it collapses the space station, the Moon, and a telescope a million miles out into the same dot. Accurate, and it lied.\"\n\n\u2192 \"Catching that wasn't a bug fix. It was asking a different question: not 'is this correct,' but 'does this leave someone with a true picture.' That's the seat a human holds in this kind of system \u2014 not oversight of the machine, a different kind of verification running right next to it. The suite verifies the build. I verify the meaning. That's the integration.\""
+        },
+        {
+          "kind": "prompt",
+          "text": "Nobody picked this look. Pitch a new one.",
+          "cue": {
+            "collectiveOpen": true,
+            "collectiveFocus": "style",
+            "prompt": "Pitch a new look for the space apps: a palette, an era, a vibe."
+          },
+          "note": "\u23f1 This slide switches phones to RESTYLE. ~2 min total.\n\n\u2192 \"Both of these are running default Claude web-app styling \u2014 keen eyes might recognize it. Nobody specified this look. It just happened. So what does it mean that it keeps happening?\"\n\n\u2192 \"Your phones just switched to RESTYLE. Pitch a look \u2014 a palette, an era, a vibe. Sixty seconds.\"\n\n\u23f1 Watch RESTYLE IDEAS in the presenter view. Pick one, hit COPY, paste into Claude Code on the laptop (space-sandbox repo). It only edits the :root palette block, so layout can't break. Switch the projector to the laptop to show the result.\n\n\u2192 \"The room pitched it, I picked it, a model built it. That's the assemblage doing a design review.\"\n\n\u2691 If the laptop swap is fumbly, just read the top 3 ideas aloud and move on \u2014 the point is the question, not the reskin."
         },
         {
           "kind": "caseStudy",
@@ -500,20 +516,53 @@
         {
           "kind": "statement",
           "text": "The pilot and the instrument panel were already a cyborg circuit.",
-          "note": "\u2192 \"The pilot and the instrument panel were already a cyborg circuit long before any of this was intelligent.\"\n\n\u23f1 Let this land \u2014 it's the hinge straight into STEWARD's close, not just a chronological ending."
+          "note": "\u2192 \"The pilot and the instrument panel were already a cyborg circuit long before any of this was intelligent.\"\n\n\u23f1 Let this land \u2014 it's the hinge into playing the room's game, then STEWARD's close, not just a chronological ending."
         }
       ],
-      "presenterNotes": "\u23f1 18 min \u00b7 five cases, same argument each time, Regent closes as the deliberate non-AI bookend\n\n\u23f1 If running long: fold the two space-sandbox apps' delivery into one tighter pass (cut the COLLECTIVE-tab aside), or trim Solar Witness to the four-pass story only, dropping the SCOUT/CORS aside.\n\n\u2691 Don't present these as a portfolio tour. What / steward move / tie-back, nothing more \u2014 density is the argument."
+      "presenterNotes": "\u23f1 18 min \u00b7 five cases + one live restyle (~2 min), Regent closes as the non-AI bookend\n\n\u23f1 Slide 1 opens BUILD THE GAME on phones; the restyle slide switches them to RESTYLE. Both are automatic on slide change.\n\n\u2691 Don't present these as a portfolio tour. What / steward move / tie-back, nothing more."
+    },
+    {
+      "id": "collective",
+      "label": "THE ROOM'S GAME",
+      "mins": 5,
+      "cue": {
+        "mode": "present",
+        "prompt": "Last call: vote for the best idea in each blank.",
+        "signalOpen": true,
+        "assembleOpen": true,
+        "collectiveOpen": true,
+        "collectiveFocus": "story"
+      },
+      "slides": [
+        {
+          "kind": "slots",
+          "title": "You've been writing a game.",
+          "note": "\u2192 \"While I was talking, you were writing. Here's what's winning each blank right now.\"\n\n\u2192 \"Last call \u2014 vote for your favorite in each blank. Thirty seconds.\"\n\n\u23f1 Watch SLOT PINS in the presenter view. Pin one per blank if a clear winner is buried, or a line is too good to lose. The projector updates live as you pin.\n\n\u2691 If a submission is off-color, don't pin it \u2014 pin something else. Pins beat votes."
+        },
+        {
+          "kind": "statement",
+          "text": "You submitted. I stewarded. Now we play.",
+          "note": "\u2192 \"You submitted. You voted. I pinned. That's the steward loop \u2014 the same one from every case study, just with forty authors instead of eight agents.\""
+        },
+        {
+          "kind": "game",
+          "src": "rpg",
+          "title": "The room's game",
+          "note": "\u23f1 The game runs inside the projector. Click into it and type: look, then go north / take / use. ~2 min, one or two rooms.\n\n\u2192 \"Every word on this screen that isn't the engine came from someone in this room.\"\n\n\u00b7 Tags next to each phrase show PINNED / VOTED / DEFAULT \u2014 point at one that's PINNED.\n\n\u2691 Keyboard focus: click inside the game once before typing, or the presenter's arrow keys will move slides instead."
+        }
+      ],
+      "presenterNotes": "\u23f1 5 min \u00b7 the payoff for BUILD THE GAME. Votes \u2192 your pins \u2192 play it live.\n\n\u2691 Keep it to one or two rooms of play. Stop on a laugh, not on a dead end."
     },
     {
       "id": "responsibility",
       "label": "RESPONSIBILITY",
-      "mins": 4,
+      "mins": 3,
       "cue": {
         "mode": "present",
         "prompt": "For whose interests does the interface serve?",
         "signalOpen": true,
-        "assembleOpen": true
+        "assembleOpen": true,
+        "collectiveOpen": true
       },
       "slides": [
         {
@@ -537,7 +586,8 @@
         "mode": "steward",
         "prompt": "One sentence: what changes in your thesis if you frame it as assemblage integration?",
         "signalOpen": true,
-        "assembleOpen": true
+        "assembleOpen": true,
+        "collectiveOpen": true
       },
       "slides": [
         {

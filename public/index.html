@@ -9,8 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="shared.css?v=20260911d">
-  <link rel="stylesheet" href="app.css?v=20260911d">
+  <link rel="stylesheet" href="shared.css?v=20260924a">
+  <link rel="stylesheet" href="app.css?v=20260924a">
 </head>
 <body>
 
@@ -192,21 +192,22 @@
   <!-- ================= MODE C: COLLECTIVE ================= -->
   <section class="mode" id="mode-collective" data-mode="collective" aria-labelledby="tab-collective" hidden>
     <div class="mode-head">
-      <p class="mode-sub">Pitch a look for the room's apps, or vote up the story the room is building.</p>
+      <p class="mode-sub">Two things the room makes together: a new look for Marcel's space apps, and the game we play at the end.</p>
     </div>
 
     <!-- sub-tabs: two functions, one tab, kept distinct rather than stacked -->
     <div class="subseg" role="tablist" aria-label="Collective section">
       <button class="subseg-btn is-on" id="subtab-style" role="tab" aria-selected="true" aria-controls="sub-style" type="button">
-        <span class="subseg-name">STYLE IDEAS</span>
+        <span class="subseg-name">RESTYLE</span><span class="subseg-scent">pitch a look</span>
       </button>
       <button class="subseg-btn" id="subtab-votes" role="tab" aria-selected="false" aria-controls="sub-votes" type="button">
-        <span class="subseg-name">STORY VOTES</span>
+        <span class="subseg-name">BUILD THE GAME</span><span class="subseg-scent">add + vote</span>
       </button>
     </div>
 
     <!-- ---- sub-section: STYLE IDEAS ---- -->
     <div class="submode" id="sub-style" data-sub="style">
+      <p class="vote-intro">Two apps on screen share a default look nobody picked. <b>Describe a new one</b> — a palette, an era, a vibe. Marcel picks one and restyles it live.</p>
       <form class="fui-panel style-form" id="style-form" novalidate>
         <span class="fui-corners" aria-hidden="true"></span>
 
@@ -246,6 +247,7 @@
 
     <!-- ---- sub-section: STORY VOTES ---- -->
     <div class="submode" id="sub-votes" data-sub="votes" hidden>
+      <p class="vote-intro">Five blanks make the game. <b>Write an idea</b> for any blank, or <b>▲ vote</b> for one you like. Top votes go in, and Marcel can pin a favorite.</p>
       <p class="micro-label vote-hint" id="vote-format-title">BUILD THE WORLD TOGETHER</p>
       <div class="vote-slots" id="vote-slots">
         <p class="micro-label slots-loading" id="vote-slots-loading">LOADING SLOTS…</p>
@@ -270,7 +272,7 @@
   </div>
 </nav>
 
-<script src="radar.js?v=20260911d" defer></script>
-<script src="app.js?v=20260911d" defer></script>
+<script src="radar.js?v=20260924a" defer></script>
+<script src="app.js?v=20260924a" defer></script>
 </body>
 </html>

@@ -118,6 +118,9 @@
     es.addEventListener('promptvote', ev => {
       try { onPromptVote(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
     });
+    es.addEventListener('promptpiece', ev => {
+      try { onPromptPiece(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
+    });
     es.addEventListener('promptpin', ev => {
       try { onPromptPin(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
     });
@@ -128,7 +131,7 @@
   let pendingCue = null;
   function onCueFrame(c, opts = {}) {
     if (!booted) { pendingCue = { c, opts }; return; }
-    if (opts.reset) gates = { signal: false, assemble: false };
+    if (opts.reset) gates = { signal: false, assemble: false, collective: false };
     applyCue(c, opts);
   }
   function scheduleRetry() {
@@ -189,8 +192,8 @@
   //   SIGNAL opens once and never closes.  ASSEMBLE stays editable all talk.
   // A cue can only ever OPEN a gate. The single exception is an explicit
   // `closed` beat, which is allowed to shut the room down.
-  let gates = lsGet(LS.gates, { signal: false, assemble: false }) || { signal: false, assemble: false };
-  gates = { signal: !!gates.signal, assemble: !!gates.assemble };
+  let gates = lsGet(LS.gates, { signal: false, assemble: false, collective: false }) || {};
+  gates = { signal: !!gates.signal, assemble: !!gates.assemble, collective: !!gates.collective };
   let cue = lsGet(LS.cue, null);
 
   // ---- cue bar (built here: index.html is fixed, so new UI comes from JS) ----
@@ -238,9 +241,12 @@
       'Marcel opens this at the reveal. Once it opens it stays open for the rest of the talk.'),
     assemble: buildGate('assemble', 'Assemble is not open',
       'The builder opens a couple of minutes in. Once it opens you can revise your picks for the whole talk.'),
+    collective: buildGate('collective', 'Collective is not open yet',
+      'Later in the talk you\'ll restyle two of Marcel\'s apps and write the game the room plays together. This opens on its own when it\'s time.'),
   };
   modes.signal.insertBefore(gateEls.signal, $('.signal-form', modes.signal));
   modes.assemble.insertBefore(gateEls.assemble, $('#spectrum-panel'));
+  modes.collective.insertBefore(gateEls.collective, $('.subseg', modes.collective));
 
   // lock signifier on the mode tabs
   const tabLocks = {};
@@ -249,21 +255,21 @@
     t.append(lk);
     tabLocks[t.dataset.mode] = lk;
   });
-  // COLLECTIVE is not part of the presenter cue/gate system (no collectiveOpen
-  // field exists in the cue contract) — it is always on offer, so it never
-  // wears the lock signifier the other two tabs use.
-  if (tabLocks.collective) tabLocks.collective.hidden = true;
 
-  const isOpen = which => which === 'collective' ? true : !!gates[which];
+  // All three tabs are gated the same way now: the deck decides when each opens.
+  const GATED = ['signal', 'assemble', 'collective'];
+  const isOpen = which => !!gates[which];
 
   function renderGates() {
-    for (const which of ['signal', 'assemble']) {
+    for (const which of GATED) {
       const on = isOpen(which);
       const sec = modes[which];
       sec.classList.toggle('is-locked', !on);
       const pill = gatePills[which];
-      pill.classList.toggle('is-live', on);
-      $('.pill-state', pill).textContent = on ? 'OPEN' : 'LOCKED';
+      if (pill) {
+        pill.classList.toggle('is-live', on);
+        $('.pill-state', pill).textContent = on ? 'OPEN' : 'LOCKED';
+      }
       const tab = tabs.find(t => t.dataset.mode === which);
       tab.classList.toggle('is-locked', !on);
       tab.setAttribute('aria-disabled', String(!on));
@@ -272,8 +278,8 @@
     // never leave someone parked on a section that offers nothing
     const cur = seg.dataset.on;
     if (!isOpen(cur)) {
-      const other = cur === 'signal' ? 'assemble' : 'signal';
-      if (isOpen(other)) setMode(other, { scroll: false });
+      const other = GATED.find(w => w !== cur && isOpen(w));
+      if (other) setMode(other, { scroll: false });
     }
   }
 
@@ -308,20 +314,21 @@
 
   function applyCue(next, { reset = false, initial = false } = {}) {
     const prev = cue;
-    const c = next && typeof next === 'object' ? next : { mode: 'intro', beatId: 'intro', label: 'INTRO', prompt: '', signalOpen: false, assembleOpen: false };
+    const c = next && typeof next === 'object' ? next : { mode: 'intro', beatId: 'intro', label: 'INTRO', prompt: '', signalOpen: false, assembleOpen: false, collectiveOpen: false };
     const mode = MODE_COPY[c.mode] ? c.mode : 'intro';
     const before = { ...gates };
 
     if (c.mode === 'closed') {
       // the ONLY path that closes anything
-      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen };
+      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen, collective: !!c.collectiveOpen };
     } else if (reset) {
-      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen };
+      gates = { signal: !!c.signalOpen, assemble: !!c.assembleOpen, collective: !!c.collectiveOpen };
     } else {
       // ratchet: a gate can open, never close
       gates = {
         signal: gates.signal || !!c.signalOpen,
         assemble: gates.assemble || !!c.assembleOpen,
+        collective: gates.collective || !!c.collectiveOpen,
       };
     }
 
@@ -353,10 +360,25 @@
     const opened = [];
     if (!before.signal && gates.signal) opened.push('signal');
     if (!before.assemble && gates.assemble) opened.push('assemble');
-    const closed = (before.signal && !gates.signal) || (before.assemble && !gates.assemble);
+    if (!before.collective && gates.collective) opened.push('collective');
+    const closed = (before.signal && !gates.signal) || (before.assemble && !gates.assemble)
+      || (before.collective && !gates.collective);
     const look = MODE_COPY[mode].look;
 
-    if (opened.length) {
+    // COLLECTIVE focus: the stage is explicitly pointing the room at one
+    // activity (restyle or build-the-game). This outranks the mode's default
+    // "look", and a focus CHANGE is itself news worth flashing.
+    const focus = gates.collective && (c.collectiveFocus === 'style' || c.collectiveFocus === 'story') ? c.collectiveFocus : null;
+    const focusChanged = focus && (!prev || prev.collectiveFocus !== focus || !before.collective);
+    if (focus) setSub(focus === 'story' ? 'votes' : 'style');
+    const FOCUS_COPY = { style: 'RESTYLE IS OPEN — PITCH A LOOK', story: 'BUILD THE GAME — ADD + VOTE' };
+
+    if (focusChanged) {
+      setMode('collective');
+      // they're already landed on it — no "GO TO" button pointing at where they are
+      flashChange(FOCUS_COPY[focus], null);
+      say(FOCUS_COPY[focus]);
+    } else if (opened.length) {
       const w = opened[0];
       flashChange(`${opened.map(s => s.toUpperCase()).join(' + ')} JUST OPENED`, isOpen(look) ? look : w);
       if (!isOpen(seg.dataset.on)) setMode(w);
@@ -800,6 +822,12 @@
     $('.signal-form').hidden = !isOpen('signal');
     // hide the empty-state box entirely until they've actually sent something
     $('#mode-signal .log').hidden = !log.length;
+    // COLLECTIVE: gate panel replaces BOTH sub-sections until it's cued open
+    const colOpen = isOpen('collective');
+    $('#gate-collective').hidden = colOpen;
+    $('.subseg', modes.collective).hidden = !colOpen;
+    if (!colOpen) { $('#sub-style').hidden = true; $('#sub-votes').hidden = true; }
+    else if ($('#sub-style').hidden && $('#sub-votes').hidden) setSub(currentSub);
   }
 
   function renderCard(s, r, { scroll = true } = {}) {
@@ -901,14 +929,18 @@
   // STORY VOTES (existing prompt-piece slots, but voting instead of only submitting).
   const subtabs = [...document.querySelectorAll('.subseg-btn')];
   const submodes = { style: $('#sub-style'), votes: $('#sub-votes') };
+  let currentSub = 'style';
   function setSub(name) {
     if (!submodes[name]) name = 'style';
+    currentSub = name;
     subtabs.forEach(t => {
       const on = t.id === `subtab-${name}`;
       t.classList.toggle('is-on', on);
       t.setAttribute('aria-selected', String(on));
     });
-    for (const [k, sec] of Object.entries(submodes)) sec.hidden = k !== name;
+    // while COLLECTIVE is locked the gate panel stands in for both sections
+    const open = !!gates.collective;
+    for (const [k, sec] of Object.entries(submodes)) sec.hidden = !open || k !== name;
   }
   subtabs.forEach(t => t.addEventListener('click', () => setSub(t.id.replace('subtab-', ''))));
 
@@ -1026,18 +1058,72 @@
         el('div', { class: 'vote-slot-head' },
           el('span', { class: 'vote-slot-name display', text: slot.label || slot.id }),
           el('span', { class: 'vote-slot-hint micro-label', text: slot.hint || '' }),
+          // the example lives here, full width, where it can't get clipped
+          slot.placeholder ? el('span', { class: 'vote-slot-eg', text: `e.g. ${slot.placeholder}` }) : null,
         ),
       );
       const list = el('ul', { class: 'vote-card-list', id: `vote-list-${slot.id}` });
       const arr = (pieces[slot.id] || []).slice().sort((a, b) => (b.votes || 0) - (a.votes || 0) || b.ts - a.ts);
       if (!arr.length) {
-        list.append(el('li', { class: 'vote-card-empty micro-label', text: 'NOTHING SUBMITTED YET FOR THIS SLOT' }));
+        list.append(el('li', { class: 'vote-card-empty micro-label', text: 'NO IDEAS YET — WRITE THE FIRST ONE BELOW' }));
       } else {
         for (const piece of arr) list.append(renderVoteCard(piece, slot.id));
       }
-      panel.append(list);
+      panel.append(list, renderAddPiece(slot));
       voteSlotsRoot.append(panel);
     }
+  }
+
+  // Every slot carries its own composer. An empty slot is an invitation to
+  // write, never a dead end with nothing to tap (the old vote-only layout).
+  const PIECE_MAX = 60;
+  function renderAddPiece(slot) {
+    const inputId = `add-${slot.id}`;
+    const input = el('input', {
+      id: inputId, class: 'input add-piece-input', type: 'text', maxlength: String(PIECE_MAX),
+      placeholder: 'your idea…', autocomplete: 'off',
+      enterkeyhint: 'send',
+    });
+    const btn = el('button', { class: 'btn add-piece-btn', type: 'submit', disabled: true, 'aria-label': `Add to ${slot.label || slot.id}` }, 'ADD');
+    const err = el('p', { class: 'inline-error add-piece-err', role: 'alert', hidden: true });
+    const form = el('form', { class: 'add-piece', novalidate: true },
+      el('label', { class: 'sr-only', for: inputId, text: `Add an idea for ${slot.label || slot.id}` }),
+      el('div', { class: 'add-piece-row' }, input, btn),
+      err,
+    );
+    input.addEventListener('input', () => { btn.disabled = !input.value.trim(); err.hidden = true; });
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const text = input.value.replace(/[\u0000-\u001F\u007F]/g, '').trim().slice(0, PIECE_MAX);
+      if (!text || btn.disabled) return;
+      btn.disabled = true; btn.textContent = '···';
+      try {
+        const r = await postJSON('api/prompt-piece', { sid, handle: handle || undefined, slot: slot.id, text });
+        input.value = '';
+        // optimistic: show it now; the SSE echo is de-duped by id
+        onPromptPiece({ id: r.id, ts: r.ts, sid, handle, slot: slot.id, text, votes: 0 });
+        say(`ADDED TO ${String(slot.label || slot.id).toUpperCase()}`);
+      } catch (ex) {
+        err.textContent = ex.status === 429 ? 'Too fast — one submission every 3 seconds. Try again in a moment.'
+          : ex.status ? `Server refused it: ${ex.message}` : 'No link to the server. Try again when it\'s back.';
+        err.hidden = false;
+      } finally {
+        btn.textContent = 'ADD'; btn.disabled = !input.value.trim();
+      }
+    });
+    return form;
+  }
+
+  // New phrase from anyone (SSE `promptpiece`, or our own optimistic insert).
+  function onPromptPiece(piece) {
+    if (!piece || !piece.id || !piece.slot || pieceIndex.has(piece.id)) return;
+    const list = $(`#vote-list-${piece.slot}`);
+    if (!list) return;
+    const empty = $('.vote-card-empty', list);
+    if (empty) empty.remove();
+    const li = renderVoteCard({ votes: 0, ...piece }, piece.slot);
+    list.append(li);
+    if (!reducedMotion) { li.classList.add('is-new-pulse'); setTimeout(() => li.classList.remove('is-new-pulse'), 700); }
   }
 
   function renderVoteCard(piece, slotId) {

@@ -688,24 +688,44 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
    MODE C: COLLECTIVE — style ideas + story voting/pinning
    ═══════════════════════════════════════════════════════════════════ */
 
-/* ---------- sub-tabs (STYLE IDEAS / STORY VOTES) ---------- */
+/* ---------- sub-tabs (RESTYLE / BUILD THE GAME) ---------- */
 .subseg {
   display: grid; grid-template-columns: 1fr 1fr;
   border: 1px solid var(--rule-strong);
-  height: 44px;
+  min-height: 52px;
 }
+.subseg[hidden] { display: none; }
 .subseg-btn {
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   min-height: var(--tap);
   font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--mid);
   border-right: 1px solid var(--rule-strong);
   transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
 }
+.subseg-scent { font-size: 9px; letter-spacing: 0.06em; text-transform: none; color: var(--mid); }
 .subseg-btn:last-child { border-right: 0; }
 .subseg-btn.is-on { color: var(--fg); background: rgba(0, 229, 204, 0.06); }
 .subseg-btn.is-on .subseg-name { color: var(--accent); }
 .submode[hidden] { display: none; }
+
+/* one-line "what do I do here" above each sub-section */
+.vote-intro { font-size: 13px; line-height: 1.45; color: var(--mid); margin: 2px 2px 10px; }
+.vote-intro b { color: var(--fg); font-weight: 500; }
+.vote-slot-eg { font-size: 12px; line-height: 1.35; color: var(--mid); font-style: italic; }
+
+/* per-slot composer: every blank is writable, so nothing is ever a dead end */
+.add-piece { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; border-top: 1px dashed var(--rule); }
+.add-piece-row { display: flex; gap: 8px; }
+.add-piece-input { flex: 1; min-width: 0; min-height: var(--tap); font-size: 16px; /* 16px stops iOS zoom-on-focus */ text-overflow: ellipsis; }
+.add-piece-btn {
+  flex: none; min-width: 64px; min-height: var(--tap);
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: 11px; letter-spacing: 0.1em;
+}
+.add-piece-btn:disabled { border-color: var(--rule-strong); color: var(--mid); }
+.add-piece-btn:not(:disabled):active { background: rgba(0, 229, 204, 0.14); }
+.add-piece-err[hidden] { display: none; }
 .submode { display: flex; flex-direction: column; gap: 14px; }
 
 /* ---------- style idea form (mirrors .signal-form, 120-char cap) ---------- */

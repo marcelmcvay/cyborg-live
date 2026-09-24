@@ -77,6 +77,12 @@ Ordered within the beat. `kind` is one of:
 | `image` | `src`, `alt` | full-screen image from `public/images/` directory |
 | `staged` | — | LIVE full-screen audience submission via `/api/stage` |
 | `prompt` | `text` | big question + the join URL, for discussion blocks |
+| `slots` | `title` | LIVE the five COLLECTIVE game blanks, current winner per slot |
+| `game` | `src` (default `rpg`), `title` | full-bleed iframe of the terminal RPG |
+
+Any slide may also carry `cue: { prompt?, collectiveOpen?, collectiveFocus? }`.
+When the presenter steps to that slide it changes what the room's phones
+offer, without re-cueing the beat. See CONTRACT.md "COLLECTIVE is a cued gate".
 
 Keep it sparse. This is a talk, not a document — if a slide needs a paragraph,
 it belongs in `presenterNotes`.

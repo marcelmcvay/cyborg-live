@@ -327,3 +327,34 @@ Every endpoint in this section needs a real UI producer before this feature
 is called done — no exceptions this time, per the standing project rule
 after the earlier orphaned-endpoint incident.
 
+## COLLECTIVE is a cued gate (added Sep 24 2026)
+
+COLLECTIVE used to be "always open", which meant nothing ever pointed the
+room at it. It is now gated exactly like SIGNAL/ASSEMBLE.
+
+### Cue fields (POST /api/cue, additive)
+  collectiveOpen: boolean   same explicit-boolean + ratchet rule as the other
+                            two gates. Once open it stays open (except `closed`).
+  collectiveFocus: 'style' | 'story' | null
+                            lands phones on RESTYLE ('style') or BUILD THE GAME
+                            ('story'). A focus CHANGE flashes a banner and
+                            switches the phone to the COLLECTIVE tab.
+
+### Slide-level cue (POST /api/slide, additive)
+  body.slideCue = { prompt?, collectiveOpen?, collectiveFocus? }
+  Authored in the deck as `slide.cue`. presenter.js forwards it verbatim when
+  it steps to that slide (and for slide 0 right after a beat cue, since a beat
+  cue lands on slide 0 without a slide POST). Only these three fields can
+  change; mode/beat identity never does. collectiveOpen can only go true
+  (ratchet). If anything changed the server re-broadcasts `cue`.
+
+### New deck slide kinds (deck.js)
+  slots   LIVE: the five game blanks with the current winner per slot
+          (pinned > top-voted > newest). Repaints on promptpiece/vote/pin.
+  game    full-bleed iframe of /rpg (same origin, shares the live room).
+
+### Producers / consumers added
+  promptpiece SSE  consumers now: rpg.js, app.js (live cards), deck.js (slots), presenter.js (pin panel)
+  styleidea SSE    consumers now: app.js, presenter.js (RESTYLE IDEAS panel, COPY = restyle prompt)
+  POST /api/prompt-piece  producers now: promptbuilder.js AND app.js per-slot composer
+
