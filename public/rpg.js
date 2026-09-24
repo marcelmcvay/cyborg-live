@@ -5,10 +5,12 @@
    phrase pool blends in real submissions as they arrive over SSE.
 
    Data flow (per contract):
-     1. GET /api/state ONCE on boot to seed promptPieces/promptCounts.
-     2. EventSource('/api/feed') subscribed to the `promptpiece` event for
-        every NEW piece for the rest of the session (mandatory live consumer
-        — see CONTRACT.md producer/consumer census).
+     1. GET /api/state ONCE on boot to seed promptPieces/promptCounts/promptPins.
+     2. EventSource('/api/feed') subscribed to `promptpiece` for every NEW
+        piece, `promptvote` for vote tallies, and `promptpin` for the
+        presenter's per-slot pin/clear — all three can change which phrase
+        currently wins a slot, per the pinned > voted > latest > default
+        resolution order (see CONTRACT.md COLLECTIVE TAB section).
 */
 (() => {
   'use strict';
@@ -50,8 +52,13 @@
     TWIST: 'nobody can lie twice in the same room',
   };
 
-  // pools[slot] = array of { text, source: 'default'|'audience', handle? }
+  // pools[slot] = array of { text, source: 'default'|'audience', handle?, votes? }
   const pools = { SETTING: [], COMPANION: [], THREAT: [], ARTIFACT: [], TWIST: [] };
+
+  // Presenter-side pin per slot (see CONTRACT.md COLLECTIVE TAB section):
+  // promptPins[slot] = pinned piece id, or null. Seeded from GET /api/state
+  // and kept current over the `promptpin` SSE event.
+  const promptPins = { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null };
 
   function seedDefault(slot, text) {
     pools[slot].push({ text: cleanPhrase(text), source: 'default' });
@@ -65,20 +72,84 @@
       handle: piece.handle ? cleanPhrase(piece.handle) : null,
       id: piece.id,
       ts: piece.ts,
+      votes: Number(piece.votes) || 0,
     });
     // keep pools bounded — mirrors the server's own MAX_PROMPT_PIECES_PER_SLOT
     if (pools[slot].length > 8) pools[slot] = pools[slot].slice(-8);
   }
 
-  function latest(slot) {
+  // Update the live vote count on whichever piece owns `id`. Returns the
+  // slot it was found in (or null) so callers can decide whether the
+  // currently-displayed room/phrase needs to be re-resolved.
+  function setVotes(id, votes) {
+    for (const slot of SLOT_IDS) {
+      const piece = pools[slot].find((p) => p.id === id);
+      if (piece) {
+        piece.votes = Number(votes) || 0;
+        return slot;
+      }
+    }
+    return null;
+  }
+
+  function setPin(slot, pinnedId) {
+    if (!SLOT_IDS.includes(slot)) return;
+    promptPins[slot] = pinnedId || null;
+  }
+
+  function pinnedPiece(slot) {
+    const id = promptPins[slot];
+    if (!id) return null;
+    return (pools[slot] || []).find((p) => p.id === id) || null;
+  }
+
+  function topVoted(slot) {
+    const arr = (pools[slot] || []).filter((p) => p.source === 'audience' && (p.votes || 0) > 0);
+    if (!arr.length) return null;
+    return arr.slice().sort((a, b) => (b.votes || 0) - (a.votes || 0) || (b.ts || 0) - (a.ts || 0))[0];
+  }
+
+  // Exactly the old `latest()` behavior — most recent submission wins, or the
+  // built-in default if nothing has been submitted yet. Kept as its own
+  // function because tier 3 of the resolution order below is defined as
+  // "whatever the existing latest-submission-wins logic already does".
+  function mostRecent(slot) {
     const arr = pools[slot];
     return arr && arr.length ? arr[arr.length - 1] : { text: FALLBACK_DEFAULTS[slot], source: 'default' };
   }
 
+  // ── Slot resolution: PINNED > HIGHEST-VOTED > LATEST > BUILT-IN DEFAULT ──
+  // Per CONTRACT.md COLLECTIVE TAB section: "rpg.js's slot-picking logic
+  // must prefer: pinned > highest-voted > latest > built-in default for each
+  // slot, in that order." Every caller that used to read `latest(slot)` or
+  // `pick(slot, seedIndex)` now gets this resolution instead — the seed-based
+  // per-room rotation `pick()` used to do is retired in favor of one
+  // steward-able winner per slot, which is the whole point of pinning.
+  // `resolved` on the returned object drives the on-screen indicator:
+  // 'pinned' | 'voted' | 'audience' (latest submission) | 'default'.
+  function latest(slot) {
+    const pinned = pinnedPiece(slot);
+    if (pinned) return { ...pinned, resolved: 'pinned' };
+    const voted = topVoted(slot);
+    if (voted) return { ...voted, resolved: 'voted' };
+    const rec = mostRecent(slot);
+    return { ...rec, resolved: rec.source === 'audience' ? 'audience' : 'default' };
+  }
+
   function pick(slot, seedIndex) {
-    const arr = pools[slot];
-    if (!arr || !arr.length) return { text: FALLBACK_DEFAULTS[slot], source: 'default' };
-    return arr[seedIndex % arr.length];
+    void seedIndex; // retired: presenter pin / room vote now decides the single per-slot winner
+    return latest(slot);
+  }
+
+  // Tiny diagnostic tag for Marcel during a live demo — not audience-facing.
+  function slotBadgeText(info) {
+    if (!info) return '';
+    switch (info.resolved) {
+      case 'pinned': return ' [PINNED]';
+      case 'voted': return ` [VOTED ${info.votes || 0}]`;
+      case 'audience': return ' [LATEST]';
+      default: return ' [DEFAULT]';
+    }
   }
 
   function audienceCount(slot) {
@@ -160,24 +231,29 @@
       text: p.text,
       source: p.source,
       handle: p.handle || null,
+      resolved: p.resolved,
+      votes: p.votes || 0,
     };
   }
 
   function settingSentence(seedIndex) {
     const p = pick('SETTING', seedIndex);
-    return `You are standing in ${p.text}.`;
+    return `You are standing in ${p.text}${slotBadgeText(p)}.`;
   }
 
   function companionName() {
-    return latest('COMPANION').text;
+    const p = latest('COMPANION');
+    return `${p.text}${slotBadgeText(p)}`;
   }
 
   function threatName() {
-    return latest('THREAT').text;
+    const p = latest('THREAT');
+    return `${p.text}${slotBadgeText(p)}`;
   }
 
   function twistText() {
-    return latest('TWIST').text;
+    const p = latest('TWIST');
+    return `${p.text}${slotBadgeText(p)}`;
   }
 
   const rooms = {
@@ -224,7 +300,7 @@
         if (!flags.takenArchive) {
           const art = artifactFlavor(0);
           const badge = art.source === 'audience' ? ` (submitted by ${art.handle || 'the room'})` : '';
-          base.push(`Something sits here you could TAKE: ${art.text}${badge}.`);
+          base.push(`Something sits here you could TAKE: ${art.text}${slotBadgeText(art)}${badge}.`);
         } else {
           base.push(`The shelf where you found something is now empty.`);
         }
@@ -248,7 +324,7 @@
         if (!flags.takenVent) {
           const art = artifactFlavor(1);
           const badge = art.source === 'audience' ? ` (submitted by ${art.handle || 'the room'})` : '';
-          base.push(`Wedged in the grating you could TAKE: ${art.text}${badge}.`);
+          base.push(`Wedged in the grating you could TAKE: ${art.text}${slotBadgeText(art)}${badge}.`);
         }
         base.push(`Exit: EAST. Try TALK to speak with whatever's in here.`);
         return base.join(' ');
@@ -758,7 +834,7 @@
 
   // Fetch current state ONCE on load to seed initial world with whatever's
   // already been submitted before this page opened. See CONTRACT.md:
-  // GET /api/state -> promptPieces / promptCounts.
+  // GET /api/state -> promptPieces / promptCounts / promptPins.
   async function loadInitialState() {
     try {
       const res = await fetch('/api/state', { cache: 'no-cache' });
@@ -771,6 +847,9 @@
             arr.forEach((piece) => pushPiece(slot, piece));
           }
         });
+      }
+      if (data && data.promptPins && typeof data.promptPins === 'object') {
+        SLOT_IDS.forEach((slot) => setPin(slot, data.promptPins[slot] || null));
       }
       return true;
     } catch (err) {
@@ -811,6 +890,35 @@
       onNewPromptPiece(piece);
     });
 
+    // Vote landed on some piece somewhere — a piece already in a pool may
+    // just have overtaken the current slot winner (pinned > VOTED > latest
+    // > default), so re-resolve that slot and re-render the room exactly
+    // like a new piece would (same in-world "shivers and resettles" beat).
+    es.addEventListener('promptvote', (evt) => {
+      let d;
+      try {
+        d = JSON.parse(evt.data);
+      } catch (err) {
+        return;
+      }
+      if (!d || !d.id) return;
+      const slot = setVotes(d.id, d.votes);
+      if (slot) onSlotResolutionChanged(slot);
+    });
+
+    // Presenter pinned or cleared a pin for a slot — same re-resolution path.
+    es.addEventListener('promptpin', (evt) => {
+      let d;
+      try {
+        d = JSON.parse(evt.data);
+      } catch (err) {
+        return;
+      }
+      if (!d || !d.slot || !SLOT_IDS.includes(d.slot)) return;
+      setPin(d.slot, d.pinnedId || null);
+      onSlotResolutionChanged(d.slot);
+    });
+
     es.addEventListener('ping', () => {
       // keepalive only — no UI action needed, but confirms the link is alive
       setLinkStatus('live');
@@ -835,13 +943,27 @@
       'line-tag'
     );
 
+    reresolveSlotInWorld(piece.slot);
+  }
+
+  // Shared re-render path for anything that can change WHICH phrase currently
+  // wins a slot (a new submission, a vote overtaking the leader, or Marcel
+  // pinning/clearing a slot from the presenter screen). Reuses the exact
+  // "room shivers and resettles" behavior onNewPromptPiece already used for
+  // new pieces, so all three triggers feel consistent in-world.
+  function onSlotResolutionChanged(slot) {
+    renderSidebar();
+    reresolveSlotInWorld(slot);
+  }
+
+  function reresolveSlotInWorld(slot) {
     const room = currentRoom();
     let touchesRoom = false;
-    if (piece.slot === 'SETTING') touchesRoom = true;
-    if (piece.slot === 'COMPANION' && room.id === 'vent') touchesRoom = true;
-    if (piece.slot === 'THREAT' && room.id === 'control' && !flags.threatResolved) touchesRoom = true;
-    if (piece.slot === 'ARTIFACT' && (room.id === 'archive' || room.id === 'vent')) touchesRoom = true;
-    if (piece.slot === 'TWIST' && room.id === 'core' && !flags.twistRevealed) touchesRoom = true;
+    if (slot === 'SETTING') touchesRoom = true;
+    if (slot === 'COMPANION' && room.id === 'vent') touchesRoom = true;
+    if (slot === 'THREAT' && room.id === 'control' && !flags.threatResolved) touchesRoom = true;
+    if (slot === 'ARTIFACT' && (room.id === 'archive' || room.id === 'vent')) touchesRoom = true;
+    if (slot === 'TWIST' && room.id === 'core' && !flags.twistRevealed) touchesRoom = true;
 
     if (touchesRoom) {
       printLine('The room around you shivers and resettles slightly.', 'line-dim');

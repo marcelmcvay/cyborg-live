@@ -188,16 +188,83 @@
       <p class="micro-label card-status" id="card-status" aria-live="polite"></p>
     </div>
   </section>
+
+  <!-- ================= MODE C: COLLECTIVE ================= -->
+  <section class="mode" id="mode-collective" data-mode="collective" aria-labelledby="tab-collective" hidden>
+    <div class="mode-head">
+      <p class="mode-sub">Pitch a look for the room's apps, or vote up the story the room is building.</p>
+    </div>
+
+    <!-- sub-tabs: two functions, one tab, kept distinct rather than stacked -->
+    <div class="subseg" role="tablist" aria-label="Collective section">
+      <button class="subseg-btn is-on" id="subtab-style" role="tab" aria-selected="true" aria-controls="sub-style" type="button">
+        <span class="subseg-name">STYLE IDEAS</span>
+      </button>
+      <button class="subseg-btn" id="subtab-votes" role="tab" aria-selected="false" aria-controls="sub-votes" type="button">
+        <span class="subseg-name">STORY VOTES</span>
+      </button>
+    </div>
+
+    <!-- ---- sub-section: STYLE IDEAS ---- -->
+    <div class="submode" id="sub-style" data-sub="style">
+      <form class="fui-panel style-form" id="style-form" novalidate>
+        <span class="fui-corners" aria-hidden="true"></span>
+
+        <div class="field">
+          <div class="field-row">
+            <label class="micro-label" for="style-text">RESTYLE IDEA</label>
+            <span class="readout counter" id="style-counter" aria-live="polite">000<span class="counter-sep">/</span>120</span>
+          </div>
+          <textarea id="style-text" name="text" class="textarea" rows="3" maxlength="120"
+            placeholder="e.g. make it look like a 1970s NASA mission patch, orange and cream" autocomplete="off" spellcheck="true"></textarea>
+        </div>
+
+        <div class="field is-bare">
+          <label class="sr-only" for="handle-3">Handle (optional, shared with Signal)</label>
+          <input id="handle-3" class="input" type="text" maxlength="24" placeholder="name or initials (optional)" autocomplete="nickname" autocapitalize="off">
+        </div>
+
+        <div class="form-foot">
+          <p class="inline-error" id="style-error" role="alert" hidden></p>
+          <button class="btn is-primary send-btn" id="style-send-btn" type="submit" disabled>
+            <span class="send-label">SEND IDEA</span><span class="btn-scent">goes to the room's style feed</span>
+            <span class="send-arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </form>
+
+      <div class="log">
+        <div class="log-head">
+          <span class="micro-label">STYLE FEED</span>
+          <span class="readout micro-label" id="style-feed-count">000</span>
+        </div>
+        <ol class="log-list" id="style-feed-list" aria-live="polite">
+          <li class="log-empty micro-label">NO STYLE IDEAS YET — BE FIRST</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- ---- sub-section: STORY VOTES ---- -->
+    <div class="submode" id="sub-votes" data-sub="votes" hidden>
+      <p class="micro-label vote-hint" id="vote-format-title">BUILD THE WORLD TOGETHER</p>
+      <div class="vote-slots" id="vote-slots">
+        <p class="micro-label slots-loading" id="vote-slots-loading">LOADING SLOTS…</p>
+      </div>
+    </div>
+  </section>
 </main>
 
 <!-- ================= MODE SWITCH ================= -->
 <nav class="modebar" aria-label="Mode">
-  <div class="seg" role="tablist">
+  <div class="seg seg-3" role="tablist">
     <button class="seg-btn" id="tab-signal" role="tab" aria-selected="false" aria-controls="mode-signal" data-mode="signal" type="button">
       <span class="seg-name">SIGNAL</span><span class="seg-scent">ask a question</span>
     </button>
     <button class="seg-btn is-on" id="tab-assemble" role="tab" aria-selected="true" aria-controls="mode-assemble" data-mode="assemble" type="button">
       <span class="seg-name">ASSEMBLE</span><span class="seg-scent">build your cyborg</span>
+    </button>
+    <button class="seg-btn" id="tab-collective" role="tab" aria-selected="false" aria-controls="mode-collective" data-mode="collective" type="button">
+      <span class="seg-name">COLLECTIVE</span><span class="seg-scent">style + vote</span>
     </button>
     <span class="seg-indicator" aria-hidden="true"></span>
   </div>

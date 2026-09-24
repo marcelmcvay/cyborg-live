@@ -16,12 +16,17 @@
     cue: 'api/cue',
     slide: 'api/slide',
     stage: 'api/stage',
+    promptPin: 'api/prompt-pin',
   };
   const ADMIN_KEY_LS = 'cyborg.adminKey';
   const T0_LS = 'cyborg.t0';          // ms epoch of "talk starts now"
   const DEFAULT_DECK = 'design-week-ri';
   const MAX_CARDS = 60;               // DOM cap; feed is newest-first
   const KINDS = ['question', 'discussion', 'note'];
+  // Story-builder slots (see CONTRACT.md COLLECTIVE TAB section). Marcel
+  // pins the winner per slot from this screen; rpg.js resolves
+  // pinned > highest-voted > latest > built-in default.
+  const PROMPT_SLOTS = ['SETTING', 'COMPANION', 'THREAT', 'ARTIFACT', 'TWIST'];
   const SPECTRUM_LABELS = ['DAILY DESIGNER', 'RACE CAR DRIVER', 'PILOT', 'ASTRONAUT', 'VADER'];
   const KLASS_ROTATE_MS = 8000;
   const BACKOFF = { base: 1000, max: 30000 };
@@ -61,6 +66,10 @@
     session: null,
     clockTimer: null,
     tab: 'control',         // control | notes | signal
+    // ── story pin panel ──
+    promptPieces: { SETTING: [], COMPANION: [], THREAT: [], ARTIFACT: [], TWIST: [] },
+    promptPins: { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null },
+    pinPending: {}, // slot -> id currently in flight (optimistic), or undefined
   };
 
   // ── DOM ──────────────────────────────────────────────────────────
@@ -126,6 +135,10 @@
     notesIdx: $('#notesIdx'),
     notesTime: $('#notesTime'),
     btnResetBeat: $('#btnResetBeat'),
+    // story pin panel — injected into the DOM by injectPinPanel(), see below
+    pinPanel: null,
+    pinRows: null,
+    pinProxy: null,
   };
 
   // ── Utils ────────────────────────────────────────────────────────
@@ -1104,6 +1117,186 @@
     if ('staged' in st) setStaged(st.staged || null);
     if (st.cue) applyCue(st.cue);
     else { renderBeats(); renderNow(); renderClocks(); }
+    // story pin panel: promptPieces carry live vote counts on every /api/state
+    // call per contract, so this refresh alone keeps vote counts current even
+    // without the promptvote SSE event landing.
+    applyPromptState(st);
+  }
+
+  /* ═════════════════════════════════════════════════════════════════
+     STORY PIN PANEL — Marcel stewards which audience-submitted phrase
+     wins each of the 5 narrative slots feeding the terminal RPG (rpg.js).
+     See CONTRACT.md COLLECTIVE TAB section: POST /api/prompt-pin, and
+     GET /api/state's promptPieces/promptCounts/promptVotes/promptPins.
+
+     Same admin-key-gated POST pattern as cueBeat/stageSubmission/
+     hideSubmission above: body { key, slot, id }, id=null clears the pin.
+     Optimistic UI update on click, reconciled against the authoritative
+     `promptpin` SSE event so the two paths never fight — applyPromptPin()
+     is the single place both converge on.
+     ═════════════════════════════════════════════════════════════════ */
+
+  function applyPromptState(st) {
+    if (st && st.promptPieces && typeof st.promptPieces === 'object') {
+      PROMPT_SLOTS.forEach((slot) => {
+        const arr = st.promptPieces[slot];
+        S.promptPieces[slot] = Array.isArray(arr) ? arr.slice() : [];
+      });
+    }
+    if (st && st.promptPins && typeof st.promptPins === 'object') {
+      PROMPT_SLOTS.forEach((slot) => {
+        S.promptPins[slot] = st.promptPins[slot] || null;
+        // an authoritative pin state supersedes any stale optimistic guess
+        if (S.pinPending[slot] !== undefined && S.pinPending[slot] === S.promptPins[slot]) {
+          delete S.pinPending[slot];
+        }
+      });
+    }
+    renderPinPanel();
+  }
+
+  function pinnedIdFor(slot) {
+    return slot in S.pinPending ? S.pinPending[slot] : S.promptPins[slot];
+  }
+
+  function injectPinPanel() {
+    const tele = $('.tele');
+    if (!tele) return;
+    const section = document.createElement('section');
+    section.className = 'fui-panel pinpanel';
+    section.id = 'pinPanel';
+    section.dataset.module = 'pin';
+    section.setAttribute('aria-label', 'Story slot pins');
+    section.innerHTML = `
+      <span class="fui-corners" aria-hidden="true"></span>
+      <div class="panel__head panel__head--tight">
+        <button class="panel__toggle" type="button" data-collapse="pin" aria-expanded="true" aria-controls="pinBody">
+          <span class="panel__caret" aria-hidden="true"></span>
+          <span class="panel__title">
+            <span class="micro-label">STORY BUILDER</span>
+            <span class="panel__h" role="heading" aria-level="2">SLOT PINS</span>
+          </span>
+          <span class="panel__proxy readout" id="pinProxy">—</span>
+        </button>
+      </div>
+      <div class="panel__collapse" id="pinBody">
+        <ol class="pinrows" id="pinRows"></ol>
+      </div>`;
+    tele.appendChild(section);
+    el.pinPanel = section;
+    el.pinRows = $('#pinRows', section);
+    el.pinProxy = $('#pinProxy', section);
+
+    // NOTE: the [data-collapse] button is wired generically by initCollapse()
+    // (it queries the whole document), same as every other telemetry module —
+    // do not add a second listener here or the toggle would fire twice.
+
+    el.pinRows.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-pin]');
+      if (!btn) return;
+      const slot = btn.dataset.pinSlot;
+      const id = btn.dataset.pin === '__clear__' ? null : btn.dataset.pin;
+      pinSlot(slot, id, btn);
+    });
+  }
+
+  function pinRowHTML(slot) {
+    const pieces = (S.promptPieces[slot] || []).slice()
+      .sort((a, b) => (b.votes || 0) - (a.votes || 0) || (b.ts || 0) - (a.ts || 0));
+    const pinnedId = pinnedIdFor(slot);
+    const pending = slot in S.pinPending;
+    const candidates = pieces.length
+      ? pieces.map((p) => {
+          const isPinned = pinnedId && p.id === pinnedId;
+          return `
+            <li class="pinrow__cand${isPinned ? ' is-pinned' : ''}">
+              <span class="pinrow__check" aria-hidden="true">${isPinned ? '✓' : ''}</span>
+              <span class="pinrow__txt">${esc(p.text)}</span>
+              <span class="pinrow__votes readout">${pad(p.votes || 0, 2)}</span>
+              <button type="button" class="pinbtn${isPinned ? ' is-active' : ''}"
+                      data-pin="${esc(p.id)}" data-pin-slot="${esc(slot)}"
+                      ${pending ? 'disabled' : ''}
+                      title="Pin this phrase as ${esc(slot)}">${isPinned ? 'PINNED' : 'PIN'}</button>
+            </li>`;
+        }).join('')
+      : `<li class="pinrow__empty micro-label">NO SUBMISSIONS YET</li>`;
+    return `
+      <li class="pinrow" data-slot="${esc(slot)}">
+        <div class="pinrow__head">
+          <span class="pinrow__slot micro-label">${esc(slot)}</span>
+          <button type="button" class="pinbtn pinbtn--clear" data-pin="__clear__" data-pin-slot="${esc(slot)}"
+                  ${pinnedId ? '' : 'disabled'} ${pending ? 'disabled' : ''}
+                  title="Clear pin for ${esc(slot)} (falls back to highest-voted / latest / default)">CLEAR</button>
+        </div>
+        <ul class="pinrow__list">${candidates}</ul>
+      </li>`;
+  }
+
+  function renderPinPanel() {
+    if (!el.pinRows) return;
+    el.pinRows.innerHTML = PROMPT_SLOTS.map(pinRowHTML).join('');
+    if (el.pinProxy) {
+      const pinnedCount = PROMPT_SLOTS.filter((s) => pinnedIdFor(s)).length;
+      el.pinProxy.textContent = `${pad(pinnedCount, 1)}/${PROMPT_SLOTS.length} PINNED`;
+    }
+  }
+
+  async function pinSlot(slot, id, btn) {
+    if (!PROMPT_SLOTS.includes(slot)) return;
+    const key = getAdminKey();
+    if (!key) { ctrlError('PIN ABORTED · NO ADMIN KEY'); return; }
+
+    // 1. FEEDBACK FIRST — optimistic update in the same frame as the press.
+    fire(btn);
+    const prevPending = S.pinPending[slot];
+    const hadPending = slot in S.pinPending;
+    S.pinPending[slot] = id;
+    clearCtrlError();
+    renderPinPanel();
+    status(id === null ? `PIN CLEAR → ${slot}` : `PIN → ${slot}`);
+
+    try {
+      const res = await fetch(API.promptPin, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, slot, id }),
+      });
+      if (res.status === 403) {
+        localStorage.removeItem(ADMIN_KEY_LS);
+        if (hadPending) S.pinPending[slot] = prevPending; else delete S.pinPending[slot];
+        renderPinPanel();
+        ctrlError('PIN 403 · KEY REJECTED');
+        if (getAdminKey(true)) return pinSlot(slot, id, btn);
+        return;
+      }
+      if (!res.ok) {
+        let detail = `HTTP ${res.status}`;
+        try { const j = await res.json(); if (j && j.error) detail = j.error; } catch { /* */ }
+        throw new Error(detail);
+      }
+      const json = await res.json();
+      // authoritative pin also arrives over SSE (`promptpin`); applying here
+      // closes the loop even if this presenter's own stream is momentarily
+      // down, and applyPromptPin() is idempotent against the SSE echo.
+      applyPromptPin(json && json.slot ? json.slot : slot, json && 'pinnedId' in json ? json.pinnedId : id);
+      status(id === null ? `PIN CLEARED · ${slot}` : `PINNED · ${slot}`);
+    } catch (err) {
+      if (hadPending) S.pinPending[slot] = prevPending; else delete S.pinPending[slot];
+      renderPinPanel();
+      ctrlError(`PIN FAILED · ${slot} · ${String(err.message).toUpperCase()}`);
+      status(`PIN FAILED · ${err.message}`);
+    }
+  }
+
+  // Single point of truth for a landed pin, whether it arrived as this
+  // screen's own POST response or as the `promptpin` SSE event (possibly
+  // from another window / device). Idempotent: applying the same value
+  // twice is a no-op past the first render.
+  function applyPromptPin(slot, pinnedId) {
+    if (!PROMPT_SLOTS.includes(slot)) return;
+    S.promptPins[slot] = pinnedId || null;
+    if (S.pinPending[slot] !== undefined) delete S.pinPending[slot];
+    renderPinPanel();
   }
 
   // Component labels for the tally, plus the axes/ghosts the room radar needs.
@@ -1202,6 +1395,32 @@
     // cued from another device. Beat is resolved by id.
     es.addEventListener('cue', (e) => {
       try { applyCue(JSON.parse(e.data)); } catch { /* ignore */ }
+    });
+
+    // Story pin panel live updates — see CONTRACT.md COLLECTIVE TAB.
+    // promptvote keeps vote counts current between /api/state polls (which
+    // already refresh votes on every call, so this is a nice-to-have for
+    // snappier feedback, not the only path); promptpin reconciles a pin
+    // made from ANOTHER window/device against this one.
+    es.addEventListener('promptvote', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (!d || !d.id) return;
+        for (const slot of PROMPT_SLOTS) {
+          const arr = S.promptPieces[slot];
+          if (!Array.isArray(arr)) continue;
+          const piece = arr.find((p) => p.id === d.id);
+          if (piece) { piece.votes = d.votes; renderPinPanel(); break; }
+        }
+      } catch { /* ignore malformed frame */ }
+    });
+
+    es.addEventListener('promptpin', (e) => {
+      try {
+        const d = JSON.parse(e.data);
+        if (!d || !d.slot) return;
+        applyPromptPin(d.slot, d.pinnedId);
+      } catch { /* ignore malformed frame */ }
     });
 
     // Slide moved — by this presenter, another presenter, or a clicker on the
@@ -1439,6 +1658,7 @@
     initControlTrack();
     initTabs();
     initCollapse();
+    injectPinPanel();
     setLink('offline');
     renderCounts();
     renderSpectrum();

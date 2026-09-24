@@ -55,7 +55,7 @@
     try { data = await res.json(); } catch { /* non-JSON error page */ }
     if (!res.ok) {
       const msg = (data && data.error) ? data.error : `HTTP ${res.status} ${res.statusText || ''}`.trim();
-      const e = new Error(msg); e.status = res.status; throw e;
+      const e = new Error(msg); e.status = res.status; e.body = data; throw e;
     }
     return data;
   }
@@ -111,6 +111,16 @@
         onCueFrame(d && d.cue ? d.cue : null, { reset: true });
       } catch { /* ignore */ }
     });
+    // ---- COLLECTIVE tab: style ideas + prompt-piece voting/pinning ----
+    es.addEventListener('styleidea', ev => {
+      try { onStyleIdea(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
+    });
+    es.addEventListener('promptvote', ev => {
+      try { onPromptVote(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
+    });
+    es.addEventListener('promptpin', ev => {
+      try { onPromptPin(JSON.parse(ev.data)); } catch { /* ignore malformed frame */ }
+    });
   }
   // connectFeed() runs before the cue block's bindings exist, so frames that
   // land during boot are queued rather than dropped (or thrown into a TDZ).
@@ -134,7 +144,7 @@
   // ---------------------------------------------------------------- mode switch
   const seg = $('.seg');
   const tabs = [...document.querySelectorAll('.seg-btn')];
-  const modes = { signal: $('#mode-signal'), assemble: $('#mode-assemble') };
+  const modes = { signal: $('#mode-signal'), assemble: $('#mode-assemble'), collective: $('#mode-collective') };
   function setMode(name, { scroll = true } = {}) {
     if (!modes[name]) name = 'signal';
     seg.dataset.on = name;
@@ -154,7 +164,9 @@
   tabs.forEach(t => t.addEventListener('click', () => noteTabTap(t.dataset.mode)));
   seg.addEventListener('keydown', e => {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
-    const next = tabs[seg.dataset.on === 'assemble' ? 0 : 1]; // two tabs: either arrow toggles
+    const curIdx = tabs.findIndex(t => t.dataset.mode === seg.dataset.on);
+    const delta = e.key === 'ArrowRight' ? 1 : -1;
+    const next = tabs[(curIdx + delta + tabs.length) % tabs.length];
     setMode(next.dataset.mode); next.focus();
   });
   setMode(location.hash === '#signal' ? 'signal' : lsGet(LS.mode, 'assemble'), { scroll: false });
@@ -237,8 +249,12 @@
     t.append(lk);
     tabLocks[t.dataset.mode] = lk;
   });
+  // COLLECTIVE is not part of the presenter cue/gate system (no collectiveOpen
+  // field exists in the cue contract) — it is always on offer, so it never
+  // wears the lock signifier the other two tabs use.
+  if (tabLocks.collective) tabLocks.collective.hidden = true;
 
-  const isOpen = which => !!gates[which];
+  const isOpen = which => which === 'collective' ? true : !!gates[which];
 
   function renderGates() {
     for (const which of ['signal', 'assemble']) {
@@ -354,7 +370,7 @@
   }
 
   // ---------------------------------------------------------------- shared handle inputs
-  const handleInputs = [$('#handle'), $('#handle-2')];
+  const handleInputs = [$('#handle'), $('#handle-2'), $('#handle-3')].filter(Boolean);
   const handleCounter = $('#handle-counter');
   function syncHandle(v, from) {
     handle = v.replace(/[\u0000-\u001F\u007F]/g, '').slice(0, 24);
@@ -880,11 +896,266 @@
     catch { cardEls.status.textContent = text; say('COPY MANUALLY'); }
   });
 
+  // ================================================================ MODE C: COLLECTIVE
+  // Sub-tabs within one mode: STYLE IDEAS (free text -> live feed) and
+  // STORY VOTES (existing prompt-piece slots, but voting instead of only submitting).
+  const subtabs = [...document.querySelectorAll('.subseg-btn')];
+  const submodes = { style: $('#sub-style'), votes: $('#sub-votes') };
+  function setSub(name) {
+    if (!submodes[name]) name = 'style';
+    subtabs.forEach(t => {
+      const on = t.id === `subtab-${name}`;
+      t.classList.toggle('is-on', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    for (const [k, sec] of Object.entries(submodes)) sec.hidden = k !== name;
+  }
+  subtabs.forEach(t => t.addEventListener('click', () => setSub(t.id.replace('subtab-', ''))));
+
+  // ---------- STYLE IDEAS ----------
+  const styleForm = $('#style-form');
+  const styleTa = $('#style-text');
+  const styleCounter = $('#style-counter');
+  const styleSendBtn = $('#style-send-btn');
+  const styleSendLabel = $('.send-label', styleSendBtn);
+  const styleErr = $('#style-error');
+  const styleFeedList = $('#style-feed-list');
+  const styleFeedCount = $('#style-feed-count');
+  const STYLE_MAX = 120;
+  const seenStyleIds = new Set();
+  let styleIdeas = []; // newest last, matches server convention
+
+  function updateStyleCounter() {
+    const n = [...styleTa.value].length;
+    styleCounter.hidden = n < 80;
+    styleCounter.innerHTML = `${pad(n)}<span class="counter-sep">/</span>${STYLE_MAX}`;
+    styleCounter.classList.toggle('is-warn', n >= 100 && n < STYLE_MAX);
+    styleCounter.classList.toggle('is-danger', n >= STYLE_MAX);
+    styleTa.classList.toggle('is-over', n > STYLE_MAX);
+    const ok = styleTa.value.trim().length > 0 && n <= STYLE_MAX;
+    styleSendBtn.disabled = !ok || styleSending;
+  }
+  let styleSending = false;
+  styleTa.addEventListener('input', () => { hideErr(styleErr); updateStyleCounter(); });
+  styleTa.addEventListener('keydown', e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') styleForm.requestSubmit(); });
+
+  function renderStyleFeed() {
+    styleFeedList.replaceChildren();
+    styleFeedCount.textContent = pad(styleIdeas.length);
+    if (!styleIdeas.length) {
+      styleFeedList.append(el('li', { class: 'log-empty micro-label', text: 'NO STYLE IDEAS YET — BE FIRST' }));
+      return;
+    }
+    for (const idea of [...styleIdeas].reverse()) styleFeedList.append(renderStyleItem(idea));
+  }
+  function renderStyleItem(idea) {
+    const t = new Date(idea.ts || Date.now());
+    const hh = pad(t.getHours(), 2), mm = pad(t.getMinutes(), 2);
+    return el('li', { class: 'log-item is-received', 'data-id': idea.id },
+      el('span', { class: 'log-kind', text: '✎', 'aria-label': 'style idea' }),
+      el('p', { class: 'log-text', text: idea.text }),
+      el('span', { class: 'log-meta micro-label', text: `${hh}:${mm}${idea.handle ? ' · ' + idea.handle : ''}` }),
+    );
+  }
+  function onStyleIdea(idea) {
+    if (!idea || seenStyleIds.has(idea.id)) return;
+    seenStyleIds.add(idea.id);
+    styleIdeas.push(idea);
+    styleIdeas = styleIdeas.slice(-12);
+    renderStyleFeed();
+    if (!reducedMotion) {
+      const li = styleFeedList.firstElementChild;
+      if (li) { li.classList.add('is-new-pulse'); setTimeout(() => li.classList.remove('is-new-pulse'), 700); }
+    }
+  }
+
+  styleForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (styleSending) return;
+    const text = styleTa.value.replace(/[\u0000-\u0008\u000B-\u001F\u007F]/g, '').trim();
+    if (!text) { showErr(styleErr, 'Write something first.'); return; }
+    if ([...text].length > STYLE_MAX) { showErr(styleErr, `Over ${STYLE_MAX} characters. Trim it.`); return; }
+    hideErr(styleErr);
+    styleSending = true;
+    styleSendBtn.disabled = true;
+    styleSendBtn.classList.add('is-busy');
+    styleSendLabel.textContent = 'SENDING';
+    try {
+      const r = await postJSON('api/style-idea', { sid, handle: handle || undefined, text });
+      styleSendLabel.textContent = `RECEIVED · ${r.id}`;
+      say(`STYLE IDEA LOGGED · ID ${r.id}`);
+      onStyleIdea({ id: r.id, ts: r.ts, sid, handle, text });
+      styleTa.value = ''; updateStyleCounter();
+    } catch (err) {
+      const human = err.status === 429 ? 'Too fast — one submission every 3 seconds (shared with Signal). Retry in a moment.'
+        : err.status === 404 ? 'Server endpoint not found (/api/style-idea → 404). Retry when the link is back.'
+        : err.status ? `Server refused it: ${err.message}`
+        : 'No link to the server. Retry when the link is back.';
+      showErr(styleErr, human);
+      styleSendLabel.textContent = 'FAILED — RETRY?';
+    } finally {
+      styleSending = false;
+      styleSendBtn.classList.remove('is-busy');
+      setTimeout(() => { styleSendLabel.textContent = 'SEND IDEA'; updateStyleCounter(); }, 1400);
+      updateStyleCounter();
+    }
+  });
+  updateStyleCounter();
+
+  // ---------- STORY VOTES ----------
+  const voteSlotsRoot = $('#vote-slots');
+  let promptFormat = { title: '', slots: [] };
+  // pieceIndex: id -> { piece, cardEl, votesEl, btnEl } so SSE frames can find
+  // and update a specific card wherever it renders, without a full re-render.
+  const pieceIndex = new Map();
+  let promptPins = { SETTING: null, COMPANION: null, THREAT: null, ARTIFACT: null, TWIST: null };
+  let votedByMe = new Set(lsGet('cyborg.votedPieces', []));
+  function saveVotedByMe() { lsSet('cyborg.votedPieces', [...votedByMe]); }
+
+  function renderVoteSlots(pieces) {
+    voteSlotsRoot.replaceChildren();
+    pieceIndex.clear();
+    if (!promptFormat.slots.length) {
+      voteSlotsRoot.append(el('p', { class: 'micro-label slots-loading', text: 'LOADING SLOTS…' }));
+      return;
+    }
+    for (const slot of promptFormat.slots) {
+      const panel = el('section', { class: 'fui-panel vote-slot', id: `vote-slot-${slot.id}` });
+      panel.append(el('span', { class: 'fui-corners', 'aria-hidden': 'true' }));
+      panel.append(
+        el('div', { class: 'vote-slot-head' },
+          el('span', { class: 'vote-slot-name display', text: slot.label || slot.id }),
+          el('span', { class: 'vote-slot-hint micro-label', text: slot.hint || '' }),
+        ),
+      );
+      const list = el('ul', { class: 'vote-card-list', id: `vote-list-${slot.id}` });
+      const arr = (pieces[slot.id] || []).slice().sort((a, b) => (b.votes || 0) - (a.votes || 0) || b.ts - a.ts);
+      if (!arr.length) {
+        list.append(el('li', { class: 'vote-card-empty micro-label', text: 'NOTHING SUBMITTED YET FOR THIS SLOT' }));
+      } else {
+        for (const piece of arr) list.append(renderVoteCard(piece, slot.id));
+      }
+      panel.append(list);
+      voteSlotsRoot.append(panel);
+    }
+  }
+
+  function renderVoteCard(piece, slotId) {
+    const pinned = promptPins[slotId] === piece.id;
+    const li = el('li', { class: `vote-card${pinned ? ' is-pinned' : ''}`, 'data-id': piece.id, 'data-slot': slotId });
+    const main = el('div', { class: 'vote-card-main' },
+      pinned ? el('span', { class: 'vote-pin-badge micro-label', text: 'PINNED' }) : null,
+      el('p', { class: 'vote-card-text', text: piece.text }),
+      el('span', { class: 'vote-card-who micro-label', text: piece.handle ? piece.handle : 'ANON' }),
+    );
+    const voteBtn = el('button', { class: 'vote-btn', type: 'button', 'aria-label': `Upvote ${piece.text}` },
+      el('span', { class: 'vote-btn-arrow', 'aria-hidden': 'true', text: '▲' }),
+      el('span', { class: 'vote-btn-count readout', text: pad(piece.votes || 0, 2) }),
+    );
+    if (votedByMe.has(piece.id)) voteBtn.classList.add('is-voted');
+    voteBtn.addEventListener('click', () => castVote(piece.id, slotId, voteBtn));
+    li.append(main, voteBtn);
+    pieceIndex.set(piece.id, { piece, li, voteBtn, slotId });
+    return li;
+  }
+
+  async function castVote(id, slotId, btn) {
+    const entry = pieceIndex.get(id);
+    if (!entry) return;
+    // OPTIMISTIC: bump the shown count within 100ms, before the network call resolves.
+    const already = votedByMe.has(id);
+    const prevVotes = entry.piece.votes || 0;
+    if (!already) {
+      entry.piece.votes = prevVotes + 1;
+      votedByMe.add(id); saveVotedByMe();
+      $('.vote-btn-count', btn).textContent = pad(entry.piece.votes, 2);
+      btn.classList.add('is-voted', 'is-pending');
+    } else {
+      // repeat tap on an already-voted card: confirm, don't resend a new optimistic bump
+      btn.classList.add('is-pending');
+    }
+    try {
+      const r = await postJSON('api/prompt-vote', { sid, id });
+      entry.piece.votes = r.votes;
+      $('.vote-btn-count', btn).textContent = pad(r.votes, 2);
+      btn.classList.remove('is-pending');
+      pulseVote(btn);
+    } catch (err) {
+      if (err.status === 409 && err.body && typeof err.body.votes === 'number') {
+        // already voted server-side — reconcile the count, not an error to show angrily
+        entry.piece.votes = err.body.votes;
+        $('.vote-btn-count', btn).textContent = pad(err.body.votes, 2);
+        btn.classList.remove('is-pending');
+        return;
+      }
+      // real failure: revert the optimistic bump
+      if (!already) {
+        entry.piece.votes = prevVotes;
+        votedByMe.delete(id); saveVotedByMe();
+        $('.vote-btn-count', btn).textContent = pad(prevVotes, 2);
+        btn.classList.remove('is-voted');
+      }
+      btn.classList.remove('is-pending');
+      say(err.status === 404 ? 'THAT PHRASE IS GONE' : 'VOTE FAILED — NO LINK');
+    }
+  }
+
+  function pulseVote(btn) {
+    if (reducedMotion) return;
+    btn.classList.remove('is-pulsing'); void btn.offsetWidth; btn.classList.add('is-pulsing');
+    setTimeout(() => btn.classList.remove('is-pulsing'), 400);
+  }
+
+  function onPromptVote(data) {
+    if (!data || !data.id) return;
+    const entry = pieceIndex.get(data.id);
+    if (!entry) return; // piece not currently rendered (different slot batch, etc.)
+    entry.piece.votes = data.votes;
+    $('.vote-btn-count', entry.voteBtn).textContent = pad(data.votes, 2);
+    pulseVote(entry.voteBtn);
+  }
+
+  function onPromptPin(data) {
+    if (!data || !data.slot) return;
+    promptPins[data.slot] = data.pinnedId || null;
+    // re-render just that slot's list so exactly one card in it shows PINNED
+    const list = $(`#vote-list-${data.slot}`);
+    if (!list) return;
+    const rows = [...pieceIndex.values()].filter(en => en.slotId === data.slot);
+    for (const en of rows) {
+      const isPinned = promptPins[data.slot] === en.piece.id;
+      en.li.classList.toggle('is-pinned', isPinned);
+      const badge = $('.vote-pin-badge', en.li);
+      if (isPinned && !badge) {
+        en.li.querySelector('.vote-card-main').prepend(el('span', { class: 'vote-pin-badge micro-label', text: 'PINNED' }));
+      } else if (!isPinned && badge) {
+        badge.remove();
+      }
+    }
+  }
+
+  async function loadPromptFormat() {
+    const res = await fetch('prompt-format.json', { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`prompt-format.json HTTP ${res.status}`);
+    const data = await res.json();
+    promptFormat = { title: data.title || '', slots: Array.isArray(data.slots) ? data.slots : [] };
+    if (promptFormat.title) $('#vote-format-title').textContent = promptFormat.title.toUpperCase();
+  }
+
   // ================================================================ BOOT
   // 1. paint whatever cue we cached (so a refresh mid-talk isn't a blank beat)
   // 2. GET ./api/state and apply the authoritative cue
   // 3. from then on, live `cue` SSE events drive everything
   applyCue(cue, { initial: true });
+  // ---- COLLECTIVE boot: slot copy (static, prompt-format.json) ----
+  // Seed data itself (promptPieces/promptVotes/promptPins/styleIdeas) rides
+  // on the same GET api/state call bootstrapState() already makes below —
+  // one fetch, not a duplicate — see bootstrapState()'s collective block.
+  let collectivePiecesSeed = null;
+  loadPromptFormat()
+    .then(() => { if (collectivePiecesSeed) renderVoteSlots(collectivePiecesSeed); })
+    .catch(() => { voteSlotsRoot.replaceChildren(el('p', { class: 'inline-error', role: 'alert', text: 'Slot list failed to load. Reload to retry.' })); });
+
   booted = true;
   if (pendingCue) { const p = pendingCue; pendingCue = null; onCueFrame(p.c, p.opts); }
   loadCatalog();
@@ -895,6 +1166,15 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const st = await res.json();
       applyCue(st.cue, { initial: !cue || !cue.beatId });
+      // ---- COLLECTIVE seed: prompt pieces (+votes/pins) and style-idea feed ----
+      collectivePiecesSeed = st.promptPieces || {};
+      promptPins = st.promptPins || promptPins;
+      if (promptFormat.slots.length) renderVoteSlots(collectivePiecesSeed);
+      if (Array.isArray(st.styleIdeas)) {
+        for (const idea of st.styleIdeas) { if (idea && idea.id) seenStyleIds.add(idea.id); }
+        styleIdeas = st.styleIdeas.slice(-12);
+        renderStyleFeed();
+      }
     } catch (e) {
       // visible, not silent: the phone says it doesn't know the beat
       cueBeat.textContent = 'BEAT UNKNOWN — NO LINK';

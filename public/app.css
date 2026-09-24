@@ -471,6 +471,13 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 }
 .seg[data-on="assemble"] .seg-indicator { transform: translateX(100%); }
 
+/* three-tab variant (COLLECTIVE added alongside SIGNAL/ASSEMBLE) */
+.seg.seg-3 { grid-template-columns: repeat(3, 1fr); }
+.seg.seg-3 .seg-indicator { width: calc(33.333% + 1px); }
+.seg.seg-3[data-on="signal"] .seg-indicator { transform: translateX(0); }
+.seg.seg-3[data-on="assemble"] .seg-indicator { transform: translateX(100%); }
+.seg.seg-3[data-on="collective"] .seg-indicator { transform: translateX(200%); }
+
 /* ---------- toast-ish system line ---------- */
 .sysline {
   position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px));
@@ -675,3 +682,96 @@ body { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 
 /* stale = picks changed since the last send; pull attention back */
 .transmit-panel.is-stale .transmit-btn { background: var(--accent); color: var(--bg); }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   MODE C: COLLECTIVE — style ideas + story voting/pinning
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ---------- sub-tabs (STYLE IDEAS / STORY VOTES) ---------- */
+.subseg {
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--rule-strong);
+  height: 44px;
+}
+.subseg-btn {
+  display: flex; align-items: center; justify-content: center;
+  min-height: var(--tap);
+  font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--mid);
+  border-right: 1px solid var(--rule-strong);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.subseg-btn:last-child { border-right: 0; }
+.subseg-btn.is-on { color: var(--fg); background: rgba(0, 229, 204, 0.06); }
+.subseg-btn.is-on .subseg-name { color: var(--accent); }
+.submode[hidden] { display: none; }
+.submode { display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- style idea form (mirrors .signal-form, 120-char cap) ---------- */
+.style-form { display: flex; flex-direction: column; gap: 14px; }
+
+/* new style-idea feed items get a brief entrance pulse, same accent language
+   as the rest of the app; respects prefers-reduced-motion globally */
+.log-item.is-new-pulse { border-left-color: var(--accent); animation: style-pulse 700ms var(--ease); }
+@keyframes style-pulse {
+  0% { background: rgba(0, 229, 204, 0.14); }
+  100% { background: rgba(15, 15, 13, 0.8); }
+}
+
+/* ---------- story-vote slots ---------- */
+.vote-hint { padding: 2px 2px 0; text-align: center; }
+.vote-slots { display: flex; flex-direction: column; gap: 12px; }
+.vote-slot { padding: 12px 12px 10px; display: flex; flex-direction: column; gap: 10px; }
+.vote-slot-head { display: flex; flex-direction: column; gap: 2px; }
+.vote-slot-name { font-size: 16px; text-transform: uppercase; letter-spacing: 0.01em; }
+.vote-slot-hint { font-size: 10px; }
+
+.vote-card-list { display: flex; flex-direction: column; gap: 8px; }
+.vote-card-empty { padding: 12px; border: 1px dashed var(--rule); text-align: center; }
+
+.vote-card {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px;
+  padding: 10px 10px 10px 12px;
+  border: 1px solid var(--rule);
+  border-left: 2px solid var(--rule-strong);
+  background: rgba(240, 239, 233, 0.015);
+  transition: border-color var(--t-med) var(--ease), background var(--t-med) var(--ease);
+}
+.vote-card-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.vote-card-text { font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; color: var(--fg); }
+.vote-card-who { font-size: 9px; }
+
+/* PINNED — a state distinct from "has votes": presenter authority, not the room's count */
+.vote-card.is-pinned { border-left-color: var(--accent); background: rgba(0, 229, 204, 0.05); }
+.vote-pin-badge {
+  display: inline-flex; align-self: flex-start;
+  padding: 2px 6px; margin-bottom: 1px;
+  border: 1px solid var(--accent); color: var(--accent);
+  font-size: 9px; letter-spacing: 0.1em;
+}
+.vote-pin-badge::before { content: "\2605\0020"; } /* star glyph */
+
+/* upvote tap target — >=44px per Norman touch-target requirement, distinct
+   visual "pressed" state once voted vs. not-yet-voted (mapping: up arrow = more votes) */
+.vote-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  min-width: 52px; min-height: 44px; padding: 4px 8px;
+  border: 1px solid var(--rule-strong);
+  color: var(--mid);
+  transition: border-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.vote-btn:active { transform: scale(0.97); }
+.vote-btn-arrow { font-size: 11px; line-height: 1; }
+.vote-btn-count { font-size: 14px; line-height: 1; }
+.vote-btn.is-voted { border-color: var(--accent); color: var(--accent); background: rgba(0, 229, 204, 0.06); }
+.vote-btn.is-pending { opacity: 0.7; }
+/* feedback pulse on a vote landing (own tap or someone else's, via SSE) */
+.vote-btn.is-pulsing { animation: vote-pulse 400ms var(--ease); }
+@keyframes vote-pulse {
+  0% { background: rgba(0, 229, 204, 0.28); }
+  100% { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vote-btn.is-pulsing, .log-item.is-new-pulse { animation: none; }
+}

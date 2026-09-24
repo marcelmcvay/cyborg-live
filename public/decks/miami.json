@@ -2,7 +2,7 @@
   "slug": "miami",
   "title": "Designing Assemblages: A Cyborg Foundation for Interaction Design",
   "venue": "University of Miami \u2014 graduate lecture",
-  "totalMins": 55,
+  "totalMins": 60,
   "format": "lecture",
   "beats": [
     {
@@ -187,7 +187,7 @@
     {
       "id": "etymology",
       "label": "ETYMOLOGY",
-      "mins": 6,
+      "mins": 8,
       "cue": {
         "mode": "present",
         "prompt": "1960. An engineering requirement.",
@@ -195,6 +195,34 @@
         "assembleOpen": true
       },
       "slides": [
+        {
+          "kind": "statement",
+          "text": "Norbert Wiener, 1948. Cybernetics is born in the sky, solving a targeting problem.",
+          "note": "\u2192 \"Let's go back to where the word comes from \u2014 and it's a longer road than you'd expect, so bear with the history for a few minutes.\"\n\n\u2192 \"Start with Norbert Wiener. 1948. His book is called, simply, 'Cybernetics' \u2014 control and communication in the animal and the machine. Wiener's own path into this ran through anti-aircraft fire control in World War Two: predicting where a plane will be, not where it is, and closing the loop between sensor and gun in real time. Cybernetics is born in the sky, solving a targeting problem.\""
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/wwii-mk37-aa-fire-control-director-1944.jpg",
+          "alt": "WWII Mark 37 anti-aircraft fire-control director, 1944",
+          "note": "\u00b7 The actual predictor/feedback-loop hardware Wiener worked from \u2014 sensor and gun closed into one loop."
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/wiener-cybernetics-1948-book-cover.jpg",
+          "alt": "Cover of Norbert Wiener's Cybernetics, 1948",
+          "note": "\u00b7 The book itself: control and communication in the animal and the machine."
+        },
+        {
+          "kind": "statement",
+          "text": "Marshall McLuhan: media as extensions of man.",
+          "note": "\u2192 \"Marshall McLuhan picks up the same thread a generation later. 'Understanding Media,' 1964 \u2014 media as extensions of man. McLuhan's argument and Wiener's engineering are doing the same work from two directions: technology isn't a tool sitting outside you, it's a loop that runs through you.\""
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/mcluhan-portrait-1967.jpg",
+          "alt": "Portrait of Marshall McLuhan, 1967",
+          "note": "\u00b7 McLuhan, a generation after Wiener, arguing media are extensions of man."
+        },
         {
           "kind": "quote",
           "text": "For the exogenously extended organizational complex functioning as an integrated homeostatic system unconsciously, we propose the term 'Cyborg.'",
@@ -212,7 +240,64 @@
           "note": "\u2192 \"The word began as an engineering requirement.\"\n\n\u23f1 Let it sit, then move."
         }
       ],
-      "presenterNotes": "\u23f1 6 min \u00b7 the word started as a spec, not a metaphor and not science fiction"
+      "presenterNotes": "\u23f1 8 min \u00b7 Wiener \u2192 McLuhan \u2192 Clynes and Kline \u2014 the word started as a spec, not a metaphor and not science fiction"
+    },
+    {
+      "id": "mercury-apollo",
+      "label": "CONTROL / STABILITY",
+      "mins": 3,
+      "cue": {
+        "mode": "present",
+        "prompt": "The capsule was built to fly itself. Then it didn't.",
+        "signalOpen": true,
+        "assembleOpen": true
+      },
+      "slides": [
+        {
+          "kind": "image",
+          "src": "_research_miami/naca-test-pilot-and-engineer.jpg",
+          "alt": "NACA test pilot and engineer reviewing flight data",
+          "note": "\u00b7 This is the engineering culture Project Mercury was born into \u2014 slide rules and flight-test data, before a pilot ever touched the hardware."
+        },
+        {
+          "kind": "statement",
+          "text": "The capsule was built to fly itself. The pilots called it 'spam in a can.'",
+          "note": "\u2192 \"Here's where the human-in-the-loop argument gets concrete \u2014 and it's the same story I planted back at the start of this talk.\"\n\n\u2192 \"Project Mercury, America's first crewed spaceflight program, was designed, at first, around automation. The capsule was built to fly itself. The astronaut was mostly there to be monitored.\"\n\n\u2192 \"The Mercury Seven were all military test pilots. Several had combat records. They hated this. Chuck Yeager \u2014 the first man to break the sound barrier, not one of the seven, but very much part of that culture \u2014 called the whole program 'spam in a can.' Being flown, not flying. That's the insult.\"\n\n\u2192 \"They fought for it and won real concessions: a window \u2014 the original design didn't have one \u2014 and a manual control system as backup to the automatic one.\""
+        },
+        {
+          "kind": "image",
+          "src": "_research_miami/glenn-mercury-pressure-suit.jpg",
+          "alt": "Mercury-program astronaut in pressure suit",
+          "note": "\u00b7 A Mercury-program astronaut in the pressure suit they fought to be more than cargo inside."
+        },
+        {
+          "kind": "statement",
+          "text": "Carpenter flew the horizon by eye. Cooper flew reentry by wristwatch.",
+          "note": "\u2192 \"That backup system was not decorative. Scott Carpenter, 1962 \u2014 his automatic attitude control failed mid-flight and bled fuel. He flew a good chunk of the mission on manual, eyeballing the window against the Earth's horizon.\"\n\n\u2192 \"Gordon Cooper, the very last Mercury flight, 1963 \u2014 a cascading electrical failure killed the automatic system's power entirely. Cooper flew a fully manual reentry: hand controller, a grease-pencil mark on the window for his pitch angle, his own wristwatch for retrofire timing. It worked. By most accounts it was the most precise splashdown of the whole program.\""
+        },
+        {
+          "kind": "quote",
+          "text": "Neither side was wrong. Nobody won this argument by being right.",
+          "attrib": "resolved by the Cooper-Harper Handling Qualities Rating Scale, formalized 1969",
+          "note": "\u2192 \"Neither side was wrong. The engineers were right that automation is safer on average. The pilots were right that a trained human is a hedge against exactly the failure automation can't predict. Nobody won this argument by being right.\"\n\n\u2192 \"It got resolved by an actual piece of engineering that took the pilot's side seriously as a design input, not just a grudging backup switch: the Cooper-Harper Handling Qualities Rating Scale, built through the 1960s, formalized in 1969. A one-to-ten scale that converts a test pilot's subjective 'how did that feel' into a number an engineer can design against.\"\n\n\u2192 \"It's still the industry standard today \u2014 aircraft, military helicopters, NASA spacecraft. A scale built to make a human's felt experience legible to a systems engineer, and vice versa. This is the connection I meant at the very start, when I said we design for the connections between elements in a system \u2014 human, agent, and stack.\""
+        },
+        {
+          "kind": "statement",
+          "text": "Apollo 11. The computer alarms. A 24-year-old with a handwritten list.",
+          "note": "\u2192 \"Fast-forward six years. Apollo 11, July 1969. During the actual lunar landing, the guidance computer starts throwing alarms \u2014 1202, 1201 \u2014 it's overloaded, dropping low-priority tasks.\"\n\n\u2192 \"A 24-year-old engineer named Jack Garman has a handwritten list of alarm codes taped to his console. He tells Mission Control in seconds: survivable, keep going. That's a systems engineer's preparation, directly keeping the mission alive.\""
+        },
+        {
+          "kind": "statement",
+          "text": "Armstrong saw the boulder field and took the controls by hand.",
+          "note": "\u2192 \"And then Neil Armstrong looks at where the automatic program is actually taking them \u2014 a boulder field \u2014 and takes manual control. Flies it by hand to a clear spot. Lands with less than a minute of fuel left, by some estimates.\""
+        },
+        {
+          "kind": "statement",
+          "text": "Both things were true in the same thirty seconds.",
+          "note": "\u2192 \"Both things are true in the same thirty seconds. The engineered system \u2014 alarm triage, guidance computer, a checklist taped to a console \u2014 kept the mission alive. And the human pilot's judgment, trained into his body, faster than any checklist, made the call the machine couldn't make.\"\n\n\u2192 \"That's not a contest. That's the actual shape of a cyborg system working.\"\n\n\u23f1 Let this sit for a beat before moving to CYBERNETICS."
+        }
+      ],
+      "presenterNotes": "\u23f1 3 min \u00b7 the human-in-the-loop argument gets concrete \u2014 same story planted at the very start of the talk\n\n\u23f1 If behind schedule anywhere before CASE STUDIES, trim here first: (1) shorten Carpenter/Cooper to one sentence each, (2) cut Jack Garman's name and just say \"an engineer,\" (3) last resort, cut from Cooper-Harper straight to the closing line and save Apollo 11 for Regent's close.\n\n\u2691 This is the callback Regent cashes in at the very end of the talk \u2014 don't rush the closing line."
     },
     {
       "id": "cybernetics",
