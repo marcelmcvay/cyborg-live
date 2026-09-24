@@ -164,6 +164,11 @@
       "slides": [
         {
           "kind": "statement",
+          "text": "We are all cyborgs.",
+          "note": "\u2192 \"We are all cyborgs.\"\n\n\u00b7 The claim first, then the proof. The next slide makes them test it on themselves."
+        },
+        {
+          "kind": "statement",
           "text": "Pick the tech that is genuinely part of you.",
           "note": "\u2192 \"Pick the tech that's genuinely part of you. Not what you own \u2014 what you'd feel the loss of.\"\n\n\u2192 \"Glasses. Your keyboard layout. Your car. Your language. Your dialect.\""
         },
